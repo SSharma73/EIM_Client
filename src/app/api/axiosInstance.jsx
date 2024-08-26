@@ -36,7 +36,7 @@ const responseInterceptor = axiosInstance.interceptors.response.use(
       window.location.href = "/login";
       originalRequest.sent = true;
     }
-    throw error;
+    throw error;2
   }
 );
 

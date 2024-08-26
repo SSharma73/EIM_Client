@@ -8,9 +8,8 @@ import {
   TablePagination,
   TableRow,
   Paper,
+  useTheme,
 } from "@mui/material";
-
-
 
 const CustomTable = ({
   rows,
@@ -21,21 +20,22 @@ const CustomTable = ({
   rowsPerPage,
   actions = [],
 }) => {
-  const handleChangePage = (
-    even,
-    newPage
-  ) => {
+  const handleChangePage = (even, newPage) => {
     setPage(newPage);
   };
 
-  const handleChangeRowsPerPage = (
-    event
-  ) => {
+  const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(+event.target.value);
   };
+  const theme = useTheme();
 
   return (
-    <TableContainer component={Paper}>
+    <TableContainer
+      component={Paper}
+      sx={{
+        backgroundColor: theme.palette.primary.main,
+      }}
+    >
       <Table aria-label="custom pagination table">
         <TableBody>
           <TableRow>

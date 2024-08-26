@@ -43,7 +43,7 @@ const Settings = () => {
         breadcrumbItems={breadcrumbItems}
       />
       <Grid container>
-        <CustomGrid sx={{ border: "1px solid red" }}>
+        <CustomGrid>
           <Grid container justifyContent={"space-between"}>
             <Grid item>
               <Avatar sx={{ height: "120px", width: "120px" }}>

@@ -14,7 +14,8 @@ const baselightTheme = createTheme({
   direction: "ltr",
   palette: {
     primary: {
-      main: "rgba(24, 36, 111, 1)",
+      // main: "rgba(24, 36, 111, 1)",
+      main: "#003546",
       light: "rgba(52, 125, 0, 0.25)",
     },
     secondary: {
@@ -183,7 +184,7 @@ const baselightTheme = createTheme({
             fontSize: "16px",
             color: "#C0FE72",
             borderRadius: "0px",
-            backgroundColor: "#18246F",
+            backgroundColor: theme.palette.primary.main,
           },
         },
       },

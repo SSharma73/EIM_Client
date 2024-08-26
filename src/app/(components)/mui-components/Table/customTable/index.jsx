@@ -12,6 +12,7 @@ import {
   TableHead,
   Box,
   Grid,
+  useTheme,
 } from "@mui/material";
 
 const index = ({
@@ -30,7 +31,8 @@ const index = ({
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(+event.target.value);
   };
-  console.log("rows", rows?.length);
+  const theme = useTheme();
+
   return (
     <TableContainer
       sx={{
@@ -40,7 +42,11 @@ const index = ({
       }}
     >
       <Table aria-label="custom pagination table">
-        <TableHead sx={{ backgroundColor: "#171963" }}>
+        <TableHead
+          sx={{
+            backgroundColor: theme.palette.primary.main,
+          }}
+        >
           <TableRow>
             {columns.map((column, index) => (
               <TableCell

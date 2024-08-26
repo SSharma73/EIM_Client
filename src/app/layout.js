@@ -11,7 +11,6 @@ export default function RootLayout({ children }) {
       <body>
         <ThemeProvider theme={theme}>
           <CssBaseline />
-
           {children}
         </ThemeProvider>
       </body>

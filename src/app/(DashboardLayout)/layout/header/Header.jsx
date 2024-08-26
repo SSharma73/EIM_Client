@@ -16,7 +16,7 @@ const AppBarStyled = styled(AppBar)(({ theme }) => ({
   [theme.breakpoints.down("sm")]: {
     padding: "18px 15px 25px 15px",
   },
-  backgroundColor: "rgba(14, 1, 71, 1)",
+  backgroundColor: theme.palette.primary.main,
 }));
 
 const Header = ({ toggleMobileSidebar }) => {

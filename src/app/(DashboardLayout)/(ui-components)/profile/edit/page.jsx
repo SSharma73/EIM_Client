@@ -60,7 +60,7 @@ const Edit = () => {
         />
 
         <Grid container>
-          <CustomGrid container sx={{ border: "1px solid red" }}>
+          <CustomGrid container>
             <Grid container rowGap={4} mt={4} pl={2} mb={2}>
               <Grid item md={5} xs={12} sm={6}>
                 <Typography>Current Password</Typography>
@@ -144,12 +144,7 @@ const Edit = () => {
               </Grid>
             </Grid>
           </CustomGrid>
-          <Grid
-            container
-            justifyContent={"flex-end"}
-            columnGap={2}
-            mt={2}
-          >
+          <Grid container justifyContent={"flex-end"} columnGap={2} mt={2}>
             <Button variant="outlined" size="large" onClick={handleBackClick}>
               Back{" "}
             </Button>

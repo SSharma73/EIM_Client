@@ -1,10 +1,22 @@
-"use client"
-import * as React from 'react';
-import { Paper, Grid, Typography, Button, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow } from '@mui/material';
-import { CustomDropdown } from '@/app/(components)/mui-components/DropdownButton/index';
-import { CustomDownloadExcel } from '@/app/(components)/mui-components/DownloadExcel/index';
-import Image from 'next/image';
-import NodataImg from '../../../../public/Img/Nodata.svg'
+"use client";
+import * as React from "react";
+import {
+  Paper,
+  Grid,
+  Typography,
+  Button,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TablePagination,
+  TableRow,
+} from "@mui/material";
+import { CustomDropdown } from "@/app/(components)/mui-components/DropdownButton/index";
+import { CustomDownloadExcel } from "@/app/(components)/mui-components/DownloadExcel/index";
+import Image from "next/image";
+import NodataImg from "../../../../public/Img/Nodata.svg";
 
 function StickyHeadTable({ columns, renderActions, buttons, rows, status }) {
   const [page, setPage] = React.useState(0);
@@ -20,32 +32,76 @@ function StickyHeadTable({ columns, renderActions, buttons, rows, status }) {
   };
 
   return (
-    <Paper sx={{ width: '100%', overflow: 'hidden', borderRadius: "16px", backgroundColor: '#6099EB'}}>
+    <Paper
+      sx={{
+        width: "100%",
+        overflow: "hidden",
+        borderRadius: "16px",
+        backgroundColor: theme.palette.primary.main,
+      }}
+    >
       <TableContainer sx={{ maxHeight: 700 }}>
-        {buttons && buttons.map((item, index) => (
-          <Grid key={index} container justifyContent="space-between" alignItems="center" p={2}>
-            <Typography variant='h4' color={"#fff"}>{item.data}</Typography>
-            <Grid item>
-              {item.customdownload && <CustomDownloadExcel key={index} name={item.customdownload} rows={rows} data={item.data} />}
-              {item.regiondropdown && item.regiondropdown.map((item, index) => (<CustomDropdown key={index} buttonname={item.name} variant={item.variant} region={item.region} />))}
-              {item.dailydropdown && item.dailydropdown.map((item, index) => (<CustomDropdown key={index} buttonname={item.name} variant={item.variant} region={item.days} />))}
-              {item.button && <Button variant='contained'>View All</Button>}
+        {buttons &&
+          buttons.map((item, index) => (
+            <Grid
+              key={index}
+              container
+              justifyContent="space-between"
+              alignItems="center"
+              p={2}
+            >
+              <Typography variant="h4" color={"#fff"}>
+                {item.data}
+              </Typography>
+              <Grid item>
+                {item.customdownload && (
+                  <CustomDownloadExcel
+                    key={index}
+                    name={item.customdownload}
+                    rows={rows}
+                    data={item.data}
+                  />
+                )}
+                {item.regiondropdown &&
+                  item.regiondropdown.map((item, index) => (
+                    <CustomDropdown
+                      key={index}
+                      buttonname={item.name}
+                      variant={item.variant}
+                      region={item.region}
+                    />
+                  ))}
+                {item.dailydropdown &&
+                  item.dailydropdown.map((item, index) => (
+                    <CustomDropdown
+                      key={index}
+                      buttonname={item.name}
+                      variant={item.variant}
+                      region={item.days}
+                    />
+                  ))}
+                {item.button && <Button variant="contained">View All</Button>}
+              </Grid>
             </Grid>
-          </Grid>
-        ))}
+          ))}
         <Table stickyHeader aria-label="sticky table">
           <TableHead>
             <TableRow>
-               { columns && columns.map((column) => (
-                <TableCell
-                  key={column.id}
-                  align={column.align}
-                  sx={{ backgroundColor: "#171963", color: "#fff", padding: "15px" }}
-                  style={{ minWidth: column.minWidth }}
-                >
-                  {column.label}
-                </TableCell>
-              ))}
+              {columns &&
+                columns.map((column) => (
+                  <TableCell
+                    key={column.id}
+                    align={column.align}
+                    sx={{
+                      backgroundColor: "#171963",
+                      color: "#fff",
+                      padding: "15px",
+                    }}
+                    style={{ minWidth: column.minWidth }}
+                  >
+                    {column.label}
+                  </TableCell>
+                ))}
             </TableRow>
           </TableHead>
           <TableBody>
@@ -58,10 +114,18 @@ function StickyHeadTable({ columns, renderActions, buttons, rows, status }) {
                       <TableCell key={column.id} align={column.align}>
                         {column.id === "action" ? (
                           <>{renderActions()}</>
-                        ) : column.id === "status" || column.id === "TotalTripDay" || column.id === "TotalTripmonth" || column.id === "chargingcycle" || column.id === "swappingcycle" ? (
+                        ) : column.id === "status" ||
+                          column.id === "TotalTripDay" ||
+                          column.id === "TotalTripmonth" ||
+                          column.id === "chargingcycle" ||
+                          column.id === "swappingcycle" ? (
                           <>{status(row[column.id])}</>
                         ) : (
-                          <>{column.format && typeof row[column.id] === 'number' ? column.format(row[column.id]) : row[column.id]}</>
+                          <>
+                            {column.format && typeof row[column.id] === "number"
+                              ? column.format(row[column.id])
+                              : row[column.id]}
+                          </>
                         )}
                       </TableCell>
                     ))}
@@ -78,7 +142,12 @@ function StickyHeadTable({ columns, renderActions, buttons, rows, status }) {
                     p={4}
                   >
                     <Grid item>
-                      <Image src={NodataImg } alt="No Data Image" height={500} width={500} />
+                      <Image
+                        src={NodataImg}
+                        alt="No Data Image"
+                        height={500}
+                        width={500}
+                      />
                     </Grid>
                     <Grid item>
                       <Typography variant="h5" component="h5">

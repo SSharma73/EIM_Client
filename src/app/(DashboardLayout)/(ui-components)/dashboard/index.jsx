@@ -14,6 +14,7 @@ import {
   Box,
   Grid,
   Typography,
+  useTheme,
 } from "@mui/material";
 
 const index = ({
@@ -26,22 +27,23 @@ const index = ({
   count,
   loading,
 }) => {
-  const handleChangePage = (
-    event,
-    newPage
-  ) => {
+  const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
-  const handleChangeRowsPerPage = (
-    event
-  ) => {
+  const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(+event.target.value);
   };
-console.log("rows",rows?.length)
+  const theme = useTheme();
   return (
-    <TableContainer  sx={{backgroundColor:"#669BE9", borderRadius:"0px 0px 16px 16px",overflowX: "auto"}}>
+    <TableContainer
+      sx={{
+        backgroundColor: "#6099eb",
+        borderRadius: "0px 0px 16px 16px",
+        overflowX: "auto",
+      }}
+    >
       <Table aria-label="custom pagination table">
-        <TableHead sx={{ backgroundColor: "#171963", }}>
+        <TableHead sx={{ backgroundColor: theme.palette.primary.main }}>
           <TableRow>
             {columns.map((column, index) => (
               <TableCell
@@ -50,10 +52,10 @@ console.log("rows",rows?.length)
                   index === 0
                     ? "left"
                     : index === columns.length - 1
-                      ? "center"
-                      : "center"
+                    ? "center"
+                    : "center"
                 }
-                sx={{ whiteSpace: 'nowrap' }} // Ensure headers don't wrap
+                sx={{ whiteSpace: "nowrap" }} // Ensure headers don't wrap
               >
                 <strong>{column}</strong>
               </TableCell>
@@ -76,16 +78,16 @@ console.log("rows",rows?.length)
                     ind === 0
                       ? "left"
                       : ind === Object.values(row).length - 1
-                        ? "center"
-                        : "center"
+                      ? "center"
+                      : "center"
                   }
                   component="th"
                   scope="row"
                   sx={{
-                    whiteSpace: 'nowrap',
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    maxWidth: '200px', // Adjust max width as needed
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    maxWidth: "200px", // Adjust max width as needed
                   }}
                 >
                   {!Array.isArray(ele) ? (
@@ -116,7 +118,7 @@ console.log("rows",rows?.length)
                     justifyContent="center"
                     alignItems="center"
                   >
-                    <Image src={noData} alt="nodata"  height={500} width={500}/>
+                    <Image src={noData} alt="nodata" height={500} width={500} />
                   </Grid>
                 </Box>
               </TableCell>
