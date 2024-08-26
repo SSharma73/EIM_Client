@@ -1,0 +1,82 @@
+.dialog-action-btn {
+  position: sticky !important;
+  bottom: 0 !important;
+  right: 0 !important;
+  width: 100% !important;
+  background-color: rgba(255, 255, 255, 1) !important ;
+  z-index: 1 !important;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19) !important;
+}
+::-webkit-scrollbar-thumb {
+  background: #ddd;
+  width: 12px !important;
+  height: 12px !important;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #00028c !important;
+}
+::-webkit-scrollbar-track {
+  background: transparent !important;
+}
+::-webkit-scrollbar {
+  width: 6px !important;
+  height: 5px !important;
+}
+.container {
+  position: relative !important;
+  width: 100% !important;
+  max-width: 1260px !important; /* Adjust based on your image size */
+  margin: auto !important;
+}
+.geo {
+  width: 430px !important;
+  height: 430px !important;
+  border-radius: 50% !important;
+  background-color: rgba(
+    115,
+    168,
+    115,
+    0.5
+  ) !important; /* Adjust transparency here */
+  position: absolute !important;
+  top: 20% !important;
+  left: 5% !important;
+}
+.geoRed {
+  width: 300px !important;
+  height: 300px !important;
+  border-radius: 50% !important;
+  background-color: rgba(
+    91,
+    119,
+    163,
+    0.5
+  ) !important; /* Adjust transparency here */
+  /* Adjust transparency here */
+  position: absolute !important;
+  top: 32% !important;
+  left: 8% !important;
+}
+.geoBlue {
+  width: 630px !important;
+  height: 490px !important;
+  background-color: rgba(168, 115, 115, 0.9) !important;
+  position: absolute !important;
+  top: 9% !important;
+  right: 3.2% !important;
+}
+.geoAll {
+  width: 91% !important;
+  height: 550px !important;
+  border-radius: 0% !important;
+  background-color: rgba(
+    123,
+    128,
+    134,
+    0.5
+  ) !important; /* Adjust transparency here */
+  position: absolute !important;
+  top: 5% !important;
+  left: 6% !important;
+}
+
