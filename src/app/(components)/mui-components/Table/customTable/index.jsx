@@ -1,6 +1,7 @@
 import React from "react";
 import noData from "../../../../../../public/Img/Nodata.svg";
 import Image from "next/image";
+import { useTheme } from "@mui/material/styles";
 import {
   TableContainer,
   Table,
@@ -12,10 +13,9 @@ import {
   TableHead,
   Box,
   Grid,
-  useTheme,
 } from "@mui/material";
 
-const index = ({
+const CustomTable = ({
   rows,
   page,
   columns,
@@ -25,13 +25,13 @@ const index = ({
   count,
   loading,
 }) => {
+  const theme = useTheme();
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(+event.target.value);
   };
-  const theme = useTheme();
 
   return (
     <TableContainer
@@ -151,4 +151,4 @@ const index = ({
   );
 };
 
-export default index;
+export default CustomTable;

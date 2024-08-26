@@ -14,10 +14,9 @@ import {
   Box,
   Grid,
   Typography,
-  useTheme,
 } from "@mui/material";
-
-const index = ({
+import { useTheme } from "@mui/material/styles";
+const Dashboard = ({
   rows,
   page,
   columns,
@@ -27,13 +26,13 @@ const index = ({
   count,
   loading,
 }) => {
+  const theme = useTheme();
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(+event.target.value);
   };
-  const theme = useTheme();
   return (
     <TableContainer
       sx={{
@@ -147,4 +146,4 @@ const index = ({
   );
 };
 
-export default index;
+export default Dashboard;
