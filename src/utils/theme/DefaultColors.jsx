@@ -15,7 +15,7 @@ const baselightTheme = createTheme({
   palette: {
     primary: {
       // main: "rgba(24, 36, 111, 1)",
-      main: "#003546",
+      main: "#144a5b",
       light: "rgba(52, 125, 0, 0.25)",
     },
     secondary: {
