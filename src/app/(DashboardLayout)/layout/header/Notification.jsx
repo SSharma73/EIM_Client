@@ -1,10 +1,7 @@
 "use client";
-import React, {
-  useState,
-  Fragment,
-} from "react";
+import React, { useState, Fragment } from "react";
 import Box from "@mui/material/Box";
-import { Button, Typography, Badge, Grid,Avatar } from "@mui/material";
+import { Button, Typography, Badge, Grid, Avatar } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
 import { styled, createTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
@@ -36,8 +33,8 @@ const MenuItem = styled(MuiMenuItem)(({ theme }) => ({
   paddingBottom: theme.spacing(3),
   borderBottom: `1px solid ${theme.palette.divider}`,
   "&:hover": {
-    backgroundColor: "transparent", 
-    color: theme.palette.secondary.main, 
+    backgroundColor: "transparent",
+    color: theme.palette.secondary.main,
   },
 }));
 const styles = {
@@ -100,26 +97,34 @@ const Notification = () => {
   // }, []);
   return (
     <Fragment>
-      <Avatar sx={{width: 34, height: 34,backgroundColor:"#202E79"}}>
-      <IconButton
-        aria-haspopup="true"
-        onClick={handleDropdownOpen}
-        aria-controls="customized-menu"
+      <Avatar
+        sx={{
+          width: 34,
+          height: 34,
+          backgroundColor: "transparent",
+        }}
       >
-        <Badge
-          color="warning"
-          // sx={{
-          //   "& .MuiBadge-badge": {
-          //     backgroundColor: "red",
-          //     color: "white",
-          //   },
-          // }}
-          max={999}
-          // badgeContent="0"
+        <IconButton
+          aria-haspopup="true"
+          onClick={handleDropdownOpen}
+          aria-controls="customized-menu"
         >
-          <NotificationsNoneIcon sx={{ fontSize: "22px",color:"#C0FE72" }} />
-        </Badge>
-      </IconButton>
+          <Badge
+            color="warning"
+            // sx={{
+            //   "& .MuiBadge-badge": {
+            //     backgroundColor: "red",
+            //     color: "white",
+            //   },
+            // }}
+            max={999}
+            // badgeContent="0"
+          >
+            <NotificationsNoneIcon
+              sx={{ fontSize: "22px", color: "#C0FE72" }}
+            />
+          </Badge>
+        </IconButton>
       </Avatar>
       <Menu
         anchorEl={anchorEl}
@@ -144,7 +149,7 @@ const Notification = () => {
         <ScrollWrapper>
           {dummyData ? (
             <>
-              {dummyData?.map((item ,index) => (
+              {dummyData?.map((item, index) => (
                 <MenuItem key={index}>
                   <Box
                     sx={{
