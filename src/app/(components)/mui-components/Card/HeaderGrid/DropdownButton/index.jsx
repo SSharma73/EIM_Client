@@ -9,7 +9,7 @@ export default function CustomSelect({
 }) {
   const handleChange = (event) => {
     const selectedCustomer = customers.menuItems.find(
-      (item) => item.label === event.target.value
+      (item) => item?.label === event.target.value
     );
     setCustomerItems({
       id: selectedCustomer ? selectedCustomer.id : null,
@@ -23,7 +23,7 @@ export default function CustomSelect({
         id="outlined-select-customer"
         select
         label="Select Customer"
-        value={customerItems.label}
+        value={customerItems?.label}
         onChange={handleChange}
         fullWidth
         sx={{ minWidth: "200px" }}
@@ -33,8 +33,8 @@ export default function CustomSelect({
           <em>Select Customer</em>
         </MenuItem>
         {customers?.menuItems?.map((item) => (
-          <MenuItem key={item.id} value={item.label}>
-            {item.label}
+          <MenuItem key={item?.id} value={item?.label}>
+            {item?.label}
           </MenuItem>
         ))}
       </TextField>

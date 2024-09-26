@@ -28,7 +28,6 @@ export default function AddUser({ open, setOpen }) {
   const { register, handleSubmit, formState, reset, getValues } = useForm();
   const { errors } = formState;
   const formdata2 = getValues();
-  console.log("jasbkjas", formdata2);
   const onDrop = (acceptedFiles) => {
     setFile(acceptedFiles[0]);
     setProgress(0);

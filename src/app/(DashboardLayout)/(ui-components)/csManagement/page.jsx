@@ -1,22 +1,20 @@
 "use client";
+import React, { useEffect, useState } from "react";
 import { Grid } from "@mui/material";
-import React, { useState } from "react";
 import Overview from "@/app/(components)/pages-component/CsManagement1/MainOverview";
 import Charging from "@/app/(components)/pages-component/CsManagement1/chargingStation";
 import DriverVehicle from "@/app/(components)/pages-component/CsManagement1/DriverVehicle";
 import RevenueManagement from "@/app/(components)/pages-component/CsManagement1/Revenue";
 import ManagementGrid from "@/app/(components)/mui-components/Card";
 import AddTractor from "@/app/(components)/pages-component/CsManagement1/addTractor";
+import axiosInstance from "@/app/api/axiosInstanceImg";
 
 const CsManagement = () => {
   const [value, setValue] = useState(0);
-  const [open, setOpen] = useState(false); // Initial active tab index
-  const handleChange = (event, newValue) => {
-    setValue(newValue); // Update the active tab index
-  };
-  const handleOpen = () => {
-    setOpen(true);
-  };
+  const [secondTabValue, setSecondTabvalue] = useState(0);
+
+  const [open, setOpen] = useState(false);
+  const [fetchAllDetails, setFetchAllDetails] = useState(null);
 
   const breadcrumbItems = [
     { label: "Dashboard", link: "/" },
@@ -27,12 +25,6 @@ const CsManagement = () => {
     Customer: "",
     "Charging Station": "",
   });
-  const handleDropdownSelect = (label, item) => {
-    setSelectedItems((prevState) => ({
-      ...prevState,
-      [label]: item,
-    }));
-  };
   const dropDownButtons = [
     {
       label: "Region",
@@ -51,6 +43,7 @@ const CsManagement = () => {
     selectedItems["Charging Station"] === "Swapping station"
       ? "Swapping station"
       : "Charging station";
+
   const tabs = [
     { label: "Overview" },
     {
@@ -59,10 +52,106 @@ const CsManagement = () => {
     { label: "E - Tractor" },
     { label: "Revenue management" },
   ];
+  const type =
+    selectedItems["Charging Station"] === "Swapping station" ? "sany" : "delta";
+  const handleChange = (event, newValue) => {
+    setValue(newValue);
+  };
+
+  const handleOpen = () => {
+    setOpen(true);
+  };
+  const handleDropdownSelect = (label, item) => {
+    setSelectedItems((prevState) => ({
+      ...prevState,
+      [label]: item,
+    }));
+    setFetchAllDetails(null);
+  };
+  const handleSecondChange = (event, newValue) => {
+    let status;
+    switch (newValue) {
+      case 0:
+        status = "";
+        break;
+      case 1:
+        status = "";
+        break;
+      case 2:
+        status = "swapping";
+        break;
+      case 3:
+        status = "available";
+        break;
+      case 4:
+        status = "offline";
+        break;
+      default:
+        status = "";
+        break;
+    }
+
+    setSecondTabvalue(newValue);
+    fetchDetails({
+      search: "",
+      limit: 10,
+      page: 1,
+      type: type,
+      status: status,
+    });
+  };
+
+  const fetchDetails = async ({
+    limit = 10,
+    page = 1,
+    type = "",
+    status = "",
+  } = {}) => {
+    try {
+      const params = new URLSearchParams({
+        limit,
+        page,
+        type,
+        status,
+      });
+      const { data } = await axiosInstance.get(
+        `charger/fetchChargers?${params.toString()}`
+      );
+      setFetchAllDetails(data?.data);
+    } catch (error) {
+      console.error("Error fetching chargers:", error);
+      throw error;
+    }
+  };
+  useEffect(() => {
+    fetchDetails({
+      search: "",
+      limit: 10,
+      page: 1,
+      type: type,
+    });
+  }, [eventLabel]);
 
   const TabPanelList = [
-    { component: <Overview value="1" /> },
-    { component: <Charging value="2" eventLabel={eventLabel} /> },
+    {
+      component: (
+        <Overview
+          value="1"
+          fetchAllDetails={fetchAllDetails}
+          secondTabValue={secondTabValue}
+          handleSecondChange={handleSecondChange}
+        />
+      ),
+    },
+    {
+      component: (
+        <Charging
+          value="2"
+          eventLabel={eventLabel}
+          fetchAllDetails={fetchAllDetails}
+        />
+      ),
+    },
     { component: <DriverVehicle value="3" eventLabel={eventLabel} /> },
     { component: <RevenueManagement value="4" /> },
   ];

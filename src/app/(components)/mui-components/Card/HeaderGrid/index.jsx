@@ -139,22 +139,24 @@ const HeaderGrid = ({
                       </Button>
                     )
                   : ""}
-                <CustomDropdown
-                  variant="contained"
-                  size="large"
-                  sx={{ ml: 2 }}
-                  customers={dropDown}
-                  customerItems={customerItems}
-                  setCustomerItems={setCustomerItems}
-                />
+                {customerItems && (
+                  <CustomDropdown
+                    variant="contained"
+                    size="large"
+                    sx={{ ml: 2 }}
+                    customers={dropDown}
+                    customerItems={customerItems}
+                    setCustomerItems={setCustomerItems}
+                  />
+                )}
                 {dropDownEvent &&
-                  dropDownEvent.map((button, index) => (
+                  dropDownEvent?.map((button, index) => (
                     <CustomDropdownEvent
                       key={index}
-                      buttonname={selectedItems[button.label] || button.label}
-                      menuitems={button.menuItems}
+                      buttonname={selectedItems[button?.label] || button?.label}
+                      menuitems={button?.menuItems}
                       onItemSelect={(item) =>
-                        handleDropdownSelect(button.label, item)
+                        handleDropdownSelect(button?.label, item)
                       }
                       variant="contained"
                       sx={{ ml: 2 }}
@@ -186,7 +188,7 @@ const HeaderGrid = ({
                   {tabs.map((tab, index) => (
                     <Tab
                       key={index}
-                      label={tab.label}
+                      label={tab?.label}
                       {...a11yProps(index)}
                       sx={{
                         border: "1px solid #fff",

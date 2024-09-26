@@ -18,25 +18,20 @@ const CustomGrid = styled(Grid)(({ theme }) => ({
   borderRadius: "16px",
   color: "#fff",
 }));
-const Overview1 = () => {
-  const [value, setValue] = useState(0);
-  const handleChange = (event, newValue) => {
-    setValue(newValue);
-  };
-
+const Overview1 = ({ fetchAllDetails, secondTabValue, handleSecondChange }) => {
   const tabs = [
-    { label: "Overview (512)" },
-    { label: "Charging (23)" },
-    { label: "Swapping (14)" },
-    { label: "Available (14)" },
-    { label: "Offline (296)" },
+    { label: "Overview" },
+    { label: "Charging" },
+    { label: "Swapping" },
+    { label: "Available" },
+    { label: "Offline" },
   ];
   const TabPanelList = [
-    { component: <Overview /> },
-    { component: <ChargingStation /> },
-    { component: <SwappingStation /> },
-    { component: <Overview /> },
-    { component: <Overview /> },
+    { component: <Overview fetchAllDetails={fetchAllDetails} /> },
+    { component: <Overview fetchAllDetails={fetchAllDetails} /> },
+    { component: <Overview fetchAllDetails={fetchAllDetails} /> },
+    { component: <Overview fetchAllDetails={fetchAllDetails} /> },
+    { component: <Overview fetchAllDetails={fetchAllDetails} /> },
   ];
   const data = [
     { title: "No. of session", content: "400" },
@@ -79,8 +74,8 @@ const Overview1 = () => {
         <ManagementGrid
           tabs={tabs}
           TabPanelList={TabPanelList}
-          value={value}
-          handleChange={handleChange}
+          value={secondTabValue}
+          handleChange={handleSecondChange}
         />
       </Grid>
     </Grid>

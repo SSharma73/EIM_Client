@@ -28,7 +28,6 @@ export default function AddUser({ open, setOpen, handleEfficiencyData }) {
   const { register, handleSubmit, formState, reset, getValues } = useForm();
   const { errors } = formState;
   const formdata2 = getValues();
-  console.log("jasbkjas", formdata2);
   const onDrop = (acceptedFiles) => {
     setFile(acceptedFiles[0]);
     setProgress(0);
@@ -102,7 +101,7 @@ export default function AddUser({ open, setOpen, handleEfficiencyData }) {
     handleClose();
   };
   const handleCommanCancel = () => {
-    setOpenComman(false)
+    setOpenComman(false);
   };
   return (
     <React.Fragment>

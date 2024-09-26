@@ -1,72 +1,104 @@
-"use client"
-import React, { useState, useEffect } from 'react'
-import { Grid } from '@mui/material'
-import ManagementGrid from '@/app/(components)/mui-components/Card'
-import Table from './table'
-import {useRouter} from 'next/navigation'
-import { Fleet ,dummyCustomerData} from '@/app/(components)/table/rows'
-import axiosInstance from '@/app/api/axiosInstance'
-
+"use client";
+import React, { useState, useEffect } from "react";
+import { Grid } from "@mui/material";
+import HeaderGrid from "@/app/(components)/mui-components/Card/HeaderGrid";
+import Table from "./table";
+import { useRouter } from "next/navigation";
+import AddCustomer from "@/app/(components)/pages-component/customerManagement/AddCustomer/AddCustomer";
+import axiosInstance from "@/app/api/axiosInstance";
 
 const CustomerManagement = () => {
+  const tabLabel = [{ name: "Customer" }, { name: "Port" }];
+  const [open, setOpen] = useState(false);
   const [page, setPage] = React.useState(0);
   const [loading, setLoading] = useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(25);
   const [deviceData, setDeviceData] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
-  const [date, setDate] = useState(null);
-  const [data, setData] = useState(null);
-  const [openGraph, setOpenGraph] = useState(false)
-
-  const getDataFromChildHandler = (date, dataArr) => {
-    setDate(date);
+  const [buttonType, setButtonType] = useState("Customer");
+  const [fetchAllDetails, setFetchAllDetails] = useState(null);
+  const handleOpen = () => {
+    setOpen(true);
   };
-  const router =useRouter();
-  const handleCustomerData =async()=>{
-    try {
-      const response=await axiosInstance.get(`/port/getAll?page=${page + 1
-        }&pageSize=${rowsPerPage}&search=${searchQuery}`)
-      console.log(response)
-      setData(response?.data)
 
+  const router = useRouter();
+
+  const handleTableData = async ({
+    search = "",
+    limit = 10,
+    page = 1,
+    role,
+  } = {}) => {
+    try {
+      const params = new URLSearchParams({
+        search,
+        limit,
+        page,
+      });
+      const Type = role ?? "Customer";
+      const Url =
+        Type == "Customer" ? "customer/fetchCustomers" : "port/fetchPorts";
+      const { status, data } = await axiosInstance.get(
+        `${Url}?${params.toString()}`
+      );
+      if (status === 200 || status === 201) {
+        setFetchAllDetails(data?.data);
+      }
     } catch (error) {
-      console.log(error)
-      
+      console.log("Check error");
     }
-  }
-  const AddPort =()=>{
-      router.push('/customerManagement/addPort')
-  }
-  const buttons = [
-    {
-      data: "region Data Sheet", customdownload: "Download Excel",
-      dailydropdown: [{ name: "Today", variant: "contained", }]
-    }
-  ];
+  };
+  const AddButton = () => {
+    buttonType === "Customer"
+      ? handleOpen()
+      : router.push("/customerManagement/addPort");
+  };
   const breadcrumbItems = [
     { label: "Dashboard", link: "/" },
     { label: "Customer-Management", link: "/customerManagement" },
   ];
-useEffect(()=>{
-  handleCustomerData()
-},[])
+  useEffect(() => {
+    handleTableData();
+  }, []);
+  const TabPanelList = [{ component: "" }];
   return (
-    <Grid container rowGap={2}>
-      <ManagementGrid breadcrumbItems={breadcrumbItems} moduleName={"Customer Management"} button={"Add Port"} handleClickOpen={AddPort}/>
-      <Table
-        data={data}
-        deviceData={deviceData}
-        rowsPerPage={rowsPerPage}
-        setRowsPerPage={setRowsPerPage}
-        page={page}
-        setPage={setPage}
-        searchQuery={searchQuery}
-        setSearchQuery={setSearchQuery}
-        loading={loading}
-        getDataFromChildHandler={getDataFromChildHandler}
-      />
-    </Grid>
-  )
-}
+    <>
+      {buttonType === "Customer" && (
+        <AddCustomer
+          open={open}
+          setOpen={setOpen}
+          handleTableData={handleTableData}
+        />
+      )}
+      <Grid container rowGap={2}>
+        <HeaderGrid
+          buttonType={buttonType}
+          handleClickOpen={AddButton}
+          TabPanelList={TabPanelList}
+          CustomButtonGroup={tabLabel}
+          setButtonType={setButtonType}
+          breadcrumbItems={breadcrumbItems}
+          moduleName={"Customer Management"}
+          button={buttonType === "Customer" ? "Add Customer" : "Add Port"}
+          handleTableData={handleTableData}
+        />
+        <Table
+          page={page}
+          setPage={setPage}
+          data={fetchAllDetails && fetchAllDetails?.result}
+          deviceData={deviceData}
+          rowsPerPage={rowsPerPage}
+          setRowsPerPage={setRowsPerPage}
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+          loading={loading}
+          handleTableData={handleTableData}
+          type={buttonType === "Customer" ? "Customer" : "Port"}
+          getDataFromChildHandler={handleTableData}
+        />
+      </Grid>
+    </>
+  );
+};
 
-export default CustomerManagement
+export default CustomerManagement;

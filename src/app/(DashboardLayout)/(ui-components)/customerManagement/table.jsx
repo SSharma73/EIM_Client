@@ -8,13 +8,14 @@ import Papa from "papaparse";
 import { saveAs } from "file-saver";
 import { FaRegFileExcel } from "react-icons/fa";
 import ToastComponent, {
-  notifyError,notifySuccess
+  notifyError,
+  notifySuccess,
 } from "@/app/(components)/mui-components/Snackbar";
 import { useRouter } from "next/navigation";
 
 const Table = ({
+  type,
   data,
-  value,
   rowsPerPage,
   setRowsPerPage,
   page,
@@ -22,15 +23,22 @@ const Table = ({
   searchQuery,
   setSearchQuery,
   loading,
-  getDataFromChildHandler,
 }) => {
   const columns = [
-    "Port ID",
-    "Port name ",
-    "Port location",
-    "Customer",
-    "Tariff",
+    "Brand logo",
+    "Brand name ",
+    "Customer name",
+    "Email",
+    "Phone",
+    "Address",
+    "City",
+    "State",
+    "Pincode",
+    "Country",
+    "Subscription",
   ];
+  const columns2 = ["Port name", "Port address", "Customer", "Tariff"];
+
   const [open, setOpenDialog] = React.useState(false);
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState(searchQuery);
   const router = useRouter();
@@ -47,13 +55,10 @@ const Table = ({
   const handleSearchChange = (event) => {
     setDebouncedSearchQuery(event.target.value);
   };
-  console.log("data", data);
   const handleOpenDialog = () => {
     setOpenDialog(true);
   };
   const handleExport = (data) => {
-    console.log("Exporting data", data);
-
     if (!Array.isArray(data) || data.length === 0) {
       notifyError("No data available to export");
       return;
@@ -94,7 +99,7 @@ const Table = ({
     const csvString = Papa.unparse(csvData);
     const blob = new Blob([csvString], { type: "text/csv;charset=utf-8" });
     saveAs(blob, "CustomerMamagementData.csv");
-    notifySuccess("Download Excel Successfuly")
+    notifySuccess("Download Excel Successfuly");
   };
 
   const handleConfirm = () => {
@@ -107,35 +112,67 @@ const Table = ({
     router.push("/tariffManagement/createTariff");
   };
   const getFormattedData = (data) => {
-    console.log("data", data);
-    return data?.map((item, index) => ({
-      portId: (
-        <Box>
-          <span>{item?.portId}</span>
-          <Box
-            component="span"
-            sx={{
-              display: "inline-block",
-              width: "10px",
-              height: "10px",
-              borderRadius: "50%",
-              backgroundColor: item.color,
-              marginLeft: "10px",
-            }}
+    return data?.map((item, index) => {
+      // portId: (
+      //   <Box>
+      //     <span>{item?.portId}</span>
+      //     <Box
+      //       component="span"
+      //       sx={{
+      //         display: "inline-block",
+      //         width: "10px",
+      //         height: "10px",
+      //         borderRadius: "50%",
+      //         backgroundColor: item.color,
+      //         marginLeft: "10px",
+      //       }}
+      //     />
+      //   </Box>
+      // ),
+      // name: item?.name ?? "--",
+      // regionName: item?.regionName ? item?.regionName : "--",
+      // customer: item?.customer?.userName ? item?.customer?.userName : "--",
+      // tariff: (
+      //   <Chip
+      //     label={item?.tariff?.name ? item?.tariff?.name : "--"}
+      //     color="primary"
+      //     onClick={handleClickTarif}
+      //   />
+      // ),
+
+      const actionComponent = (
+        <Grid container justifyContent="center" spacing={2} key={index}>
+          <Chip
+            label={item?.tariff?.name ? item?.tariff?.name : "--"}
+            color="primary"
+            onClick={handleClickTarif}
           />
-        </Box>
-      ),
-      name: item?.name ?? "--",
-      regionName: item?.regionName ? item?.regionName : "--",
-      customer: item?.customer?.userName ? item?.customer?.userName : "--",
-      tariff: (
-        <Chip
-          label={item?.tariff?.name ? item?.tariff?.name : "--"}
-          color="primary"
-          onClick={handleClickTarif}
-        />
-      ),
-    }));
+        </Grid>
+      );
+
+      if (type === "Customer") {
+        return {
+          "Brand logo": item?.brandLogo ?? "--",
+          "Brand name": item?.brandName ?? "--",
+          "Customer name": item?.adminUser?.name ?? "--",
+          Email: item?.adminUser?.email ?? "--",
+
+          Phone: item?.adminUser?.phone ?? "--",
+          Address: item?.brandAddress?.line1 ?? "--",
+          City: item?.brandAddress?.city ?? "--",
+          State: item?.brandAddress?.state ?? "--",
+          Pincode: item?.brandAddress?.pincode ?? "--",
+          Country: item?.brandAddress?.country ?? "--",
+          Action: actionComponent,
+        };
+      }
+      return {
+        "Port name": item?.name ?? "--",
+        "Port address": item?.address?.line1 ?? "--",
+        Customer: item?.customerId?.brandName ?? "--",
+        Action: actionComponent,
+      };
+    });
   };
 
   return (
@@ -153,7 +190,9 @@ const Table = ({
         }}
       >
         <Grid item>
-          <Typography variant="h3">Region Data Sheet</Typography>
+          <Typography variant="h3">
+            {type === "Customer" ? "Customer details" : "Port details"}
+          </Typography>
         </Grid>
         <Grid item className="customSearch">
           <Grid container>
@@ -170,11 +209,6 @@ const Table = ({
                 Download Excel
               </Button>
             </Grid>
-            <Grid item mr={1}>
-              <CommonDatePicker
-                getDataFromChildHandler={getDataFromChildHandler}
-              />
-            </Grid>
           </Grid>
         </Grid>
       </Grid>
@@ -187,9 +221,9 @@ const Table = ({
       ) : (
         <CustomTable
           page={page}
-          rows={getFormattedData(data?.data)}
+          rows={getFormattedData(data)}
           count={data?.totalDocuments}
-          columns={columns}
+          columns={type === "Customer" ? columns : columns2}
           setPage={setPage}
           rowsPerPage={rowsPerPage}
           setRowsPerPage={setRowsPerPage}

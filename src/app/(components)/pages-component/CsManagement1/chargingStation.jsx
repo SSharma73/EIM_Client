@@ -17,11 +17,10 @@ import { IoEyeOutline } from "react-icons/io5";
 import { FaRegFileExcel } from "react-icons/fa";
 import Papa from "papaparse";
 import { saveAs } from "file-saver";
-import { ChargingStationRow } from "../../table/rows";
 import { notifyError, notifySuccess } from "../../mui-components/Snackbar";
 import { PiCarBattery } from "react-icons/pi";
 
-const Charging = ({ value, eventLabel }) => {
+const Charging = ({ value, eventLabel, fetchAllDetails }) => {
   const labelStatus = eventLabel?.slice(0, 8);
 
   const columns = [
@@ -33,7 +32,6 @@ const Charging = ({ value, eventLabel }) => {
     labelStatus === "Swapping" ? "Total swapped" : "Total charged",
     "Unit consumed(kWh)",
     `Avg. ${labelStatus} time(hr.)`,
-    "Peak hours",
     labelStatus === "Swapping" && "Battery packs",
     "Action",
   ];
@@ -43,7 +41,6 @@ const Charging = ({ value, eventLabel }) => {
   const [deviceData, setDeviceData] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [date, setDate] = useState(null);
-  const [data, setData] = useState(null);
   const [open, setOpenDialog] = React.useState(false);
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState(searchQuery);
 
@@ -74,17 +71,12 @@ const Charging = ({ value, eventLabel }) => {
   const handleCancel = () => {
     setOpenDialog(false);
   };
-  useEffect(() => {
-    setData(ChargingStationRow);
-  }, []);
-  const handleExport = (data) => {
-    console.log("Exporting data", data);
 
+  const handleExport = (data) => {
     if (!Array.isArray(data) || data.length === 0) {
       notifyError("No data available to export");
       return;
     }
-
     const modifiedData = data?.map((row) => ({
       region: row?.region,
       status: row?.status,
@@ -136,10 +128,11 @@ const Charging = ({ value, eventLabel }) => {
 
   const getFormattedData = (data) => {
     return data?.map((item, index) => {
-      const color = item?.status === "Online" ? "success" : "error";
+      const color = item?.status === "online" ? "success" : "error"; // Ensure consistent status check
       const label = item?.status ? item?.status : "--";
+
       return {
-        region: item?.region ? item?.region : "--",
+        id: item?.stationCode ?? "--",
         status: (
           <Box>
             <Chip
@@ -153,14 +146,13 @@ const Charging = ({ value, eventLabel }) => {
             />
           </Box>
         ),
-        lastName: item?.lastName ?? "--",
-        ...(labelStatus === "Swapping" ? {} : { mobileNumber: "--" }),
-        mobileNumber1: item?.mobileNumber1 ? item?.mobileNumber1 : "--",
-        mobileNumber4: item?.mobileNumber1 ? item?.mobileNumber1 : "--",
-        mobileNumber2: item?.mobileNumber2 ? item?.mobileNumber2 : "--",
-        mobileNumber3: item?.mobileNumber3 ? item?.mobileNumber3 : "--",
-        value: item?.value ? item?.value : "--",
-        batterypacks: labelStatus === "Swapping" && (
+        hubName: item?.name ?? "--",
+        eTractorInQueue: item?.queue ?? "--",
+        currentlyStatus: item?.currentlyCharging ?? "--",
+        total: item?.totalCharged ?? "--",
+        unitConsumed: item?.unitConsumed ?? "--",
+        avgTime: item?.averageChargingTime ?? "--",
+        batteryPacks: labelStatus === "Swapping" && (
           <Grid container key={index} width={250}>
             <Grid item xs={6} md={3}>
               <Tooltip title="discharged">
@@ -199,17 +191,12 @@ const Charging = ({ value, eventLabel }) => {
             </Grid>
           </Grid>
         ),
-        Action: (
+        action: (
           <Grid container justifyContent="center" spacing={2} key={index}>
             <Grid item xs={6}>
               <Tooltip title="View">
                 <Link
-                  href={
-                    "/csManagement/1235?tab=" +
-                    value +
-                    "&eventLabel=" +
-                    eventLabel
-                  }
+                  href={`/csManagement/${item._id}?tab=${item.type}&eventLabel=${label}`}
                 >
                   <IconButton size="small">
                     <IoEyeOutline color="rgba(14, 1, 71, 1)" />
@@ -222,6 +209,7 @@ const Charging = ({ value, eventLabel }) => {
       };
     });
   };
+
   return (
     <Grid container>
       <Grid container>
@@ -244,20 +232,14 @@ const Charging = ({ value, eventLabel }) => {
               <Grid item mr={1}>
                 <Button
                   variant="outlined"
-                  sx={{ mr: 1 }}
                   onClick={() => {
-                    handleExport(data);
+                    handleExport(fetchAllDetails);
                   }}
                   startIcon={<FaRegFileExcel />}
                   size="large"
                 >
                   Download Excel
                 </Button>
-              </Grid>
-              <Grid item mr={1}>
-                <CommonDatePicker
-                  getDataFromChildHandler={getDataFromChildHandler}
-                />
               </Grid>
             </Grid>
           </Grid>
@@ -271,8 +253,8 @@ const Charging = ({ value, eventLabel }) => {
         ) : (
           <CustomTable
             page={page}
-            rows={getFormattedData(data)}
-            count={data?.length}
+            rows={getFormattedData(fetchAllDetails?.result)}
+            count={fetchAllDetails?.totalPage}
             columns={columns}
             setPage={setPage}
             rowsPerPage={rowsPerPage}
