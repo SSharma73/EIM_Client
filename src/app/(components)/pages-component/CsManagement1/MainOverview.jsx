@@ -19,7 +19,6 @@ const CustomGrid = styled(Grid)(({ theme }) => ({
   color: "#fff",
 }));
 const Overview1 = () => {
-  const [date, setDate] = useState(null);
   const [value, setValue] = useState(0);
   const handleChange = (event, newValue) => {
     setValue(newValue);

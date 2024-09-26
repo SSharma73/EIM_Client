@@ -3,12 +3,12 @@ import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import dayjs from "dayjs";
 import { addDays, subDays, differenceInDays } from "date-fns";
-import { Dialog ,InputAdornment,IconButton} from "@mui/material";
+import { Dialog, InputAdornment, IconButton } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { DateRangePicker } from "react-date-range";
 import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
-import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
+import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
@@ -70,8 +70,18 @@ const Calendar = ({ getDataFromChildHandler }) => {
       ];
     } else if (dates.length > 31) {
       resultArray = [
-        "January", "February", "March", "April", "May", "June", "July",
-        "August", "September", "October", "November", "December",
+        "January",
+        "February",
+        "March",
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "September",
+        "October",
+        "November",
+        "December",
       ];
     } else {
       resultArray = dates;
@@ -99,21 +109,21 @@ const Calendar = ({ getDataFromChildHandler }) => {
             ? dayjs(state?.[0].endDate).format("DD/MM/YYYY")
             : "dd/mm/yyyy"
         }`}
-          style= {{
-            borderRadius: "4px",
-            padding: "9px 10px",
-            width: "216px",
-            height: "43px",
-            fontWeight: "bold",
-            fontSize: "14px",
-            background: 'linear-gradient(111.41deg, rgba(255, 255, 255, 0.272) 0%, rgba(255, 255, 255, 0.068) 100%)',
-            backgroundColor:"transparent",
-            border: "1px solid #ddd",
-            cursor: "pointer",
-          }}
-       
+        style={{
+          borderRadius: "4px",
+          padding: "9px 10px",
+          width: "216px",
+          height: "43px",
+          fontWeight: "bold",
+          fontSize: "14px",
+          background:
+            "linear-gradient(111.41deg, rgba(255, 255, 255, 0.272) 0%, rgba(255, 255, 255, 0.068) 100%)",
+          backgroundColor: "transparent",
+          border: "1px solid #ddd",
+          cursor: "pointer",
+        }}
       />
-   
+
       <BootstrapDialog
         fullWidth={fullWidth}
         maxWidth={maxWidth}
@@ -141,4 +151,3 @@ Calendar.propTypes = {
 };
 
 export default Calendar;
-

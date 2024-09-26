@@ -52,14 +52,14 @@ const Page = () => {
   const handleTableData = async () => {
     if (tabsValue !== "Overview") {
       const response = await axiosInstance.get(
-        `/fleet/getAll?status=${tabsValue}&page=${
+        `/fleet/fetchFleets?status=${tabsValue}&page=${
           page + 1
         }&pageSize=${rowsPerPage}&search=${searchQuery}`
       );
       setTableData(response?.data);
     } else {
       const response = await axiosInstance.get(
-        `/fleet/getAll?page=${
+        `/fleet/fetchFleets?page=${
           page + 1
         }&pageSize=${rowsPerPage}&search=${searchQuery}`
       );
@@ -91,7 +91,7 @@ const Page = () => {
         <Charging
           value={"2"}
           data={tableData}
-          rowsPerPage={rowsPerPage} 
+          rowsPerPage={rowsPerPage}
           setRowsPerPage={setRowsPerPage}
           page={page}
           setPage={setPage}

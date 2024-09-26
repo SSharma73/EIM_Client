@@ -38,10 +38,8 @@ export default function AddUser({ open, setOpen }) {
   const [batteryId, setBatteryId] = useState(null);
   const [file, setFile] = useState(null);
   const [battery, setBattery] = useState(null);
-  const { register, handleSubmit, formState, reset, getValues } = useForm();
+  const { register, handleSubmit, formState, reset } = useForm();
   const { errors } = formState;
-  const formdata2 = getValues();
-  console.log("formdaa=", formdata2);
 
   const handleBattery = (event) => {
     setBatteryId(event.target.value);
@@ -52,7 +50,7 @@ export default function AddUser({ open, setOpen }) {
   };
   const handleClose = () => {
     setOpen(false);
-    setOpenComman(false)
+    setOpenComman(false);
     setFile();
     reset();
     setBatteryId();
@@ -79,7 +77,6 @@ export default function AddUser({ open, setOpen }) {
           },
         }
       );
-      console.log("response", response);
       if (response?.status === 200 || response?.status === 201) {
         notifySuccess(response?.data?.message);
         handleClose();
@@ -108,13 +105,12 @@ export default function AddUser({ open, setOpen }) {
     maxSize: 10485760,
   });
   const batteryData = async () => {
-    try {
-      const response = await axiosInstance.get("/battery/getAll");
-      console.log("battery", response);
-      setBattery(response?.data?.data);
-    } catch (error) {
-      notifyError("User E-Tractor Successfully");
-    }
+    // try {
+    //   const response = await axiosInstance.get("/battery/getAll");
+    //   setBattery(response?.data?.data);
+    // } catch (error) {
+    //   notifyError("User E-Tractor Successfully");
+    // }
   };
   useEffect(() => {
     batteryData();
@@ -130,7 +126,7 @@ export default function AddUser({ open, setOpen }) {
     handleClose();
   };
   const handleCommanCancel = () => {
-  setOpenComman(false);
+    setOpenComman(false);
   };
 
   return (
@@ -196,7 +192,9 @@ export default function AddUser({ open, setOpen }) {
                       <LinearProgress
                         variant="determinate"
                         value={progress}
-                        sx={{ flexGrow: 1 }}
+                        sx={{
+                          flexGrow: 1,
+                        }}
                       />
                     </Box>
                   </Grid>
@@ -265,7 +263,7 @@ export default function AddUser({ open, setOpen }) {
                   <Grid container rowGap={3}>
                     <FormControl fullWidth error={!!errors.batteryId}>
                       <InputLabel id="demo-simple-select-label">
-                        Select Battery{" "}
+                        Select Battery
                       </InputLabel>
                       <Select
                         labelId="battery"

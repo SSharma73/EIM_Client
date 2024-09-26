@@ -1,9 +1,7 @@
 import axios from "axios";
 import { signOut } from "next-auth/react";
 const axiosInstance = axios.create({
-  // baseURL: "http://103.119.171.134:5000",
-  baseURL: "https://api.eim.digital/",
-  // baseURL: "http://10.5.50.33:8080",
+  baseURL: "https://truck.eim.digital/api/",
 });
 const requestInterceptor = axiosInstance.interceptors.request.use(
   (request) => {
@@ -36,7 +34,7 @@ const responseInterceptor = axiosInstance.interceptors.response.use(
       window.location.href = "/login";
       originalRequest.sent = true;
     }
-    throw error;2
+    throw error;
   }
 );
 

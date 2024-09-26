@@ -24,13 +24,16 @@ const CustomTable = ({
   rowsPerPage,
   count,
   loading,
+  handleTableData,
 }) => {
   const theme = useTheme();
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
+    handleTableData({ page: newPage + 1 });
   };
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(+event.target.value);
+    handleTableData({ limit: +event.target.value });
   };
 
   return (

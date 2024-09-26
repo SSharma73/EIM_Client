@@ -6,7 +6,6 @@ import NavItem from "./NavItem/index";
 import { uniqueId } from "lodash";
 import { AiOutlineLogout } from "react-icons/ai";
 import { signOut } from "next-auth/react";
-import { RiSettings3Line } from "react-icons/ri";
 import Image from "next/image";
 import Logo from "../../../../../public/Img/logo.png";
 import { CgProfile } from "react-icons/cg";
@@ -28,7 +27,6 @@ const Menuitems1 = [
 ];
 const SidebarItems = ({ toggleMobileSidebar }) => {
   const handleLogOut = () => {
-    console.log("login logout Cal");
     localStorage.removeItem("token");
     localStorage.removeItem("userRole");
     signOut({ callbackUrl: "/login", redirect: true });

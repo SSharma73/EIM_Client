@@ -1,12 +1,14 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { Grid, Typography, AppBar, styled } from "@mui/material";
 import Breadcrumbs from "@/app/(components)/mui-components/Breadcrumbs/index";
-import { Tabs, Tab, Button, IconButton } from "@mui/material";
+import { Tabs, Tab, Button } from "@mui/material";
 import { IoMdAddCircleOutline } from "react-icons/io";
-import { CustomDropdown } from "../DropdownButton";
-import { CustomDropdownEvent } from "../DropdownButton/dropDownEvent";
+import CustomDropdown from "./DropdownButton";
+import { CustomDropdownEvent } from "./DropdownButton/dropDownEvent";
+
 import ButtonGroup from "@mui/material/ButtonGroup";
+import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
   return (
@@ -50,7 +52,7 @@ const getBorderRadius = (index, tabLength) => {
   }
   return borderRadius;
 };
-const ManagementGrid = ({
+const HeaderGrid = ({
   type,
   moduleName,
   breadcrumbItems,
@@ -68,16 +70,18 @@ const ManagementGrid = ({
   select,
   dropDownEvent,
   selectedItems,
+  customerItems,
+  setCustomerItems,
   handleDropdownSelect,
+  buttonType,
+  setButtonType,
 }) => {
   const tabLength = tabs ? tabs.length : 0;
   const buttonLength = CustomButtonGroup ? CustomButtonGroup.length : 0;
 
   const [visibleStart, setVisibleStart] = React.useState(0);
-  const [buttonType, setButtonType] = useState(null);
   const visibleButtons =
     CustomButtonGroup?.slice(visibleStart, visibleStart + 6) || [];
-  console.log(buttonType);
   useEffect(() => {
     if (select) {
       setButtonType(select);
@@ -96,7 +100,7 @@ const ManagementGrid = ({
   };
   const handleClick = (item) => {
     setButtonType(item);
-    handleTableData(item);
+    handleTableData({ role: item });
   };
   return (
     <>
@@ -116,49 +120,47 @@ const ManagementGrid = ({
               )}
             </Grid>
             <Grid item>
-              {buttonItem && (
-                <Button variant="contained" size="large">
-                  {buttonItem}
-                </Button>
-              )}
-              {!tabs
-                ? button && (
-                    <Button
-                      onClick={handleClickOpen}
-                      endIcon={<IoMdAddCircleOutline color="#C0FE72" />}
+              <Grid container>
+                {buttonItem && (
+                  <Button variant="contained" size="large">
+                    {buttonItem}
+                  </Button>
+                )}
+                {!tabs
+                  ? button && (
+                      <Button
+                        onClick={handleClickOpen}
+                        endIcon={<IoMdAddCircleOutline color="#C0FE72" />}
+                        variant="contained"
+                        size="large"
+                        type={type}
+                      >
+                        {button}
+                      </Button>
+                    )
+                  : ""}
+                <CustomDropdown
+                  variant="contained"
+                  size="large"
+                  sx={{ ml: 2 }}
+                  customers={dropDown}
+                  customerItems={customerItems}
+                  setCustomerItems={setCustomerItems}
+                />
+                {dropDownEvent &&
+                  dropDownEvent.map((button, index) => (
+                    <CustomDropdownEvent
+                      key={index}
+                      buttonname={selectedItems[button.label] || button.label}
+                      menuitems={button.menuItems}
+                      onItemSelect={(item) =>
+                        handleDropdownSelect(button.label, item)
+                      }
                       variant="contained"
-                      size="large"
-                      type={type}
-                    >
-                      {button}
-                    </Button>
-                  )
-                : ""}
-              {dropDown?.length > 0 &&
-                dropDown?.map((button, index) => (
-                  <CustomDropdown
-                    key={index}
-                    variant="contained"
-                    size="large"
-                    sx={{ ml: 2 }}
-                    buttonname={button.label}
-                    menuitems={button.menuItems}
-                  />
-                ))}
-
-              {dropDownEvent &&
-                dropDownEvent.map((button, index) => (
-                  <CustomDropdownEvent
-                    key={index}
-                    buttonname={selectedItems[button.label] || button.label}
-                    menuitems={button.menuItems}
-                    onItemSelect={(item) =>
-                      handleDropdownSelect(button.label, item)
-                    }
-                    variant="contained"
-                    sx={{ ml: 2 }}
-                  />
-                ))}
+                      sx={{ ml: 2 }}
+                    />
+                  ))}{" "}
+              </Grid>
             </Grid>
           </Grid>
           <Grid container>
@@ -292,4 +294,4 @@ const ManagementGrid = ({
     </>
   );
 };
-export default ManagementGrid;
+export default HeaderGrid;

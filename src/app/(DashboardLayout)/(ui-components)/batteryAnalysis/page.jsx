@@ -133,17 +133,17 @@ const Page = () => {
     { label: "Battery-Analysis", link: "/batteryAnalysis" },
   ];
   const handleEfficiencyData = async (value) => {
-    try {
-      const res = await axiosInstance.get(
-        `/battery/getAll?page=${page + 1}&pageSize=${rowsPerPage}&search=${
-          value ?? ""
-        }`
-      );
-      console.log("res", res);
-      setData(res?.data);
-    } catch (error) {
-      console.log("batteryeffiency", error);
-    }
+    // try {
+    //   const res = await axiosInstance.get(
+    //     `/battery/getAll?page=${page + 1}&pageSize=${rowsPerPage}&search=${
+    //       value ?? ""
+    //     }`
+    //   );
+    //   console.log("res", res);
+    //   setData(res?.data);
+    // } catch (error) {
+    //   console.log("batteryeffiency", error);
+    // }
   };
   useEffect(() => {
     handleEfficiencyData();

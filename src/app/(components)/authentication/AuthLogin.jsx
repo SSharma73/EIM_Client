@@ -1,13 +1,11 @@
 "use client";
 import React, { useState } from "react";
 import { signIn } from "next-auth/react";
-import axios from "axios";
 import {
   Box,
   Typography,
   Button,
   Stack,
-  Divider,
   TextField,
   InputAdornment,
   IconButton,
@@ -59,15 +57,13 @@ const AuthLogin = ({ title, subtitle }) => {
   const { register, handleSubmit, formState, reset, getValues } = useForm();
   const { errors } = formState;
   const formData = getValues();
-  console.log("formdaa", formData);
 
   const handleLogin = async (formdata) => {
-    event.preventDefault();
     try {
-      const response = await axiosInstance.post("/auth/login", formdata);
+      const response = await axiosInstance.post("auth/login", formdata);
       if (response.status) {
         signIn("credentials", {
-          emailId: formData.emailId,
+          email: formData.email,
           password: formData.password,
           callbackUrl: `/`,
           redirect: true,
@@ -76,7 +72,7 @@ const AuthLogin = ({ title, subtitle }) => {
         if (response.status == 201 || response.status == 200) {
           notifySuccess(response?.data?.message);
         }
-        localStorage.setItem("token", response?.data?.access_Token);
+        localStorage.setItem("token", response?.data?.data?.token);
       }
     } catch (error) {
       notifyError(error?.response?.data?.message);
@@ -101,17 +97,17 @@ const AuthLogin = ({ title, subtitle }) => {
               placeholder="Email"
               variant="outlined"
               fullWidth
-              id="emailId"
-              name="emailId"
-              {...register("emailId", {
+              id="email"
+              name="email"
+              {...register("email", {
                 required: "email is required!",
                 pattern: {
                   value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
                   message: "enter valid email!",
                 },
               })}
-              error={!!errors.emailId}
-              helperText={errors.emailId?.message}
+              error={!!errors.email}
+              helperText={errors.email?.message}
             />
           </Box>
           <Box mt={"25px"}>
@@ -123,7 +119,6 @@ const AuthLogin = ({ title, subtitle }) => {
               name="password"
               {...register("password", { required: "password is required!" })}
               InputProps={{
-               
                 endAdornment: (
                   <InputAdornment position="end">
                     <IconButton
@@ -145,21 +140,21 @@ const AuthLogin = ({ title, subtitle }) => {
             />
           </Box>
           <Stack
-            justifyContent="space-between"
+            my={2}
             direction="row"
             alignItems="center"
-            my={2}
+            justifyContent="space-between"
           >
             <Typography>Forgot Password</Typography>
           </Stack>
         </Stack>
         <Box>
           <Button
+            fullWidth
+            size="large"
+            type="submit"
             color="secondary"
             variant="contained"
-            size="large"
-            fullWidth
-            type="submit"
           >
             Sign In
           </Button>

@@ -295,7 +295,7 @@ const Charging = ({
         ) : (
           <CustomTable
             page={page}
-            rows={getFormattedData(data?.data)}
+            rows={getFormattedData(data?.data?.result)}
             count={data?.totalDocuments}
             columns={columns}
             setPage={setPage}

@@ -1,7 +1,7 @@
 import axios from "axios";
 import { signOut } from "next-auth/react";
 const axiosInstanceImg = axios.create({
-  baseURL: "https://api.eim.digital/",
+  baseURL: "https://truck.eim.digital/api/",
 });
 const requestInterceptor = axiosInstanceImg.interceptors.request.use(
   (request) => {

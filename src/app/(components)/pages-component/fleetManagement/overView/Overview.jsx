@@ -163,7 +163,7 @@ const Overview = ({
         data1="Trips (Units consumed)"
         data={data2}
       />
-      {data1.map((item, index) => (
+      {data1?.map((item, index) => (
         <Grid key={index} item xl={4} lg={4} md={4} sm={6} xs={12}>
           <CustomGrid>
             <Grid
@@ -266,7 +266,7 @@ const Overview = ({
       )}
       <Grid item xs={12}>
         <Table
-          data={data}
+          data={data?.result}
           params={params}
           value={value}
           rowsPerPage={rowsPerPage}

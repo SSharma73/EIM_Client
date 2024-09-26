@@ -37,9 +37,9 @@ const AddAccess = ({ params }) => {
     }
   };
   const handleView = async () => {
-    const response = await axiosInstance.get(`/user/getOne/${params.id}`);
-    console.log("responseView", response);
-    setData(response?.data?.data);
+    // const response = await axiosInstance.get(`/user/getOne/${params.id}`);
+    // console.log("responseView", response);
+    // setData(response?.data?.data);
   };
   useEffect(() => {
     handleView();

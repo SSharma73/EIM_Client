@@ -7,25 +7,13 @@ import {
   TableBody,
   TableCell,
   TableFooter,
-  TablePagination,
   TableRow,
-  Paper,
   TableHead,
   Box,
   Grid,
-  Typography,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
-const Dashboard = ({
-  rows,
-  page,
-  columns,
-  setPage,
-  setRowsPerPage,
-  rowsPerPage,
-  count,
-  loading,
-}) => {
+const Dashboard = ({ rows, columns, setPage, setRowsPerPage, loading }) => {
   const theme = useTheme();
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -54,7 +42,7 @@ const Dashboard = ({
                     ? "center"
                     : "center"
                 }
-                sx={{ whiteSpace: "nowrap" }} // Ensure headers don't wrap
+                sx={{ whiteSpace: "nowrap" }}
               >
                 <strong>{column}</strong>
               </TableCell>
