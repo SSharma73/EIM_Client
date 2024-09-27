@@ -81,13 +81,16 @@ const Overview = ({ fetchAllDetails }) => {
                         {item?.batterySoc && (
                           <Grid item>
                             <Box display="flex" gap={2}>
-                              {batteryStates.map((state) => {
+                              {batteryStates.map((state, index) => {
                                 const batteryInfo = getBatteryStatus(
                                   item?.batterySoc[state.index]
                                 );
 
                                 return (
-                                  <Tooltip title={batteryInfo.percent}>
+                                  <Tooltip
+                                    title={batteryInfo.percent}
+                                    key={index}
+                                  >
                                     <Button
                                       size="small"
                                       sx={{ color: batteryInfo.color }}
