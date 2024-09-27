@@ -1,11 +1,10 @@
 import { Grid, Typography, Divider } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Graph from "./overview/Graph/graph";
 import Graph2 from "./overview/Graph/graph2";
 import Graph3 from "./overview/Graph/graph3";
-import ChargingStation from "@/app/(components)/pages-component/CsManagement1/overview/Charging";
-import SwappingStation from "@/app/(components)/pages-component/CsManagement1/overview/Swapping";
-import { CustomDropdown } from "../../mui-components/DropdownButton";
+import { CustomDropdownEvent } from "@/app/(components)/mui-components/Card/HeaderGrid/DropdownButton/dropDownEvent";
+import axiosInstance from "@/app/api/axiosInstanceImg";
 
 import Overview from "@/app/(components)/pages-component/CsManagement1/overview/Overview";
 import TimerIcon from "@mui/icons-material/Timer";
@@ -18,7 +17,79 @@ const CustomGrid = styled(Grid)(({ theme }) => ({
   borderRadius: "16px",
   color: "#fff",
 }));
-const Overview1 = ({ fetchAllDetails, secondTabValue, handleSecondChange }) => {
+const Overview1 = ({ type }) => {
+  const [value, setValue] = useState(0);
+  const [fetchAllDetails, setFetchAllDetails] = useState(null);
+  const fetchDetails = async ({
+    limit = 10,
+    page = 1,
+    status = "",
+    type = "",
+  } = {}) => {
+    try {
+      const params = new URLSearchParams({
+        limit,
+        page,
+        status,
+        type,
+      });
+      const { data } = await axiosInstance.get(
+        `charger/fetchChargers?${params.toString()}`
+      );
+      setFetchAllDetails(data?.data);
+    } catch (error) {
+      console.error("Error fetching chargers:", error);
+      throw error;
+    }
+  };
+
+  const handleChange = (event, newValue) => {
+    let status = "";
+    let type = "";
+    switch (newValue) {
+      case 0:
+        status = "";
+        type = "";
+        break;
+      case 1:
+        status = "";
+        type = "delta";
+        break;
+      case 2:
+        status = "";
+        type = "sany";
+        break;
+      case 3:
+        status = "available";
+        type = "available";
+        break;
+      case 4:
+        status = "offline";
+        type = "offline";
+        break;
+      default:
+        status = "";
+        type = "";
+        break;
+    }
+    setValue(newValue);
+    fetchDetails({
+      search: "",
+      limit: 10,
+      page: 1,
+      status: status,
+      type: type,
+    });
+  };
+  useEffect(() => {
+    fetchDetails({
+      search: "",
+      limit: 10,
+      page: 1,
+      type: "",
+    });
+  }, []);
+
   const tabs = [
     { label: "Overview" },
     { label: "Charging" },
@@ -38,7 +109,16 @@ const Overview1 = ({ fetchAllDetails, secondTabValue, handleSecondChange }) => {
     { title: "Usage", content: "1947.33 kWh" },
     { title: "Up time", content: "400" },
   ];
-  const days = ["Daily", "Weekly", "Yearly"];
+  const days = ["Daily", "Weekly", "Monthly", "Yearly"];
+  const [selectedTimeFrames, setSelectedTimeFrames] = useState(
+    data?.map(() => days[0])
+  );
+  // Handler for dropdown selection
+  const handleTimeFrameChange = (index, newTimeFrame) => {
+    const updatedTimeFrames = [...selectedTimeFrames];
+    updatedTimeFrames[index] = newTimeFrame;
+    setSelectedTimeFrames(updatedTimeFrames);
+  };
   return (
     <Grid container spacing={2}>
       {data.map((item, index) => (
@@ -53,19 +133,35 @@ const Overview1 = ({ fetchAllDetails, secondTabValue, handleSecondChange }) => {
                 <TimerIcon sx={{ verticalAlign: "middle", p: "3px" }} />{" "}
                 {item.title}
               </Typography>
-              <CustomDropdown
+              <CustomDropdownEvent
                 variant="contained"
                 size="small"
-                buttonname="Daily"
                 menuitems={days}
+                buttonname={selectedTimeFrames[index]}
+                onItemSelect={(newTimeFrame) =>
+                  handleTimeFrameChange(index, newTimeFrame)
+                }
               />
             </Grid>
-            <Typography variant="h4" color="primary" sx={{ mt: 2 }}>
-              {item.content}{" "}
-            </Typography>
-            {index === 0 && <Graph />}
-            {index === 1 && <Graph2 />}
-            {index === 2 && <Graph3 />}
+
+            {index === 0 && (
+              <Graph
+                graphType={selectedTimeFrames[index].toLowerCase()}
+                type={type}
+              />
+            )}
+            {index === 1 && (
+              <Graph2
+                graphType={selectedTimeFrames[index].toLowerCase()}
+                type={type}
+              />
+            )}
+            {index === 2 && (
+              <Graph3
+                graphType={selectedTimeFrames[index].toLowerCase()}
+                type={type}
+              />
+            )}
             <Divider sx={{ mb: 3 }} />
           </CustomGrid>
         </Grid>
@@ -74,8 +170,8 @@ const Overview1 = ({ fetchAllDetails, secondTabValue, handleSecondChange }) => {
         <ManagementGrid
           tabs={tabs}
           TabPanelList={TabPanelList}
-          value={secondTabValue}
-          handleChange={handleSecondChange}
+          value={value}
+          handleChange={handleChange}
         />
       </Grid>
     </Grid>

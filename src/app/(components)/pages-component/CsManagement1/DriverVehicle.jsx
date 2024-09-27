@@ -16,21 +16,21 @@ import { IoEyeOutline } from "react-icons/io5";
 import Papa from "papaparse";
 import { saveAs } from "file-saver";
 import { FaRegFileExcel } from "react-icons/fa";
-import { E_tractorData } from "../../table/rows";
+import axiosInstance from "@/app/api/axiosInstance"; // Import your axios instance
 import { notifyError, notifySuccess } from "../../mui-components/Snackbar";
 
 const Charging = ({ value, eventLabel }) => {
-  const [page, setPage] = React.useState(0);
+  const [page, setPage] = useState(0);
   const [loading, setLoading] = useState(false);
-  const [rowsPerPage, setRowsPerPage] = React.useState(25);
+  const [rowsPerPage, setRowsPerPage] = useState(25);
   const [deviceData, setDeviceData] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
-  const [date, setDate] = useState(null);
-  const [data, setData] = useState(null);
+  const [data, setData] = useState([]);
 
   const getDataFromChildHandler = (date, dataArr) => {
     setDate(date);
   };
+
   const labelStatus = eventLabel?.slice(0, 8);
   const columns = [
     "E-Tractor ID",
@@ -44,7 +44,8 @@ const Charging = ({ value, eventLabel }) => {
     "Units consumed (kWh)",
     "Action",
   ];
-  const [open, setOpenDialog] = React.useState(false);
+
+  const [openDialog, setOpenDialog] = useState(false);
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState(searchQuery);
 
   useEffect(() => {
@@ -54,7 +55,7 @@ const Charging = ({ value, eventLabel }) => {
     return () => {
       clearTimeout(handler);
     };
-  }, [debouncedSearchQuery, setSearchQuery]);
+  }, [debouncedSearchQuery]);
 
   const handleSearchChange = (event) => {
     setDebouncedSearchQuery(event.target.value);
@@ -71,24 +72,12 @@ const Charging = ({ value, eventLabel }) => {
   const handleCancel = () => {
     setOpenDialog(false);
   };
-  const handleExport = (data) => {
-    console.log("Exporting data", data);
 
+  const handleExport = (data) => {
     if (!Array.isArray(data) || data.length === 0) {
       notifyError("No data available to export");
       return;
     }
-
-    const modifiedData = data?.map((row) => ({
-      Id: row?.Id,
-      chargingcycle: row?.chargingcycle,
-      hubname: row?.trip,
-      avgSpeed: row?.avgSpeed,
-      avgPayload: row?.avgPayload,
-      maxPayload: row?.maxPayload,
-      distance: row?.distance,
-      value: row?.value,
-    }));
 
     const csvData = [];
     const tableHeading = "All CS Etractor Data";
@@ -107,59 +96,66 @@ const Charging = ({ value, eventLabel }) => {
     ];
     csvData.push(headerRow);
 
-    modifiedData.forEach((row) => {
+    data.forEach((row) => {
       const rowData = [
-        row?.Id,
-        row?.chargingcycle,
-        row?.trip,
-        row?.avgSpeed,
-        row?.avgPayload,
-        row?.maxPayload,
-        row?.distance,
-        row?.value,
+        row?.Id || "--",
+        row?.chargingcycle || "--",
+        row?.chargingTime || "--",
+        row?.startSoC || "--",
+        row?.endSoC || "--",
+        row?.currentSoC || "--",
+        row?.chargedSoC || "--",
+        row?.unitsConsumed || "--",
       ];
       csvData.push(rowData);
     });
+
     const csvString = Papa.unparse(csvData);
     const blob = new Blob([csvString], { type: "text/csv;charset=utf-8" });
     saveAs(blob, "CS-EtractorData.csv");
-    notifySuccess("Download Excel Succefully");
+    notifySuccess("Download Excel Successfully");
   };
 
+  // Fetch fleet data on component mount
   useEffect(() => {
-    setData(E_tractorData);
-  }, []);
+    const fetchFleets = async () => {
+      setLoading(true);
+      try {
+        const { data } = await axiosInstance.get("fleet/fetchFleets");
+        setData(data.data);
+      } catch (error) {
+        notifyError(error?.response?.data?.message || "Failed to fetch data");
+      } finally {
+        setLoading(false);
+      }
+    };
 
+    fetchFleets();
+  }, []);
   const getFormattedData = (data) => {
-    console.log("data", data);
     return data?.map((item, index) => ({
-      Id: item?.Id ? item?.Id : "--",
-      chargingcycle: (
+      "E-Tractor ID": item?.fleetNumber || "--",
+      "Charging Cycle": item?.chargingCycle || "--",
+      "Charging Time (hr.)": item?.chargingTime || "--",
+      Status: item?.status || "--",
+      "Start SoC (%)": item?.startSoC || "--",
+      "End SoC (%)": item?.endSoC || "--",
+      "Current SoC (%)": (
         <Chip
           key={index}
           color="primary"
           sx={{ width: "80px" }}
-          label={item?.chargingcycle}
+          label={item?.batteryPercentage || "--"}
         />
       ),
-      lastName: item?.lastName ?? "--",
-      mobileNumber: item?.mobileNumber ? item?.mobileNumber : "--",
-      mobileNumber4: item?.mobileNumber ? item?.mobileNumber : "--",
-      mobileNumber1: item?.mobileNumber1 ? item?.mobileNumber1 : "--",
-      mobileNumber2: item?.mobileNumber2 ? item?.mobileNumber2 : "--",
-      mobileNumber5: item?.mobileNumber5 ? item?.mobileNumber5 : "--",
-      jobRole: item?.jobRole ? item?.jobRole : "--",
+      "Charged SoC (%)": item?.chargedSoC || "--",
+      "Units Consumed (kWh)": item?.unitsConsumed || "--",
       Action: [
         <Grid container justifyContent="center" spacing={2} key={index}>
           <Grid item xs={12}>
             <Tooltip title="View">
               <Link
-                href={
-                  "/csManagement/1235?tab=" +
-                  value +
-                  "&eventLabel=" +
-                  eventLabel
-                }
+                href={`/csManagement/${item._id}?tab=${value}&eventLabel=${eventLabel}`}
               >
                 <IconButton size="small">
                   <IoEyeOutline color="rgba(14, 1, 71, 1)" />
@@ -171,6 +167,7 @@ const Charging = ({ value, eventLabel }) => {
       ],
     }));
   };
+
   return (
     <Grid container>
       <Grid container>
@@ -203,11 +200,6 @@ const Charging = ({ value, eventLabel }) => {
                   Download Excel
                 </Button>
               </Grid>
-              <Grid item mr={1}>
-                <CommonDatePicker
-                  getDataFromChildHandler={getDataFromChildHandler}
-                />
-              </Grid>
             </Grid>
           </Grid>
         </Grid>
@@ -220,8 +212,8 @@ const Charging = ({ value, eventLabel }) => {
         ) : (
           <CustomTable
             page={page}
-            rows={getFormattedData(data)}
-            count={data?.length}
+            rows={getFormattedData(data?.result)}
+            count={data.length}
             columns={columns}
             setPage={setPage}
             rowsPerPage={rowsPerPage}

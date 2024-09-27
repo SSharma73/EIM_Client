@@ -11,8 +11,6 @@ import axiosInstance from "@/app/api/axiosInstanceImg";
 
 const CsManagement = () => {
   const [value, setValue] = useState(0);
-  const [secondTabValue, setSecondTabvalue] = useState(0);
-
   const [open, setOpen] = useState(false);
   const [fetchAllDetails, setFetchAllDetails] = useState(null);
 
@@ -68,38 +66,6 @@ const CsManagement = () => {
     }));
     setFetchAllDetails(null);
   };
-  const handleSecondChange = (event, newValue) => {
-    let status;
-    switch (newValue) {
-      case 0:
-        status = "";
-        break;
-      case 1:
-        status = "";
-        break;
-      case 2:
-        status = "swapping";
-        break;
-      case 3:
-        status = "available";
-        break;
-      case 4:
-        status = "offline";
-        break;
-      default:
-        status = "";
-        break;
-    }
-
-    setSecondTabvalue(newValue);
-    fetchDetails({
-      search: "",
-      limit: 10,
-      page: 1,
-      type: type,
-      status: status,
-    });
-  };
 
   const fetchDetails = async ({
     limit = 10,
@@ -134,14 +100,7 @@ const CsManagement = () => {
 
   const TabPanelList = [
     {
-      component: (
-        <Overview
-          value="1"
-          fetchAllDetails={fetchAllDetails}
-          secondTabValue={secondTabValue}
-          handleSecondChange={handleSecondChange}
-        />
-      ),
+      component: <Overview value="1" type={type} />,
     },
     {
       component: (

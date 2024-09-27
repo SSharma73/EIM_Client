@@ -1,22 +1,35 @@
 "use client";
-import { Button, Grid, Typography, Badge } from "@mui/material";
 import React, { useEffect, useState } from "react";
+import {
+  Grid,
+  Typography,
+  Box,
+  Tooltip,
+  IconButton,
+  Button,
+  LinearProgress,
+  Badge,
+  List,
+  ListItem,
+  ListItemText,
+} from "@mui/material";
+import { IoEyeOutline } from "react-icons/io5";
 import Graph from "@/app/(components)/pages-component/fleetManagement/vehicle/graph";
 import Graph2 from "@/app/(components)/pages-component/fleetManagement/vehicle/graph2";
 import Graph3 from "@/app/(components)/pages-component/fleetManagement/vehicle/graph3";
-
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import ListItemText from "@mui/material/ListItemText";
-import TimerIcon from "@mui/icons-material/Timer";
-import Map from "@/app/(components)/map/map";
+import CustomTable from "@/app/(components)/mui-components/Table/customTable/index";
+import TableSkeleton from "@/app/(components)/mui-components/Skeleton/tableSkeleton";
+import { CustomDropdown } from "@/app/(components)/mui-components/DropdownButton";
 import DistanceTravel from "../ViewReport/DistanceTravel";
-import { CustomDropdown } from "../../../mui-components/DropdownButton/index";
-import { Fleet } from "../../../table/rows";
-import styled from "@emotion/styled";
-import Table from "./table";
-import LinearProgress from "@mui/material/LinearProgress";
+import Map from "@/app/(components)/map/map";
 import MapDetails from "@/app/(components)/map/mapDetails";
+import Papa from "papaparse";
+import { saveAs } from "file-saver";
+import {
+  notifyError,
+  notifySuccess,
+} from "@/app/(components)/mui-components/Snackbar";
+import styled from "@emotion/styled";
 
 const CustomGrid = styled(Grid)(({ theme }) => ({
   padding: theme.spacing(2),
@@ -24,26 +37,7 @@ const CustomGrid = styled(Grid)(({ theme }) => ({
   borderRadius: "16px",
   color: "#fff",
 }));
-const iconUrls = [
-  "./truck1.svg",
-  "./truck2.svg",
-  "./truck3.svg",
-  "./truck4.svg",
-];
-const coordinate = [
-  { lat: "28.51079782059423", log: "77.40362813493975" },
-  { lat: "28.510404514720925", log: "77.40712974097106" },
-  { lat: "28.512297585971584", log: "77.40356012099012" },
-  { lat: "28.510728275696316", log: "77.40199688895548" },
-  { lat: "28.511107212816803", log: "77.4063730115565" },
-  { lat: "28.512937158827324", log: "77.41783963937374" },
-];
-const buttonData = [
-  { label: "Charging : 3", color: "red" },
-  { label: "Swapping : 0", color: "green" },
-  { label: "Scheduled CS: 6", color: "blue" },
-  { label: "Scheduled SS : 8", color: "skyblue" },
-];
+
 const Badge1 = styled(Badge)(({ color }) => ({
   "& .MuiBadge-badge": {
     backgroundColor: color,
@@ -51,8 +45,9 @@ const Badge1 = styled(Badge)(({ color }) => ({
     height: "10px",
     borderRadius: "50%",
   },
-  marginLeft: "10 px",
+  marginLeft: "10px",
 }));
+
 const Overview = ({
   value,
   data,
@@ -66,34 +61,135 @@ const Overview = ({
   params,
   getDataFromChildHandler,
 }) => {
-  const [distance, setDistance] = React.useState(false);
-  const [payload, setPayload] = React.useState(false);
-  const [trips, setTrips] = React.useState(false);
+  const [distance, setDistance] = useState(false);
+  const [payload, setPayload] = useState(false);
+  const [trips, setTrips] = useState(false);
   const [data2, setData2] = useState(null);
-  const [progress, setProgress] = React.useState(100);
   const [activeMarker, setActiveMarker] = useState(null);
   const [icons, setIcons] = useState(null);
+  const [totalDocuments, setTotalDocuments] = useState(
+    data?.totalDocuments || 0
+  );
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState(searchQuery);
+
+  // Update search query with debouncing
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setSearchQuery(debouncedSearchQuery);
+    }, 500);
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [debouncedSearchQuery, setSearchQuery]);
+
+  useEffect(() => {
+    setData2(data);
+  }, [distance, payload, trips]);
+
+  const handleExport = (data) => {
+    if (!Array.isArray(data) || data.length === 0) {
+      notifyError("No data available to export");
+      return;
+    }
+
+    const modifiedData = data?.map((row) => ({
+      region: row.port?.regionName || "--",
+      fleetId: row.fleetId || "--",
+      status: row.status || "--",
+      avgSpeed: `'${row.avgSpeed}` || "--",
+      avgPayload: row.avgPayload || "--",
+      totalDistance: row.totalDistance || "--",
+      avgConsumption: row.avgConsumption || "--",
+      breakdown: row.breakdown || "--",
+      currentSoc: row.currentSoc || "--",
+      effectiveRange: row.effectiveRange || "--",
+    }));
+
+    const csvData = [];
+    const headerRow = [
+      "Region",
+      "E-tractor ID",
+      "Status",
+      "Avg. speed (km/hr.)",
+      "Avg. payload (Ton)",
+      "Total distance travelled(km)",
+      "Avg. consumption(kwh/km)",
+      "Breakdown",
+      "Current SoC(%)",
+      "Effective range(km)",
+    ];
+    csvData.push(headerRow);
+    modifiedData.forEach((row) => {
+      csvData.push([
+        row.region,
+        row.fleetId,
+        row.status,
+        `'${row.avgSpeed}`,
+        row.avgPayload,
+        row.totalDistance,
+        row.avgConsumption,
+        row.breakdown,
+        row.currentSoc,
+        row.effectiveRange,
+      ]);
+    });
+
+    const csvString = Papa.unparse(csvData);
+    const blob = new Blob([csvString], { type: "text/csv;charset=utf-8" });
+    saveAs(blob, "FleetData.csv");
+    notifySuccess("Download Excel Successfully");
+  };
+
+  const getFormattedData = (data) => {
+    return data?.map((item, index) => ({
+      region: item?.port ? item.port.regionName : "--",
+      fleetId: item.fleetId ? item.fleetId : "--",
+      status: (
+        <Box>
+          <Typography
+            sx={{
+              color:
+                item.status === "charging"
+                  ? "#BFFC72"
+                  : item.status === "parked"
+                  ? "#FFC700"
+                  : "#fff",
+            }}
+          >
+            {item.status || "--"}
+          </Typography>
+        </Box>
+      ),
+      avgSpeed: item.avgSpeed || "--",
+      avgPayload: item.avgPayload || "--",
+      totalDistance: item.totalDistance || "--",
+      avgConsumption: item.avgConsumption || "--",
+      breakdown: item.breakdown || "--",
+      currentSoc: item.currentSoc || "--",
+      effectiveRange: item.effectiveRange || "--",
+      Action: (
+        <Grid container justifyContent="center" spacing={2}>
+          <Grid item xs={12}>
+            <Tooltip title="View">
+              <IconButton size="small">
+                <IoEyeOutline color="rgba(14, 1, 71, 1)" />
+              </IconButton>
+            </Tooltip>
+          </Grid>
+        </Grid>
+      ),
+    }));
+  };
 
   const handleMapData = (index, point) => {
     setActiveMarker(index);
     setIcons(point);
   };
+
   const onClose = () => {
     setActiveMarker(null);
   };
 
-  const handleDistance = () => {
-    setDistance(true);
-  };
-  const handlePayload = () => {
-    setPayload(true);
-  };
-  const handleTrips = () => {
-    setTrips(true);
-  };
-  useEffect(() => {
-    setData2(Fleet);
-  }, [distance, payload, trips]);
   const data1 = [
     {
       content: "20 ",
@@ -108,26 +204,24 @@ const Overview = ({
       ],
       label: "View report",
       data: "Distance travelled",
-      handleFunction: handleDistance,
+      handleFunction: () => setDistance(true),
     },
     {
       content: "30",
       value: "Vehicle",
       avg: "10 (Ton)",
-
       titleParts: [
         { text: "Trip payload ", style: { fontSize: "16px", fontWeight: 600 } },
         { text: "(Ton)", style: { fontSize: "13px", fontWeight: 600 } },
       ],
       label: "View report",
       data: "Trip payload",
-      handleFunction: handlePayload,
+      handleFunction: () => setPayload(true),
     },
     {
       content: "10",
       value: "Vehicle",
       avg: "20 (kWh)",
-
       titleParts: [
         { text: "Trips ", style: { fontSize: "16px", fontWeight: 600 } },
         {
@@ -137,33 +231,14 @@ const Overview = ({
       ],
       label: "View report",
       data: "Trips",
-      handleFunction: handleTrips,
+      handleFunction: () => setTrips(true),
     },
   ];
-
   const days = ["Today", "Weekly", "Monthly", "Yearly"];
 
   return (
     <Grid container spacing={2}>
-      <DistanceTravel
-        open={distance}
-        setOpen={setDistance}
-        data1="Distance travelled (Km)"
-        data={data2}
-      />
-      <DistanceTravel
-        open={payload}
-        setOpen={setPayload}
-        data1="Trip payload(Ton)"
-        data={data2}
-      />
-      <DistanceTravel
-        open={trips}
-        setOpen={setTrips}
-        data1="Trips (Units consumed)"
-        data={data2}
-      />
-      {data1?.map((item, index) => (
+      {data1.map((item, index) => (
         <Grid key={index} item xl={4} lg={4} md={4} sm={6} xs={12}>
           <CustomGrid>
             <Grid
@@ -172,9 +247,9 @@ const Overview = ({
               alignItems={"center"}
             >
               <Typography>
-                {item.titleParts?.map((part, idx) => (
-                  <span key={idx} style={part?.style}>
-                    {part?.text}
+                {item.titleParts.map((part, idx) => (
+                  <span key={idx} style={part.style}>
+                    {part.text}
                   </span>
                 ))}
               </Typography>
@@ -189,9 +264,8 @@ const Overview = ({
               color={"primary"}
               style={{ fontSize: "15px", fontWeight: 600 }}
             >
-              E-Tractor :
+              E-Tractor :{" "}
               <span style={{ fontWeight: 700, color: "#fff" }}>
-                {"  "}
                 {item.content}
               </span>
             </Typography>
@@ -210,7 +284,7 @@ const Overview = ({
             {index === 2 && <Graph3 />}
             <LinearProgress
               variant="determinate"
-              value={progress}
+              value={100}
               sx={{ border: "0.6px" }}
             />
             <List>
@@ -234,7 +308,8 @@ const Overview = ({
           </CustomGrid>
         </Grid>
       ))}
-      {activeMarker && activeMarker !== null ? (
+
+      {activeMarker && (
         <Grid item xs={12} md={9} sm={8} height={"380px"}>
           <Map
             handleMapData={handleMapData}
@@ -246,38 +321,42 @@ const Overview = ({
             onClose={onClose}
           />
         </Grid>
-      ) : (
-        <Grid item xs={12} height={"380px"}>
-          <Map
-            handleMapData={handleMapData}
-            iconUrls={iconUrls}
-            activeMarker={activeMarker}
-            setActiveMarker={setActiveMarker}
-            buttonData={buttonData}
-            coordinate={coordinate}
-            onClose={onClose}
-          />
-        </Grid>
       )}
-      {activeMarker && activeMarker !== null && (
+      {activeMarker && (
         <Grid item md={3} xs={12} sm={4} height={"380px"}>
           <MapDetails icons={icons} onClose={onClose} title={"Fleet Data"} />
         </Grid>
       )}
       <Grid item xs={12}>
-        <Table
-          data={data?.result}
-          params={params}
-          value={value}
-          rowsPerPage={rowsPerPage}
-          setRowsPerPage={setRowsPerPage}
-          page={page}
-          setPage={setPage}
-          searchQuery={searchQuery}
-          setSearchQuery={setSearchQuery}
-          loading={loading}
-          getDataFromChildHandler={getDataFromChildHandler}
-        />
+        {loading ? (
+          <TableSkeleton
+            rowNumber={new Array(10).fill(0)}
+            tableCell={new Array(5).fill("15%")}
+            actions={new Array(2).fill(0)}
+          />
+        ) : (
+          <CustomTable
+            page={page}
+            rows={getFormattedData(data?.result)}
+            count={totalDocuments}
+            columns={[
+              "Region",
+              "E-tractor ID",
+              "Status",
+              "Avg. speed (km/hr)",
+              "Avg. payload (Ton)",
+              "Total distance travelled(km)",
+              "Avg. consumption(kWh/km)",
+              "Breakdown",
+              "Current SoC(%)",
+              "Effective range(km)",
+              "Action",
+            ]}
+            setPage={setPage}
+            rowsPerPage={rowsPerPage}
+            setRowsPerPage={setRowsPerPage}
+          />
+        )}
       </Grid>
     </Grid>
   );

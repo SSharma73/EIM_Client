@@ -1,81 +1,102 @@
-import React from "react";
-import { Grid } from "@mui/material";
+import React, { useEffect, useState } from "react";
+import { Grid, Typography } from "@mui/material";
 import { Line } from "react-chartjs-2";
-import { Chart, layouts, registerables } from "chart.js";
+import { Chart, registerables } from "chart.js";
+import axiosInstance from "@/app/api/axiosInstanceImg";
 
 Chart.register(...registerables);
-const data1 = {
-  labels: [
-    "25 July 2024",
-    "28 July 2024",
-    "30 July 2024",
-    "5 August 2024",
-    "9 August 2024",
-  ],
-  datasets: [
-    {
-      data: [65, 59, 80, 81, 56, 55, 40, 20, 36, 48, 16],
-      borderColor: "#C0FE72",
-      borderWidth: 2,
-      pointHoverRadius: 10,
-    },
-  ],
-};
-const options = {
-  scales: {
-    y: {
-      beginAtZero: true,
-      ticks: {
-        color: "white",
+
+const Graph = ({ graphType, type }) => {
+  const [chartData, setChartData] = useState({
+    labels: [],
+    datasets: [
+      {
+        data: [],
+        borderColor: "#C0FE72",
+        borderWidth: 2,
+        pointHoverRadius: 10,
+      },
+    ],
+  });
+  const [totalSessions, setTotalSessions] = useState(0); // State for total sessions
+
+  const options = {
+    scales: {
+      y: {
+        beginAtZero: true,
+        ticks: {
+          color: "white",
+        },
+      },
+      x: {
+        beginAtZero: true,
+        display: true,
+        ticks: {
+          color: "white",
+        },
       },
     },
-    x: {
-      beginAtZero: true,
-      display: true,
-      ticks: {
-        color: "white",
+    plugins: {
+      legend: {
+        display: false,
+        position: "top",
+        align: "end",
+        fullSize: true,
+        labels: {
+          pointStyle: "circle",
+          usePointStyle: true,
+          color: "#fff",
+          textAlign: "left",
+        },
+      },
+      tooltip: {
+        enabled: true, // Show tooltips
       },
     },
-  },
-  plugins: {
-    legend: {
-      display: false,
-      position: "top",
-      align: "end",
-      fullSize: true,
-      labels: {
-        pointStyle: "circle",
-        usePointStyle: true,
-        color: "#fff",
-        textAlign: "left",
-      },
+    interaction: {
+      mode: "index",
+      intersect: false,
     },
-    tooltip: {
-      enabled: true, // Hide tooltips
-    },
-  },
-  interaction: {
-    mode: "index",
-    intersect: false,
-  },
-};
-const config = {
-  type: "line",
-  data: data1,
-  options: {
-    ...options,
-  },
-};
-const Graph = () => {
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const { data } = await axiosInstance.get("charger/sessionGraph", {
+          params: { graphType, type },
+        });
+        const labels = data?.data.map((item) => item.interval) || [];
+        const sessionData = data?.data.map((item) => item.session) || [];
+        const total = sessionData.reduce((acc, curr) => acc + curr, 0);
+
+        setChartData({
+          labels: labels,
+          datasets: [
+            {
+              data: sessionData,
+              borderColor: "#C0FE72",
+              borderWidth: 2,
+              pointHoverRadius: 10,
+            },
+          ],
+        });
+        setTotalSessions(total);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+  }, [graphType, type]);
+
   return (
-    <Grid container mt={3} mb={3}>
-      <Line
-        data={data1}
-        width={"400px"}
-        height={170}
-        options={config.options}
-      />
+    <Grid container mt={2} mb={1}>
+      <Typography variant="h4" color="primary" sx={{ mb: 2 }}>
+        {totalSessions?.toFixed(2)}
+      </Typography>
+      <Line data={chartData} width={"400px"} height={170} options={options} />
     </Grid>
   );
 };
+
 export default Graph;

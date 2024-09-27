@@ -31,6 +31,8 @@ const Page = () => {
   const [rowsPerPage, setRowsPerPage] = React.useState(25);
   const [searchQuery, setSearchQuery] = useState("");
   const [date, setDate] = useState(null);
+  const [data, setData] = useState([]);
+
   const [tabsValue, setTabsValue] = useState("Overview");
   const getDataFromChildHandler = (date, dataArr) => {
     setDate(date);
@@ -50,20 +52,14 @@ const Page = () => {
     { label: "E-tractor" },
   ];
   const handleTableData = async () => {
-    if (tabsValue !== "Overview") {
-      const response = await axiosInstance.get(
-        `/fleet/fetchFleets?status=${tabsValue}&page=${
-          page + 1
-        }&pageSize=${rowsPerPage}&search=${searchQuery}`
-      );
-      setTableData(response?.data);
-    } else {
-      const response = await axiosInstance.get(
-        `/fleet/fetchFleets?page=${
-          page + 1
-        }&pageSize=${rowsPerPage}&search=${searchQuery}`
-      );
-      setOverviewData(response?.data);
+    setLoading(true);
+    try {
+      const { data } = await axiosInstance.get("fleet/fetchFleets");
+      setData(data.data);
+    } catch (error) {
+      notifyError(error?.response?.data?.message || "Failed to fetch data");
+    } finally {
+      setLoading(false);
     }
   };
   const handleOpen = () => {
@@ -74,7 +70,7 @@ const Page = () => {
       component: (
         <Overview
           value={"1"}
-          data={overviewData}
+          data={data}
           rowsPerPage={rowsPerPage}
           setRowsPerPage={setRowsPerPage}
           page={page}
@@ -90,7 +86,7 @@ const Page = () => {
       component: (
         <Charging
           value={"2"}
-          data={tableData}
+          data={data}
           rowsPerPage={rowsPerPage}
           setRowsPerPage={setRowsPerPage}
           page={page}
@@ -106,7 +102,7 @@ const Page = () => {
       component: (
         <Trip
           value={"3"}
-          data={tableData}
+          data={data}
           rowsPerPage={rowsPerPage}
           setRowsPerPage={setRowsPerPage}
           page={page}
@@ -122,7 +118,7 @@ const Page = () => {
       component: (
         <Etractor
           value={"4"}
-          data={tableData}
+          data={data}
           rowsPerPage={rowsPerPage}
           setRowsPerPage={setRowsPerPage}
           page={page}

@@ -6,9 +6,7 @@ import { Tabs, Tab, Button } from "@mui/material";
 import { IoMdAddCircleOutline } from "react-icons/io";
 import CustomDropdown from "./DropdownButton";
 import { CustomDropdownEvent } from "./DropdownButton/dropDownEvent";
-
 import ButtonGroup from "@mui/material/ButtonGroup";
-import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
   return (

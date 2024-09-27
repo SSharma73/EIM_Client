@@ -22,19 +22,32 @@ import { PiCarBattery } from "react-icons/pi";
 
 const Charging = ({ value, eventLabel, fetchAllDetails }) => {
   const labelStatus = eventLabel?.slice(0, 8);
-
   const columns = [
     `${eventLabel} ID`,
     "Status",
     "Hub Name",
-    "E-Tractor  In queue",
-    ...(labelStatus === "Swapping" ? [] : [`Currently ${labelStatus}`]),
+    "E-Tractor In queue",
+    ...(labelStatus === "Swapping"
+      ? [`Currently ${labelStatus}`]
+      : [`Currently ${labelStatus}`]),
     labelStatus === "Swapping" ? "Total swapped" : "Total charged",
-    "Unit consumed(kWh)",
-    `Avg. ${labelStatus} time(hr.)`,
+    "Unit consumed (kWh)",
+    `Avg. ${labelStatus} time (hr.)`,
     labelStatus === "Swapping" && "Battery packs",
     "Action",
   ];
+  const getBatteryStatus = (batterySoc) => {
+    if (batterySoc === undefined || batterySoc === null) {
+      return { color: "#B0B0B0", percent: "No data" }; // Handle no data scenario
+    }
+    if (batterySoc <= 50) {
+      return { color: "#FF0000", percent: `${batterySoc}%` };
+    } else if (batterySoc > 50 && batterySoc < 90) {
+      return { color: "#FFC300", percent: `${batterySoc}%` };
+    } else {
+      return { color: "#C0FE72", percent: "100%" };
+    }
+  };
   const [page, setPage] = React.useState(0);
   const [loading, setLoading] = useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(25);
@@ -128,9 +141,14 @@ const Charging = ({ value, eventLabel, fetchAllDetails }) => {
 
   const getFormattedData = (data) => {
     return data?.map((item, index) => {
-      const color = item?.status === "online" ? "success" : "error"; // Ensure consistent status check
+      const color =
+        item?.status === "available"
+          ? "success"
+          : item?.status === "offline"
+          ? "error"
+          : "warning";
       const label = item?.status ? item?.status : "--";
-
+      const batteryStates = [{ index: 3 }, { index: 2 }, { index: 1 }];
       return {
         id: item?.stationCode ?? "--",
         status: (
@@ -140,7 +158,7 @@ const Charging = ({ value, eventLabel, fetchAllDetails }) => {
               label={<Typography variant="body2">{label}</Typography>}
               color={color}
               sx={{
-                backgroundColor: color === "success" ? "green" : "red",
+                backgroundColor: color,
                 color: "white",
               }}
             />
@@ -154,41 +172,27 @@ const Charging = ({ value, eventLabel, fetchAllDetails }) => {
         avgTime: item?.averageChargingTime ?? "--",
         batteryPacks: labelStatus === "Swapping" && (
           <Grid container key={index} width={250}>
-            <Grid item xs={6} md={3}>
-              <Tooltip title="discharged">
-                <Button
-                  size="small"
-                  color="error"
-                  startIcon={<PiCarBattery color="#FF0000" />}
-                >
-                  24%
-                </Button>
-              </Tooltip>
-            </Grid>
-            <Grid item xs={6} md={3}>
-              <Tooltip title="charging">
-                <Button
-                  variant="text"
-                  color="warning"
-                  size="small"
-                  startIcon={<PiCarBattery color="#FFC300" />}
-                >
-                  40%
-                </Button>
-              </Tooltip>
-            </Grid>
-            <Grid item xs={6} md={3}>
-              <Tooltip title="charged">
-                <Button
-                  variant="text"
-                  color="secondary"
-                  size="small"
-                  startIcon={<PiCarBattery color="#C0FE72" />}
-                >
-                  100%
-                </Button>
-              </Tooltip>
-            </Grid>
+            {batteryStates.map((state) => {
+              const batterySoc = item?.batterySoc?.[state.index];
+              const batteryInfo = getBatteryStatus(batterySoc);
+              return (
+                <Grid item xs={6} md={3} key={state.index}>
+                  <Tooltip title={batteryInfo.percent}>
+                    <Button
+                      size="small"
+                      sx={{ color: batteryInfo.color }}
+                      startIcon={<PiCarBattery color={batteryInfo.color} />}
+                    >
+                      {batterySoc !== undefined && batterySoc !== null ? (
+                        batteryInfo.percent
+                      ) : (
+                        <span>0</span>
+                      )}
+                    </Button>
+                  </Tooltip>
+                </Grid>
+              );
+            })}
           </Grid>
         ),
         action: (

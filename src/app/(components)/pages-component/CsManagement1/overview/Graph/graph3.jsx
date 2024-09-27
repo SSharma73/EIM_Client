@@ -1,21 +1,15 @@
 import React from "react";
-import { Grid } from "@mui/material";
+import { Grid, Typography } from "@mui/material";
 import { Line } from "react-chartjs-2";
 import { Chart, layouts, registerables } from "chart.js";
 
 Chart.register(...registerables);
 const data1 = {
-  labels: [
-    "25 July 2024",
-    "28 July 2024",
-    "30 July 2024",
-    "5 August 2024",
-    "9 August 2024",
-  ],
+  labels: ["dd mm yy", "dd mm yy", "dd mm yy", "dd mm yy", "dd mm yy"],
   datasets: [
     {
       label: "E Tractor",
-      data: [22,18,20,16,22],
+      data: [0, 0, 0, 0, 0],
       backgroundColor: "rgba(247, 187, 187, .2)",
       borderColor: "#C0FE72",
       borderWidth: 2,
@@ -76,7 +70,10 @@ const config = {
 };
 const Graph = () => {
   return (
-    <Grid container mt={3} mb={3}>
+    <Grid container mt={2} mb={1}>
+      <Typography variant="h4" color="primary" sx={{ mb: 2 }}>
+        {"---"}
+      </Typography>
       <Line
         data={data1}
         width={"400px"}

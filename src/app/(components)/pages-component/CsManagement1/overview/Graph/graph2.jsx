@@ -1,50 +1,21 @@
-import React from "react";
-import { Grid } from "@mui/material";
+import React, { useEffect, useState } from "react";
+import { Grid, Typography } from "@mui/material";
 import { Line } from "react-chartjs-2";
-import { Chart, layouts, registerables } from "chart.js";
+import { Chart, registerables } from "chart.js";
+import axiosInstance from "@/app/api/axiosInstanceImg";
 
 Chart.register(...registerables);
-const data1 = {
-  labels: [
-    "25 July 2024",
-    "28 July 2024",
-    "30 July 2024",
-    "5 August 2024",
-    "9 August 2024",
-  ],
-  datasets: [
-    {
-      label: "E Tractor",
-      data: [65, 59, 80, 81, 56, 55, 40, 20, 36, 48, 16],
-      backgroundColor: "rgba(247, 187, 187, .2)", // Fill color for the area chart
-      borderColor: "#C0FE72",
-      borderWidth: 2,
-      pointHoverRadius: 10,
-    },
-  ],
-};
+
 const options = {
-  // animations: {
-  //     tension: {
-  //       duration: 1000,
-  //       easing: 'linear',
-  //       from: 0.7,
-  //       to: 0.2,
-  //       loop: true
-  //     }
-  //   },
   scales: {
     y: {
       beginAtZero: true,
       ticks: {
-        color: "white", // Color of y-axis labels
+        color: "white",
         font: {
           family: "Arial",
           weight: "bold",
         },
-      },
-      ticks: {
-        color: "white",
         callback: function (value) {
           return value + " kWh";
         },
@@ -54,7 +25,7 @@ const options = {
       beginAtZero: true,
       display: true,
       ticks: {
-        color: "white", // Color of x-axis labels
+        color: "white",
       },
     },
   },
@@ -72,7 +43,7 @@ const options = {
       },
     },
     tooltip: {
-      enabled: true, // Hide tooltips
+      enabled: true,
     },
   },
   interaction: {
@@ -80,23 +51,60 @@ const options = {
     intersect: false,
   },
 };
-const config = {
-  type: "line",
-  data: data1,
-  options: {
-    ...options,
-  },
-};
-const Graph = () => {
+
+const Graph = ({ graphType, type }) => {
+  const [chartData, setChartData] = useState({
+    labels: [],
+    datasets: [
+      {
+        label: "E Tractor",
+        data: [],
+        backgroundColor: "rgba(247, 187, 187, .2)",
+        borderColor: "#C0FE72",
+        borderWidth: 2,
+        pointHoverRadius: 10,
+      },
+    ],
+  });
+  const [totalUsage, setTotalUsage] = useState(0); // State for total usage
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const { data } = await axiosInstance.get("charger/usageGraph", {
+          params: { graphType, type },
+        });
+        const labels = data?.data?.map((item) => item.interval) || [];
+        const usageData = data?.data?.map((item) => item.usage) || [];
+        // Calculate total usage
+        const total = usageData.reduce((acc, curr) => acc + curr, 0);
+        setTotalUsage(total); // Update total usage state
+
+        setChartData({
+          labels: labels,
+          datasets: [
+            {
+              ...chartData.datasets[0],
+              data: usageData,
+            },
+          ],
+        });
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+  }, [graphType, type]);
+
   return (
-    <Grid container mt={3} mb={3}>
-      <Line
-        data={data1}
-        width={"400px"}
-        height={170}
-        options={config.options}
-      />
+    <Grid container mt={2} mb={1}>
+      <Typography variant="h4" color="primary" sx={{ mb: 2 }}>
+        {totalUsage?.toFixed(2)} kWh
+      </Typography>
+      <Line data={chartData} width={"400px"} height={170} options={options} />
     </Grid>
   );
 };
+
 export default Graph;

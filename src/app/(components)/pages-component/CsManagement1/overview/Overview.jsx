@@ -1,5 +1,5 @@
 "use client";
-import { Grid, Divider, Typography, Button } from "@mui/material";
+import { Grid, Divider, Typography, Button, Tooltip } from "@mui/material";
 import React, { useState } from "react";
 import RoomOutlinedIcon from "@mui/icons-material/RoomOutlined";
 import Box from "@mui/material/Box";
@@ -34,17 +34,14 @@ const Overview = ({ fetchAllDetails }) => {
   };
 
   const getBatteryStatus = (batterySoc) => {
-    const batteryStatus = [];
-    if (batterySoc[1] <= 50) {
-      batteryStatus.push({ color: "#FF0000", percent: `${batterySoc[1]}%` });
-    } else if (batterySoc[2] > 50 && batterySoc[2] < 90) {
-      batteryStatus.push({ color: "#FFC300", percent: `${batterySoc[2]}%` });
+    if (batterySoc <= 50) {
+      return { color: "#FF0000", percent: `${batterySoc}%` };
+    } else if (batterySoc > 50 && batterySoc < 90) {
+      return { color: "#FFC300", percent: `${batterySoc}%` };
     } else {
-      batteryStatus.push({ color: "#C0FE72", percent: "100%" });
+      return { color: "#C0FE72", percent: "100%" };
     }
-    return batteryStatus;
   };
-
   return (
     <Grid container>
       <CustomGrid>
@@ -58,8 +55,7 @@ const Overview = ({ fetchAllDetails }) => {
             fetchAllDetails.result.map((item, index) => {
               const onlineStatusColor =
                 item.status === "online" ? "#1CD28E" : "#FE7272";
-              const batteryStatus =
-                item?.batterySoc && getBatteryStatus(item?.batterySoc);
+              const batteryStates = [{ index: 3 }, { index: 2 }, { index: 1 }];
               return (
                 <Grid item xs={12} key={index} mt={1}>
                   <Card sx={{ backgroundColor: "transparent" }}>
@@ -85,18 +81,27 @@ const Overview = ({ fetchAllDetails }) => {
                         {item?.batterySoc && (
                           <Grid item>
                             <Box display="flex" gap={2}>
-                              {batteryStatus.map((battery, i) => (
-                                <Button
-                                  size="small"
-                                  key={i}
-                                  sx={{ color: battery.color }}
-                                  startIcon={
-                                    <PiCarBattery color={battery.color} />
-                                  }
-                                >
-                                  {battery.percent}
-                                </Button>
-                              ))}
+                              {batteryStates.map((state) => {
+                                const batteryInfo = getBatteryStatus(
+                                  item?.batterySoc[state.index]
+                                );
+
+                                return (
+                                  <Tooltip title={batteryInfo.percent}>
+                                    <Button
+                                      size="small"
+                                      sx={{ color: batteryInfo.color }}
+                                      startIcon={
+                                        <PiCarBattery
+                                          color={batteryInfo.color}
+                                        />
+                                      }
+                                    >
+                                      {batteryInfo.percent}
+                                    </Button>
+                                  </Tooltip>
+                                );
+                              })}
                             </Box>
                           </Grid>
                         )}
