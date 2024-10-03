@@ -1,29 +1,31 @@
 "use client";
-import { Button, Grid, Typography } from "@mui/material";
+import { Grid } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import Table from "./table";
 import { useSearchParams } from "next/navigation";
 import ManagementGrid from "@/app/(components)/mui-components/Card";
-import { Fleet } from "@/app/(components)/table/rows";
+import axiosInstance from "@/app/api/axiosInstanceImg";
+import moment from "moment";
 
 const ChargingId = ({ params }) => {
   const searchParams = useSearchParams();
   const tabValue = searchParams.get("tab");
   const eventLabel = searchParams.get("eventLabel");
+  const hubName = searchParams.get("name");
 
   const [page, setPage] = React.useState(0);
   const [loading, setLoading] = useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(25);
   const [deviceData, setDeviceData] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
-  const [date, setDate] = useState(null);
   const [data, setData] = useState(null);
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
 
-  const getDataFromChildHandler = (date, dataArr) => {
-    setDate(date);
-  };
+  // const getDataFromChildHandler = (date, dataArr) => {
+  //   setDate(date);
+  // };
   const labelStatus = eventLabel?.slice(0, 8);
-  console.log("sdfgakjs",labelStatus)
 
   const vehicle1 = [
     "Date",
@@ -33,7 +35,6 @@ const ChargingId = ({ params }) => {
     "No. of trucks",
     "Unit consumed(kWh)",
     "Avg. charging time(hr.)",
-    "Peak hours",
   ];
   const E_tractor = [
     "Date",
@@ -53,9 +54,58 @@ const ChargingId = ({ params }) => {
       link: `/csManagement/${params.id}?tab=${tabValue}&eventLabel=${eventLabel}`,
     },
   ];
+
+  const fetchChargingHistory = async (startDate, endDate) => {
+    setLoading(true);
+    try {
+      const { data, status } = await axiosInstance.get(
+        "charger/fetchChargingHistory",
+        {
+          params: {
+            limit: rowsPerPage,
+            page: page + 1,
+            stationId: params.id,
+            startDate: startDate,
+            endDate: endDate,
+          },
+        }
+      );
+      setData(data?.data);
+    } catch (error) {
+      console.error("Error fetching charging history:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+  const getDataFromChildHandler = (dateRange, resultArray) => {
+    const selectedStartDate = dateRange[0].startDate;
+    const selectedEndDate = dateRange[0].endDate;
+    setStartDate(selectedStartDate);
+    setEndDate(selectedEndDate);
+    fetchChargingHistory(selectedStartDate, selectedEndDate);
+  };
   useEffect(() => {
-    setData(Fleet);
-  }, []);
+    fetchChargingHistory();
+  }, [page, rowsPerPage, startDate, endDate]);
+  const getFormattedData = (data) => {
+    return data?.map((item) => ({
+      Date: item?.createdAt
+        ? moment(item.createdAt).format("DD/MM/YYYY")
+        : "--",
+      "Hub name": hubName ?? "--",
+      Status: item?.status ?? "Charging",
+      "Truck ID": "--",
+      "No. of trucks": "--",
+      "Unit consumed(kWh)": item?.totalConsumption ?? "--",
+      "Avg. charging time(hr.)":
+        item.meterStopTime && item.meterStartTime
+          ? (
+              (new Date(item.meterStopTime) - new Date(item.meterStartTime)) /
+              3600000
+            ).toFixed(2)
+          : "--",
+    }));
+  };
 
   return (
     <Grid container sm={12} md={12}>
@@ -63,7 +113,7 @@ const ChargingId = ({ params }) => {
       {tabValue &&
         (tabValue === "2" ? (
           <Table
-            name={`${eventLabel} ID (${params.id})`}
+            name={`${hubName} (${eventLabel})`}
             columns={vehicle1}
             data={data}
             deviceData={deviceData}
@@ -74,6 +124,7 @@ const ChargingId = ({ params }) => {
             searchQuery={searchQuery}
             setSearchQuery={setSearchQuery}
             loading={loading}
+            getFormattedData={getFormattedData}
             getDataFromChildHandler={getDataFromChildHandler}
           />
         ) : tabValue === "3" ? (
@@ -89,6 +140,7 @@ const ChargingId = ({ params }) => {
             searchQuery={searchQuery}
             setSearchQuery={setSearchQuery}
             loading={loading}
+            getFormattedData={getFormattedData}
             getDataFromChildHandler={getDataFromChildHandler}
           />
         ) : null)}

@@ -11,7 +11,6 @@ import {
 } from "@mui/material";
 import CustomTable from "@/app/(components)/mui-components/Table/customTable/index";
 import TableSkeleton from "@/app/(components)/mui-components/Skeleton/tableSkeleton";
-import CommonDatePicker from "@/app/(components)/mui-components/Text-Field's/Date-range-Picker/index";
 import Link from "next/link";
 import { IoEyeOutline } from "react-icons/io5";
 import { FaRegFileExcel } from "react-icons/fa";
@@ -30,7 +29,8 @@ const Charging = ({ value, eventLabel, fetchAllDetails }) => {
     ...(labelStatus === "Swapping"
       ? [`Currently ${labelStatus}`]
       : [`Currently ${labelStatus}`]),
-    labelStatus === "Swapping" ? "Total swapped" : "Total charged",
+    "Total charged",
+    labelStatus === "Swapping" && "Total swapped",
     "Unit consumed (kWh)",
     `Avg. ${labelStatus} time (hr.)`,
     labelStatus === "Swapping" && "Battery packs",
@@ -167,8 +167,9 @@ const Charging = ({ value, eventLabel, fetchAllDetails }) => {
         hubName: item?.name ?? "--",
         eTractorInQueue: item?.queue ?? "--",
         currentlyStatus: item?.currentlyCharging ?? "--",
-        total: item?.totalCharged ?? "--",
-        unitConsumed: item?.unitConsumed ?? "--",
+        totalCharged: item?.totalCharged ?? "--",
+        totalSwapped: labelStatus === "Swapping" && item?.totalSwapped,
+        unitConsumed: item?.unitConsumed?.toFixed(2) ?? "--",
         avgTime: item?.averageChargingTime ?? "--",
         batteryPacks: labelStatus === "Swapping" && (
           <Grid container key={index} width={250}>
@@ -200,7 +201,7 @@ const Charging = ({ value, eventLabel, fetchAllDetails }) => {
             <Grid item xs={6}>
               <Tooltip title="View">
                 <Link
-                  href={`/csManagement/${item._id}?tab=${item.type}&eventLabel=${label}`}
+                  href={`/csManagement/${item._id}?tab=${value}&eventLabel=${label}&name=${item?.name}`}
                 >
                   <IconButton size="small">
                     <IoEyeOutline color="rgba(14, 1, 71, 1)" />

@@ -24,8 +24,7 @@ const droDownButtons = [
 const Page = () => {
   const [value, setValue] = useState(0);
   const [open, setOpen] = useState(false);
-  const [tableData, setTableData] = useState(null);
-  const [overviewData, setOverviewData] = useState(null);
+
   const [page, setPage] = React.useState(0);
   const [loading, setLoading] = useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(25);
