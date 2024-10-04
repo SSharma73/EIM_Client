@@ -7,7 +7,7 @@ import DriverVehicle from "@/app/(components)/pages-component/CsManagement1/Driv
 import RevenueManagement from "@/app/(components)/pages-component/CsManagement1/Revenue";
 import ManagementGrid from "@/app/(components)/mui-components/Card";
 import AddTractor from "@/app/(components)/pages-component/CsManagement1/addTractor";
-import axiosInstance from "@/app/api/axiosInstanceImg";
+import axiosInstance from "@/app/api/axiosInstance";
 
 const CsManagement = () => {
   const [value, setValue] = useState(0);

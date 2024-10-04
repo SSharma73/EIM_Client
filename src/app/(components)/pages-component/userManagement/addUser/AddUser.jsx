@@ -39,7 +39,8 @@ export default function AddUser({ id, open, setOpen, handleTableData }) {
   };
   useEffect(() => {
     if (open) {
-      fetchRoles();0
+      fetchRoles();
+      0;
     }
   }, [open]);
   const handleRole = (e) => {

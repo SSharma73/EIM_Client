@@ -15,7 +15,7 @@ const ChargingId = ({ params }) => {
 
   const [page, setPage] = React.useState(0);
   const [loading, setLoading] = useState(false);
-  const [rowsPerPage, setRowsPerPage] = React.useState(25);
+  const [rowsPerPage, setRowsPerPage] = React.useState(10);
   const [deviceData, setDeviceData] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [data, setData] = useState(null);
@@ -55,18 +55,22 @@ const ChargingId = ({ params }) => {
     },
   ];
 
-  const fetchChargingHistory = async (startDate, endDate) => {
-    setLoading(true);
+  const fetchChargingHistory = async ({
+    page,
+    rowsPerPage,
+    startDate,
+    endDate,
+  }) => {
     try {
       const { data, status } = await axiosInstance.get(
         "charger/fetchChargingHistory",
         {
           params: {
+            page: page,
             limit: rowsPerPage,
-            page: page + 1,
             stationId: params.id,
-            startDate: startDate,
-            endDate: endDate,
+            startDate,
+            endDate,
           },
         }
       );
@@ -82,10 +86,11 @@ const ChargingId = ({ params }) => {
     const selectedEndDate = dateRange[0].endDate;
     setStartDate(selectedStartDate);
     setEndDate(selectedEndDate);
-    fetchChargingHistory(selectedStartDate, selectedEndDate);
+    fetchChargingHistory({ selectedStartDate, selectedEndDate });
   };
   useEffect(() => {
-    fetchChargingHistory();
+    const count = page + 1;
+    fetchChargingHistory({ count, rowsPerPage, startDate, endDate });
   }, [page, rowsPerPage, startDate, endDate]);
   const getFormattedData = (data) => {
     return data?.map((item) => ({
@@ -126,6 +131,7 @@ const ChargingId = ({ params }) => {
             loading={loading}
             getFormattedData={getFormattedData}
             getDataFromChildHandler={getDataFromChildHandler}
+            handleTableData={fetchChargingHistory}
           />
         ) : tabValue === "3" ? (
           <Table
@@ -142,6 +148,7 @@ const ChargingId = ({ params }) => {
             loading={loading}
             getFormattedData={getFormattedData}
             getDataFromChildHandler={getDataFromChildHandler}
+            handleTableData={fetchChargingHistory}
           />
         ) : null)}
     </Grid>

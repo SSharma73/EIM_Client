@@ -85,7 +85,7 @@ const CustomerManagement = () => {
         <Table
           page={page}
           setPage={setPage}
-          data={fetchAllDetails && fetchAllDetails?.result}
+          data={fetchAllDetails}
           deviceData={deviceData}
           rowsPerPage={rowsPerPage}
           setRowsPerPage={setRowsPerPage}

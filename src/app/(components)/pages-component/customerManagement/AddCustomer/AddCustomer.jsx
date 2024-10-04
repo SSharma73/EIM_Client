@@ -25,13 +25,18 @@ export default function AddUser({ id, open, setOpen, handleTableData }) {
   const methods = useForm();
   const { reset } = methods;
   const [file, setFile] = useState(null);
-  const [role, setRole] = useState(null);
-  const [selectedRole, setSelectedRole] = useState({ id: null, name: "" });
+  const [fetchDetails, setFetchDetails] = useState(null);
+  const [selectedSubscription, setSelectedSubscription] = useState({
+    id: null,
+    name: "",
+  });
   const [openComman, setOpenComman] = React.useState(false);
-  const fetchRoles = async () => {
+  const handleFetchDetails = async () => {
     try {
-      const { data } = await axiosInstance.get("role/fetchUserRoles");
-      setRole(data?.data?.result);
+      const { data } = await axiosInstance.get(
+        "subscription/fetchSubscriptions"
+      );
+      setFetchDetails(data?.data);
     } catch (error) {
       console.error("Error fetching customers:", error);
       throw error;
@@ -39,21 +44,25 @@ export default function AddUser({ id, open, setOpen, handleTableData }) {
   };
   useEffect(() => {
     if (open) {
-      fetchRoles();
-      0;
+      handleFetchDetails();
     }
   }, [open]);
-  const handleRole = (e) => {
+  const handleSubscription = (e) => {
     const selectedValue = e.target.value;
-    const selectedRole = role.find((item) => item._id === selectedValue);
-    if (selectedRole) {
-      setSelectedRole({ id: selectedRole._id, name: selectedRole.roleName });
+    const selectedField = fetchDetails.find(
+      (item) => item._id === selectedValue
+    );
+    if (selectedField) {
+      setSelectedSubscription({
+        id: selectedField._id,
+        name: selectedField.name,
+      });
     }
   };
   const handleClose = () => {
     reset();
     setFile();
-    setRole();
+    setFetchDetails();
     setOpen(false);
     setOpenComman(false);
   };
@@ -75,9 +84,12 @@ export default function AddUser({ id, open, setOpen, handleTableData }) {
       const body = {
         ...userData,
         customerId: id,
-        picture: ImgResponse.data?.data,
+        brandLogo: ImgResponse.data?.data,
       };
-      const { status, data } = await axiosInstance.post("/user/addUser", body);
+      const { status, data } = await axiosInstance.post(
+        "/customer/addCustomer",
+        body
+      );
       if (![200, 201].includes(status)) {
         notifyError("Failed to create user");
         return;
@@ -131,10 +143,10 @@ export default function AddUser({ id, open, setOpen, handleTableData }) {
             <DialogContent sx={{ padding: "1px 24px" }}>
               <CustomerDetails
                 file={file}
-                role={role}
                 setFile={setFile}
-                selectRole={selectedRole}
-                handleRole={handleRole}
+                fetchDetails={fetchDetails}
+                selectedSubscription={selectedSubscription}
+                handleSubscription={handleSubscription}
                 handleTableData={handleTableData}
               />
             </DialogContent>

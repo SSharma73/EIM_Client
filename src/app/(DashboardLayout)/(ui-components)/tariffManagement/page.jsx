@@ -1,23 +1,17 @@
 "use client";
 import ManagementGrid from "@/app/(components)/mui-components/Card";
-import {  Grid, Tab } from "@mui/material";
+import { Grid } from "@mui/material";
 import React, { useState, useEffect } from "react";
 import Table from "./table";
 import { useRouter } from "next/navigation";
-import { dummyTariff } from "@/app/(components)/table/rows";
+import axiosInstance from "@/app/api/axiosInstance";
 
 const TariffManagement = () => {
   const [page, setPage] = React.useState(0);
   const [loading, setLoading] = useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(25);
-  const [deviceData, setDeviceData] = useState([]);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [date, setDate] = useState(null);
-  const [data, setData] = useState(null);
+  const [fetchAllDetails, setFetchAllDetails] = useState(null);
 
-  const getDataFromChildHandler = (date, dataArr) => {
-    setDate(date);
-  };
   const router = useRouter();
 
   const breadcrumbItems = [
@@ -27,8 +21,30 @@ const TariffManagement = () => {
   const AddTariff = () => {
     router.push("/tariffManagement/createTariff");
   };
+
+  const fetchDetails = async ({ limit = 10, page = 1, search = "" } = {}) => {
+    try {
+      const params = new URLSearchParams({
+        limit,
+        page,
+        search,
+      });
+      const { data } = await axiosInstance.get(
+        `tariff/fetchTariffs?${params.toString()}`
+      );
+      setFetchAllDetails(data?.data);
+    } catch (error) {
+      console.error("Error fetching chargers:", error);
+      throw error;
+    }
+  };
+
   useEffect(() => {
-    setData(dummyTariff);
+    fetchDetails({
+      search: "",
+      limit: 10,
+      page: 1,
+    });
   }, []);
 
   return (
@@ -40,16 +56,13 @@ const TariffManagement = () => {
         handleClickOpen={AddTariff}
       />
       <Table
-        data={data}
-        deviceData={deviceData}
+        data={fetchAllDetails}
         rowsPerPage={rowsPerPage}
         setRowsPerPage={setRowsPerPage}
         page={page}
         setPage={setPage}
-        searchQuery={searchQuery}
-        setSearchQuery={setSearchQuery}
         loading={loading}
-        getDataFromChildHandler={getDataFromChildHandler}
+        handleTableData={fetchDetails}
       />
     </Grid>
   );

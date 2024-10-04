@@ -1,10 +1,9 @@
-import React from 'react'
-import {Button, Typography,Grid} from '@mui/material'
-import Papa from 'papaparse';
+import React from "react";
+import { Button, Typography, Grid } from "@mui/material";
+import Papa from "papaparse";
 import { FaRegFileExcel } from "react-icons/fa";
 
-export const CustomDownloadExcel = ({handleDownloadCSV, ...props}) => {
-  
+export const CustomDownloadExcel = ({ handleDownloadCSV, ...props }) => {
   // const handleDownloadCSV = () => {
   //   if (props?.rows != 0 ) {
   //     const csv = Papa.unparse(props.rows);
@@ -24,8 +23,18 @@ export const CustomDownloadExcel = ({handleDownloadCSV, ...props}) => {
   // };
   return (
     <>
-        { <Button variant='outlined' sx={{mr:1}} {...props} onClick={handleDownloadCSV} startIcon={<FaRegFileExcel />}     size="large">{props.name}</Button>
-        }
+      {
+        <Button
+          variant="outlined"
+          sx={{ mr: 1 }}
+          {...props}
+          onClick={handleDownloadCSV}
+          startIcon={<FaRegFileExcel />}
+          size="large"
+        >
+          {props.name}
+        </Button>
+      }
     </>
-  )
-}
+  );
+};

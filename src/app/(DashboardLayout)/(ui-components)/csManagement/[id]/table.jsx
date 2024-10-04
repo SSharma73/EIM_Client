@@ -17,13 +17,8 @@ const Table = ({
   setRowsPerPage,
   getDataFromChildHandler,
   getFormattedData,
+  handleTableData,
 }) => {
-  const getStatus = (str) => {
-    if (str?.toUpperCase() === "ACTIVE")
-      return { status: "ACTIVE", color: "customChip activeGreen" };
-    else return { status: "InActive", color: "customChip activeRed" };
-  };
-
   return (
     <Grid container mt={3}>
       <Grid
@@ -39,13 +34,17 @@ const Table = ({
       >
         <Grid item>
           <Typography variant="h3">{name}</Typography>
+          <Typography variant="subtitle1" mt={1}>
+            Showing {data?.result?.length ?? 0} out of{" "}
+            {data?.totalDocuments ?? 0} history
+          </Typography>
         </Grid>
         <Grid item className="customSearch">
           <Grid container>
             <Grid item mr={1}>
               <CustomDownloadExcel
                 name={"Download Excel"}
-                rows={data}
+                rows={data?.result}
                 data={"Fleet (121)"}
               />
             </Grid>
@@ -67,11 +66,12 @@ const Table = ({
         <CustomTable
           page={page}
           rows={getFormattedData(data?.result)}
-          count={data?.totalPage}
+          count={data?.totalDocuments}
           columns={columns}
           setPage={setPage}
           rowsPerPage={rowsPerPage}
           setRowsPerPage={setRowsPerPage}
+          handleTableData={handleTableData}
         />
       )}
     </Grid>

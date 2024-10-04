@@ -11,15 +11,10 @@ import {
 } from "@mui/material";
 import CustomTable from "@/app/(components)/mui-components/Table/customTable/index";
 import TableSkeleton from "@/app/(components)/mui-components/Skeleton/tableSkeleton";
-import CommonDatePicker from "@/app/(components)/mui-components/Text-Field's/Date-range-Picker/index";
-import { CustomDownloadExcel } from "@/app/(components)/mui-components/DownloadExcel/index";
-import Link from "next/link";
 import Papa from "papaparse";
 import { saveAs } from "file-saver";
 import { FaRegFileExcel } from "react-icons/fa";
 import { IoEyeOutline } from "react-icons/io5";
-import { MdDeleteOutline } from "react-icons/md";
-import { FaEdit } from "react-icons/fa";
 import { IoIosSearch } from "react-icons/io";
 
 import axiosInstance from "@/app/api/axiosInstance";
@@ -50,10 +45,6 @@ const Table = ({ type, fetchAllDetails, handleTableData }) => {
     };
   };
 
-  const handleOpenDialog = (id) => {
-    setId(id);
-    setOpenDialog(true);
-  };
   const handleExport = (data) => {
     if (!Array.isArray(data) || data.length === 0) {
       notifyError("No data available to export");

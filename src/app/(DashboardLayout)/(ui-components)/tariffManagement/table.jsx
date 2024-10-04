@@ -1,129 +1,100 @@
-"use client";
-import React, { useState, useEffect } from "react";
-import { Grid, Typography, Button } from "@mui/material";
+import React, { useState } from "react";
+import { Grid, Typography, Button, TextField, IconButton } from "@mui/material";
 import CustomTable from "@/app/(components)/mui-components/Table/customTable/index";
 import TableSkeleton from "@/app/(components)/mui-components/Skeleton/tableSkeleton";
-import CommonDatePicker from "@/app/(components)/mui-components/Text-Field's/Date-range-Picker/index";
 import Papa from "papaparse";
 import { saveAs } from "file-saver";
+import { IoIosSearch } from "react-icons/io";
 import { FaRegFileExcel } from "react-icons/fa";
 import ToastComponent, {
   notifyError,
   notifySuccess,
 } from "@/app/(components)/mui-components/Snackbar";
+import { IoEyeOutline } from "react-icons/io5";
+import { IoCloseCircle } from "react-icons/io5";
+import TariffPlan from "./viewTariffPlan";
 
-const columns = [
-  "Tariff ID",
-  "Tariff name ",
-  "Base rate",
-  "00:00 hr. - 06:00 hr. & 22:00 hr. - 24:00 hr.",
-  "06:00 hr. - 09:00 hr. & 12:00 hr. - 18:00 hr.",
-  "09:00 hr. -12:00 hr",
-  "18:00 hr. - 22:00 hr.",
-];
+const columns = ["Tariff ID", "Tariff name ", "Base rate", "Action"];
+
 const Table = ({
   data,
-  deviceData,
-  value,
   rowsPerPage,
   setRowsPerPage,
   page,
   setPage,
-  searchQuery,
-  setSearchQuery,
   loading,
-  getDataFromChildHandler,
+  handleTableData,
 }) => {
-  const [open, setOpenDialog] = React.useState(false);
-  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState(searchQuery);
+  const [open, setOpen] = useState(false);
+  const [selectedRow, setSelectedRow] = useState(null); // Store selected row data
 
-  useEffect(() => {
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
+  const handleSearchChange = (event) => {
+    const value = event.target.value;
+    setDebouncedSearchQuery(value);
+
     const handler = setTimeout(() => {
-      setSearchQuery(debouncedSearchQuery);
+      handleTableData({ search: value });
     }, 500);
+
     return () => {
       clearTimeout(handler);
     };
-  }, [debouncedSearchQuery, setSearchQuery]);
-
-  const handleSearchChange = (event) => {
-    setDebouncedSearchQuery(event.target.value);
   };
-
-  const handleOpenDialog = () => {
-    setOpenDialog(true);
-  };
-
-  const handleConfirm = () => {
-    handleCancel();
+  const clearSearch = () => {
+    setDebouncedSearchQuery("");
+    handleTableData({ search: "" });
   };
 
   const handleExport = (data) => {
-    console.log("Exporting data", data);
-
     if (!Array.isArray(data) || data.length === 0) {
       notifyError("No data available to export");
       return;
     }
-
     const modifiedData = data?.map((row) => ({
-      employeeId: row?.employeeId,
-      status: row?.status,
-      lastName: row?.lastName,
-      mobileNumber: row?.mobileNumber,
-      mobileNumber1: row?.mobileNumber1,
-      mobileNumber2: row?.mobileNumber2,
-      mobileNumber3: row?.mobileNumber3,
+      employeeId: row._id ?? "--",
+      name: row.name ?? "--",
+      baseRate: row.baseRate ?? "--",
     }));
-
     const csvData = [];
     const tableHeading = "All Tariff Data";
     csvData.push([[], [], tableHeading, [], []]);
     csvData.push([]);
-
-    const headerRow = [
-      "Tariff ID",
-      "Tariff name ID",
-      "Base Rate",
-      "00:00 hr. - 06:00 hr. & 22:00 hr. - 24:00 hr.",
-      "06:00 hr. - 09:00 hr. & 12:00 hr. - 18:00 hr.",
-      "09:00 hr. -12:00 hr",
-      "18:00 hr. - 22:00 hr.",
-    ];
+    const headerRow = ["Tariff ID", "Tariff name ID", "Base Rate"];
     csvData.push(headerRow);
 
     modifiedData.forEach((row) => {
-      const rowData = [
-        row?.employeeId,
-        row?.status,
-        row?.lastName,
-        row?.mobileNumber,
-        row?.mobileNumber1,
-        row?.mobileNumber2,
-        row?.mobileNumber3,
-      ];
+      const rowData = [row?.employeeId, row?.name, row?.baseRate];
       csvData.push(rowData);
     });
     const csvString = Papa.unparse(csvData);
     const blob = new Blob([csvString], { type: "text/csv;charset=utf-8" });
     saveAs(blob, "TariffData.csv");
-    notifySuccess("Download Excel Succefully");
+    notifySuccess("Download Excel Successfully");
   };
 
-  const handleCancel = () => {
-    setOpenDialog(false);
-  };
   const getFormattedData = (data) => {
-    console.log("data", data);
-    return data?.map((item, index) => ({
-      employeeId: item?.employeeId ?? "--",
-      status: item?.status ?? "--",
-      lastName: item?.lastName ?? "--",
-      mobileNumber: item?.mobileNumber ? item?.mobileNumber : "--",
-      mobileNumber1: item?.mobileNumber1 ? item?.mobileNumber1 : "--",
-      mobileNumber2: item?.mobileNumber2 ? item?.mobileNumber2 : "--",
-      mobileNumber3: item?.mobileNumber3 ? item?.mobileNumber3 : "--",
-    }));
+    return data?.map((item, index) => {
+      const actionComponent = (
+        <IconButton
+          size="small"
+          key={index}
+          onClick={() => {
+            setSelectedRow(item);
+            setOpen(true);
+          }}
+        >
+          <IoEyeOutline color="#fff" />
+        </IconButton>
+      );
+
+      return {
+        employeeId: item._id ? item._id.slice(0, 5) : "--",
+        name: item.name ?? "--",
+        baseRate: item.baseRate ?? "--",
+        Action: actionComponent,
+      };
+    });
   };
 
   return (
@@ -146,22 +117,37 @@ const Table = ({
         <Grid item className="customSearch">
           <Grid container>
             <Grid item mr={1}>
+              <TextField
+                size="medium"
+                value={debouncedSearchQuery}
+                onChange={handleSearchChange}
+                label={"Search"}
+                InputProps={{
+                  endAdornment: (
+                    <IconButton
+                      onClick={clearSearch}
+                      style={{
+                        visibility: debouncedSearchQuery ? "visible" : "hidden",
+                      }}
+                    >
+                      <IoCloseCircle color="white" />
+                    </IconButton>
+                  ),
+                }}
+              />
+            </Grid>
+            <Grid item mr={1}>
               <Button
                 variant="outlined"
                 sx={{ mr: 1 }}
                 onClick={() => {
-                  handleExport(data);
+                  handleExport(data?.result);
                 }}
                 startIcon={<FaRegFileExcel />}
                 size="large"
               >
                 Download Excel
               </Button>
-            </Grid>
-            <Grid item mr={1}>
-              <CommonDatePicker
-                getDataFromChildHandler={getDataFromChildHandler}
-              />
             </Grid>
           </Grid>
         </Grid>
@@ -173,15 +159,20 @@ const Table = ({
           actions={new Array(2).fill(0)}
         />
       ) : (
-        <CustomTable
-          page={page}
-          rows={getFormattedData(data)}
-          count={data?.length}
-          columns={columns}
-          setPage={setPage}
-          rowsPerPage={rowsPerPage}
-          setRowsPerPage={setRowsPerPage}
-        />
+        <>
+          <CustomTable
+            page={page}
+            columns={columns}
+            setPage={setPage}
+            rowsPerPage={rowsPerPage}
+            setRowsPerPage={setRowsPerPage}
+            count={data?.totalDocuments ?? 0}
+            rows={getFormattedData(data?.result)}
+          />
+          {open && (
+            <TariffPlan rows={selectedRow} open={open} setOpen={setOpen} />
+          )}
+        </>
       )}
     </Grid>
   );

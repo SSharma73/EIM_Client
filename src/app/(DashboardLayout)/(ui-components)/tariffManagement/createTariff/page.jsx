@@ -1,7 +1,7 @@
 "use client";
-import ManagementGrid from "@/app/(components)/mui-components/Card";
-import { Grid, TextField, Typography, Button } from "@mui/material";
 import React, { useState, useEffect } from "react";
+import { Grid, TextField, Typography, Button } from "@mui/material";
+import ManagementGrid from "@/app/(components)/mui-components/Card";
 import styled from "@emotion/styled";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
@@ -26,8 +26,6 @@ const TimeSlot = ({
   adjustment,
   onAdjustmentChange,
 }) => {
-  const finalRate = Number(baseRate) + Number(adjustment);
-
   return (
     <Grid container pt={2} sx={{ alignItems: "center" }}>
       <Grid item md={4} sm={4} xs={12}>
@@ -36,23 +34,17 @@ const TimeSlot = ({
       <Grid item md={4} sm={4} xs={12}>
         <TextField
           type="number"
-          value={adjustment === 0 ? baseRate : adjustment}
+          value={adjustment}
           onChange={(e) => onAdjustmentChange(startTime, e.target.value)}
           placeholder="Adjustment"
         />
       </Grid>
       <Grid item md={4} sm={4} xs={12}>
-        <Typography>{finalRate.toFixed(2)}</Typography>
+        <Typography>{adjustment}</Typography>
       </Grid>
     </Grid>
   );
 };
-
-const breadcrumbItems = [
-  { label: "Dashboard", link: "/" },
-  { label: "Tariff-Management", link: "/tariffManagement" },
-  { label: "Create-Tariff", link: "/tariffManagement/createTariff" },
-];
 
 const CreateTariff = () => {
   const router = useRouter();
@@ -66,7 +58,11 @@ const CreateTariff = () => {
 
   const handleAdjustmentChange = (hour, value) => {
     const newAdjustments = [...adjustments];
-    newAdjustments[hour] = value;
+    const parsedValue = Number(value);
+    // Ensure only to add new adjustment values, not replace them
+    if (!isNaN(parsedValue)) {
+      newAdjustments[hour] = parsedValue; // Update the adjustment for the specific hour
+    }
     setAdjustments(newAdjustments);
   };
 
@@ -109,7 +105,11 @@ const CreateTariff = () => {
       notifyError(error?.response?.data?.msg || "Failed to fetch data");
     }
   };
-
+  const breadcrumbItems = [
+    { label: "Dashboard", link: "/" },
+    { label: "Tariff-Management", link: "/tariffManagement" },
+    { label: "Create-Tariff", link: "/tariffManagement/createTariff" },
+  ];
   return (
     <Grid container rowGap={2}>
       <ToastComponent />
@@ -140,7 +140,7 @@ const CreateTariff = () => {
             helperText={errors.baseRate?.message}
             onChange={(e) => setBaseRate(e.target.value)}
           />
-        </Grid>{" "}
+        </Grid>
         <Grid item md={2} sm={4} xs={12}>
           <Typography>{baseRate}</Typography>
         </Grid>
@@ -156,8 +156,8 @@ const CreateTariff = () => {
               adjustment={adjustments[slot.start]}
               onAdjustmentChange={handleAdjustmentChange}
             />
-          ))}{" "}
-        </Grid>{" "}
+          ))}
+        </Grid>
       </CustomGrid>
       <Grid container justifyContent={"flex-end"} columnGap={2} mr={3}>
         <Button

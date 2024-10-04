@@ -15,7 +15,13 @@ import {
 } from "@mui/material";
 import { useFormContext, Controller } from "react-hook-form";
 
-const UserDetails = ({ file, setFile, role, selectRole, handleRole }) => {
+const UserDetails = ({
+  file,
+  setFile,
+  fetchDetails,
+  selectedSubscription,
+  handleSubscription,
+}) => {
   const {
     control,
     setValue,
@@ -108,35 +114,35 @@ const UserDetails = ({ file, setFile, role, selectRole, handleRole }) => {
             />
             <Controller
               control={control}
-              name="contactPerson"
+              name="name"
               rules={{ required: "Contact person name is required!" }}
               render={({ field }) => (
                 <TextField
-                  id="contactPerson"
+                  id="name"
                   fullWidth
                   placeholder="Enter Contact Person Name"
                   type="text"
                   {...field}
                   sx={{ mt: 3 }}
-                  error={!!errors.contactPerson}
-                  helperText={errors.contactPerson?.message}
+                  error={!!errors.name}
+                  helperText={errors.name?.message}
                 />
               )}
             />
             <Controller
               control={control}
-              name="addressLine1"
+              name="line1"
               rules={{ required: "Address line 1 is required!" }}
               render={({ field }) => (
                 <TextField
-                  id="addressLine1"
+                  id="line1"
                   fullWidth
                   placeholder="Enter Address Line 1"
                   type="text"
                   {...field}
                   sx={{ mt: 3 }}
-                  error={!!errors.addressLine1}
-                  helperText={errors.addressLine1?.message}
+                  error={!!errors.line1}
+                  helperText={errors.line1?.message}
                 />
               )}
             />
@@ -209,10 +215,10 @@ const UserDetails = ({ file, setFile, role, selectRole, handleRole }) => {
             />
             <Controller
               control={control}
-              name="addressLine2"
+              name="line2"
               render={({ field }) => (
                 <TextField
-                  id="addressLine2"
+                  id="line2"
                   fullWidth
                   placeholder="Enter Address Line 2"
                   type="text"
@@ -290,32 +296,34 @@ const UserDetails = ({ file, setFile, role, selectRole, handleRole }) => {
           </InputLabel>
           <Controller
             control={control}
-            name="role"
-            rules={{ required: "Role is required!" }}
+            name="subscription"
+            rules={{ required: "subscription is required!" }}
             render={({ field }) => (
               <Select
                 {...field}
-                value={selectRole?.id}
+                value={selectedSubscription?.id}
                 label="Select subscription"
                 labelId="demo-simple-select-label"
                 id="demo-simple-select"
                 sx={{ mt: 1 }}
-                error={errors.role}
+                error={errors.subscription}
                 onChange={(e) => {
                   field.onChange(e);
-                  handleRole(e);
+                  handleSubscription(e);
                 }}
               >
-                {role &&
-                  role.map((item, index) => (
+                {fetchDetails &&
+                  fetchDetails.map((item, index) => (
                     <MenuItem key={index} value={item._id}>
-                      {item.roleName}
+                      {item.name}
                     </MenuItem>
                   ))}
               </Select>
             )}
           />
-          <FormHelperText>{errors.role && errors.role.message}</FormHelperText>
+          <FormHelperText>
+            {errors.subscription && errors.subscription.message}
+          </FormHelperText>
         </FormControl>
       </Grid>
     </>

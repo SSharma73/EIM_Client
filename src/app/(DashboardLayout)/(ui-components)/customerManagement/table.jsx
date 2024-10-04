@@ -64,88 +64,53 @@ const Table = ({
       return;
     }
 
-    const modifiedData = data?.map((row) => ({
-      portId: row?.portId,
-      name: row?.name,
-      regionName: row?.regionName,
-      customer: row?.customer?.userName,
-      tariff: row?.tariff?.name,
-    }));
-
     const csvData = [];
     const tableHeading = "All Customer Management Data";
     csvData.push([[], [], tableHeading, [], []]);
     csvData.push([]);
 
-    const headerRow = [
-      "Port ID",
-      "Port name ",
-      "Port location",
-      "Customer",
-      "Tariff",
-    ];
+    const headerRow = type === "Customer" ? columns : columns2;
+
     csvData.push(headerRow);
 
-    modifiedData.forEach((row) => {
-      const rowData = [
-        row?.portId,
-        row?.name,
-        row?.regionName,
-        row?.customer,
-        row?.tariff,
-      ];
+    data.forEach((item) => {
+      const rowData =
+        type === "Customer"
+          ? [
+              item?.brandLogo ?? "--",
+              item?.brandName ?? "--",
+              item?.adminUser?.name ?? "--",
+              item?.adminUser?.email ?? "--",
+              item?.adminUser?.phone ?? "--",
+              item?.brandAddress?.line1 ?? "--",
+              item?.brandAddress?.city ?? "--",
+              item?.brandAddress?.state ?? "--",
+              item?.brandAddress?.pincode ?? "--",
+              item?.brandAddress?.country ?? "--",
+            ]
+          : [
+              item?.name ?? "--",
+              item?.address?.line1 ?? "--",
+              item?.customerId?.brandName ?? "--",
+              item?.tariff?.name ?? "--",
+            ];
       csvData.push(rowData);
     });
+
     const csvString = Papa.unparse(csvData);
     const blob = new Blob([csvString], { type: "text/csv;charset=utf-8" });
-    saveAs(blob, "CustomerMamagementData.csv");
-    notifySuccess("Download Excel Successfuly");
+    saveAs(blob, "CustomerManagementData.csv");
+    notifySuccess("Download Excel Successfully");
   };
 
-  const handleConfirm = () => {
-    handleCancel();
-  };
-  const handleCancel = () => {
-    setOpenDialog(false);
-  };
-  const handleClickTarif = () => {
-    router.push("/tariffManagement/createTariff");
-  };
   const getFormattedData = (data) => {
     return data?.map((item, index) => {
-      // portId: (
-      //   <Box>
-      //     <span>{item?.portId}</span>
-      //     <Box
-      //       component="span"
-      //       sx={{
-      //         display: "inline-block",
-      //         width: "10px",
-      //         height: "10px",
-      //         borderRadius: "50%",
-      //         backgroundColor: item.color,
-      //         marginLeft: "10px",
-      //       }}
-      //     />
-      //   </Box>
-      // ),
-      // name: item?.name ?? "--",
-      // regionName: item?.regionName ? item?.regionName : "--",
-      // customer: item?.customer?.userName ? item?.customer?.userName : "--",
-      // tariff: (
-      //   <Chip
-      //     label={item?.tariff?.name ? item?.tariff?.name : "--"}
-      //     color="primary"
-      //     onClick={handleClickTarif}
-      //   />
-      // ),
-
       const actionComponent = (
-        <Grid container justifyContent="center" spacing={2} key={index}>
+        <Grid container justifyContent={"center"} spacing={2} key={index}>
           <Chip
-            label={item?.tariff?.name ? item?.tariff?.name : "--"}
+            sx={{ mt: 2 }}
+            label={item?.tariff?.name || item?.subscription?.name || "--"}
             color="primary"
-            onClick={handleClickTarif}
           />
         </Grid>
       );
@@ -156,7 +121,6 @@ const Table = ({
           "Brand name": item?.brandName ?? "--",
           "Customer name": item?.adminUser?.name ?? "--",
           Email: item?.adminUser?.email ?? "--",
-
           Phone: item?.adminUser?.phone ?? "--",
           Address: item?.brandAddress?.line1 ?? "--",
           City: item?.brandAddress?.city ?? "--",
@@ -201,7 +165,7 @@ const Table = ({
                 variant="outlined"
                 sx={{ mr: 1 }}
                 onClick={() => {
-                  handleExport(data?.data);
+                  handleExport(data?.result);
                 }}
                 startIcon={<FaRegFileExcel />}
                 size="large"
@@ -221,7 +185,7 @@ const Table = ({
       ) : (
         <CustomTable
           page={page}
-          rows={getFormattedData(data)}
+          rows={getFormattedData(data?.result)}
           count={data?.totalDocuments}
           columns={type === "Customer" ? columns : columns2}
           setPage={setPage}

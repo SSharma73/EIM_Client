@@ -1,10 +1,19 @@
 "use client";
 import ManagementGrid from "@/app/(components)/mui-components/Card";
-import { Grid, TextField, Typography, Button } from "@mui/material";
-import React,{useState} from "react";
+import {
+  Grid,
+  TextField,
+  Typography,
+  Button,
+  FormHelperText,
+} from "@mui/material";
+import React, { useState, useEffect } from "react";
 import styled from "@emotion/styled";
 import Map from "@/app/(components)/map/map";
 import Autocomplete from "@mui/material/Autocomplete";
+import axiosInstance from "@/app/api/axiosInstance";
+import { useForm } from "react-hook-form";
+import { useRouter } from "next/navigation";
 
 const CustomGrid = styled(Grid)(({ theme }) => ({
   padding: theme.spacing(2),
@@ -13,27 +22,7 @@ const CustomGrid = styled(Grid)(({ theme }) => ({
   color: "#fff",
 }));
 
-const iconUrls = [
-  { icon: "/truck1.svg", color: "blue" },
-  { icon: "/truck2.svg", color: "red" },
-  { icon: "/truck3.svg", color: "green" },
-  { icon: "/truck4.svg", color: "skyblue" },
-];
-// const coordinate = [
-//   { lat: "28.51079782059423", log: "77.40362813493975" },
-//   { lat: "28.510404514720925", log: "77.40712974097106" },
-//   { lat: "28.512297585971584", log: "77.40356012099012" },
-//   { lat: "28.510728275696316", log: "77.40199688895548" },
-//   { lat: "28.511107212816803", log: "77.4063730115565" },
-//   { lat: "28.512937158827324", log: "77.41783963937374" },
-// ];
-const buttonData = [
-  { label: "Offline", color: "red" },
-  { label: "Charging", color: "green" },
-  { label: "Trip", color: "blue" },
-  { label: "Parked", color: "skyblue" },
-];
-const FieldSection = ({ placeholder }) => (
+const FieldSection = ({ placeholder, register, name, error }) => (
   <Grid
     item
     md={4}
@@ -41,11 +30,16 @@ const FieldSection = ({ placeholder }) => (
     xs={12}
     sx={{ display: "flex", flexDirection: "column", gap: 4 }}
   >
-    <TextField placeholder={placeholder} />
+    <TextField
+      placeholder={placeholder}
+      {...register(name, { required: "This field is required." })}
+      error={!!error}
+    />
+    {error && <FormHelperText error>{error.message}</FormHelperText>}
   </Grid>
 );
 
-const AutoCompleteSection = ({ label, options }) => (
+const AutoCompleteSection = ({ label, options, register, name, error }) => (
   <Grid
     item
     md={4}
@@ -55,148 +49,208 @@ const AutoCompleteSection = ({ label, options }) => (
   >
     <Autocomplete
       disablePortal
-      id="combo-box-demo"
+      size="medium"
+      id={`${name}-autocomplete`}
       options={options}
-      fullWidth
-      renderInput={(params) => <TextField {...params} label={label} />}
+      getOptionLabel={(option) => {
+        if (name === "customerId") {
+          return option.brandName || "";
+        }
+        if (name === "tariffId") {
+          return option.name || "";
+        }
+        return "";
+      }}
+      onChange={(event, value) => {
+        register(name).onChange(value ? value._id : "");
+      }}
+      renderInput={(params) => (
+        <>
+          <TextField
+            {...params}
+            label={label}
+            error={!!error}
+            helperText={error ? error.message : ""}
+          />
+        </>
+      )}
     />
   </Grid>
 );
+
 const breadcrumbItems = [
   { label: "Dashboard", link: "/" },
   { label: "Customer-Management", link: "/customerManagement" },
   { label: "Add-Port", link: "/customerManagement/addPort" },
 ];
+
 const AddPort = () => {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
+  const router = useRouter();
   const [activeMarker, setActiveMarker] = useState(null);
-  const [icons, setIcons] = useState(null);
+  const [customers, setCustomers] = useState([]);
+  const [tariffs, setTariffs] = useState([]);
 
   const handleMapData = (index, point) => {
-    console.log("point", index, point);
     setActiveMarker(index);
-    setIcons(point);
+    // Set latitude and longitude
+    register("location.latitude").onChange(point.latitude);
+    register("location.longitude").onChange(point.longitude);
   };
-  const onClose = () => {
-    setActiveMarker(null);
+
+  const fetchCustomers = async () => {
+    try {
+      const { data } = await axiosInstance.get(
+        "customer/fetchCustomers?select=_id brandName"
+      );
+      setCustomers(data?.data?.result || []);
+    } catch (error) {
+      console.error("Error fetching customers:", error);
+    }
   };
+
+  const fetchTariffs = async () => {
+    try {
+      const { data } = await axiosInstance.get(
+        `tariff/fetchTariffs?select=_id name`
+      );
+      setTariffs(data?.data?.result || []);
+    } catch (error) {
+      console.error("Error fetching tariffs:", error);
+    }
+  };
+
+  const onSubmit = async (data) => {
+    // Constructing the location object correctly
+    const { latitude, longitude, ...rest } = data;
+
+    const payload = {
+      ...rest,
+      location: {
+        latitude: parseFloat(latitude),
+        longitude: parseFloat(longitude),
+      },
+    };
+
+    try {
+      const { status } = await axiosInstance.post("/port/addPort", payload);
+      if (status === 200) {
+        router.push("/customerManagement");
+      }
+    } catch (error) {
+      console.error("Error adding port:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchCustomers();
+    fetchTariffs();
+  }, []);
+
   return (
-    <Grid container rowGap={2}>
+    <Grid
+      container
+      rowGap={2}
+      component="form"
+      onSubmit={handleSubmit(onSubmit)}
+    >
       <ManagementGrid breadcrumbItems={breadcrumbItems} moduleName="Add Port" />
       <CustomGrid container rowGap={3} columnGap={5}>
-        <Grid
-          item
-          md={4}
-          xs={12}
-          sm={6}
-          sx={{ display: "flex", flexDirection: "column", gap: 4 }}
-        >
-          <TextField label="Location name" placeholder="Enter location name" />
-        </Grid>
+        <Typography variant="h4">Mark Position</Typography>
         <Grid item xs={12} height="380px">
-        <Map
+          <Map
             handleMapData={handleMapData}
-            iconUrls={iconUrls}
             activeMarker={activeMarker}
             setActiveMarker={setActiveMarker}
-            onClose={onClose}
           />
         </Grid>
-        <Grid
-          item
-          md={2}
-          xs={12}
-          sm={6}
-          sx={{ display: "flex", flexDirection: "column", gap: 4 }}
-        >
-          <TextField type="text" placeholder="Enter location name" />
-        </Grid>
-        <Grid container rowGap={3} columnGap={5}>
-          <FieldSection placeholder="Region name (Auto-fill)" />
-          <FieldSection placeholder="Location name (Auto-fill)" />
-          <Grid
-            item
-            md={2}
-            xs={12}
-            sm={6}
-            sx={{ display: "flex", flexDirection: "column", gap: 4 }}
-          >
-            <TextField placeholder="Port name (Auto-fill)" />
-          </Grid>
-          <FieldSection placeholder="Pin code (Auto-fill)" />
-          <FieldSection placeholder="State (Auto-fill)" />
-          <Grid
-            item
-            md={2}
-            xs={12}
-            sm={6}
-            sx={{ display: "flex", flexDirection: "column", gap: 4 }}
-          >
-            <TextField placeholder="District (Auto-fill)" />
-          </Grid>
-          <AutoCompleteSection label="Select user" options={user} />
-          <AutoCompleteSection label="Select tariff" options={Region} />
-          <Grid
-            item
-            md={2}
-            xs={12}
-            sm={6}
-            sx={{ display: "flex", flexDirection: "column", gap: 4 }}
-          >
-            <Autocomplete
-              disablePortal
-              id="combo-box-demo"
-              options={tarif}
-              fullWidth
-              renderInput={(params) => (
-                <TextField {...params} label="Assign E-tractor" />
-              )}
-            />
-          </Grid>
+        <Grid container spacing={2}>
+          <FieldSection
+            placeholder="Port name (Auto-fill)"
+            register={register}
+            name="name"
+            error={errors.name}
+          />
+          <FieldSection
+            placeholder="Address line 1 (Auto-fill)"
+            register={register}
+            name="line1"
+            error={errors.line1}
+          />
+          <FieldSection
+            placeholder="Address line 2 (Auto-fill)"
+            register={register}
+            name="line2"
+            error={errors.line2}
+          />
+          <FieldSection
+            placeholder="Pin code (Auto-fill)"
+            register={register}
+            name="pincode"
+            error={errors.pincode}
+          />
+          <FieldSection
+            placeholder="District (Auto-fill)"
+            register={register}
+            name="city"
+            error={errors.city}
+          />
+          <FieldSection
+            placeholder="State (Auto-fill)"
+            register={register}
+            name="state"
+            error={errors.state}
+          />
+          <FieldSection
+            placeholder="Country (Auto-fill)"
+            register={register}
+            name="country" // Added field for country
+            error={errors.country}
+          />
+          {/* Latitude and Longitude Fields */}
+          <FieldSection
+            placeholder="Latitude (Auto-fill)"
+            register={register}
+            name="latitude"
+            error={errors?.latitude}
+          />
+          <FieldSection
+            placeholder="Longitude (Auto-fill)"
+            register={register}
+            name="longitude"
+            error={errors?.longitude}
+          />
+
+          <AutoCompleteSection
+            label="Select customer"
+            options={customers}
+            register={register}
+            name="customerId"
+            error={errors.customerId}
+          />
+          <AutoCompleteSection
+            label="Select tariff"
+            options={tariffs}
+            register={register}
+            name="tariffId"
+            error={errors.tariffId}
+          />
         </Grid>
       </CustomGrid>
       <Grid container justifyContent={"flex-end"} columnGap={2}>
-        <Button variant="outlined">Cancel</Button>
-        <Button variant="contained">Submit</Button>
+        <Button variant="outlined" type="button">
+          Cancel
+        </Button>
+        <Button variant="contained" type="submit">
+          Submit
+        </Button>
       </Grid>
     </Grid>
   );
 };
 
 export default AddPort;
-
-const user = [
-  { label: "k.m", year: 1994 },
-  { label: "birla", year: 1972 },
-  { label: "huntmount", year: 1974 },
-  { label: "Dark", year: 2008 },
-  { label: "samay", year: 1957 },
-  { label: "robert", year: 1993 },
-  { label: "kim", year: 1994 },
-  {
-    label: "huikey",
-    year: 2003,
-  },
-];
-
-const Region = [
-  { label: "tariff 1", year: 1994 },
-  { label: "tariff 2", year: 1972 },
-  { label: "tariff 3", year: 1974 },
-  { label: "tariff 4", year: 2008 },
-  { label: "tariff 5", year: 1957 },
-  { label: "tariff 6", year: 1993 },
-  { label: "tariff 7", year: 1994 },
-  {
-    label: "tariff 8",
-    year: 2003,
-  },
-];
-const tarif = [
-  { label: "E-tractor1", year: 1994 },
-  { label: "E-tractor2", year: 1972 },
-  { label: "E-tractor3", year: 1974 },
-  { label: "E-tractor4", year: 2008 },
-  { label: "E-tractor5", year: 1957 },
-  { label: "E-tractor6", year: 1993 },
-  { label: "E-tractor7", year: 1994 },
-];
