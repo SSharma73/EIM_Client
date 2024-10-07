@@ -73,6 +73,7 @@ const AuthLogin = ({ title, subtitle }) => {
           notifySuccess(response?.data?.message);
         }
         localStorage.setItem("token", response?.data?.data?.token);
+        localStorage.setItem("userId", response?.data?.data?.user?._id);
       }
     } catch (error) {
       notifyError(error?.response?.data?.message);

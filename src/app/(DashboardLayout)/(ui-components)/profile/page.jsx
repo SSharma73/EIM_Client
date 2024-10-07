@@ -1,41 +1,36 @@
 "use client";
 import ManagementGrid from "@/app/(components)/mui-components/Card";
 import React, { useEffect, useState } from "react";
-import { Avatar, Button, Grid, TextField, Typography } from "@mui/material";
+import { Avatar, Grid, Typography } from "@mui/material";
 import Image from "next/image";
 import ProfilePic from "../../../../../public/Img/profilepic.svg";
 import { CustomGrid } from "@/app/(components)/mui-components/CustomGrid";
-import { useRouter } from "next/navigation";
-import { useForm } from "react-hook-form";
 import axiosInstance from "@/app/api/axiosInstance";
 
 const breadcrumbItems = [
   { label: "Dashboard", link: "/" },
   { label: "Profile", link: "/profile" },
 ];
+
 const Settings = () => {
-  const router = useRouter();
-  const { register, handleSubmit, formState, reset, getValues } = useForm();
-  const { errors } = formState;
   const [data, setData] = useState(null);
-  const handleClick = () => {
-    router.push("/profile/edit");
-    console.log("khgj.dfg");
-  };
-  const onSubmit = async () => {
+
+  const fetchUserById = async () => {
+    const userId = localStorage.getItem("userId");
     try {
-      const res = await axiosInstance.get("/auth/myProfile");
-      if (res?.status === 200 || res?.status === 201) {
-        console.log("res", res);
-        setData(res?.data?.data);
-      }
+      const { data: responseData } = await axiosInstance.get(
+        `user/fetchUserById/${userId}`
+      );
+      setData(responseData?.data); // Update this based on your response structure
     } catch (error) {
-      console.log(error);
+      console.error("Error fetching user by ID:", error);
     }
   };
+
   useEffect(() => {
-    onSubmit();
+    fetchUserById();
   }, []);
+
   return (
     <Grid container rowGap={2} position={"relative"}>
       <ManagementGrid
@@ -50,15 +45,10 @@ const Settings = () => {
                 <Image src={ProfilePic} />
               </Avatar>
             </Grid>
-            {/* <Grid item>
-                <Button variant="contained" size="large" onClick={handleClick}>
-                  Change Password
-                </Button>
-              </Grid> */}
           </Grid>
           <Grid container rowGap={4} pl={2} mt={4} mb={2}>
             <Grid item md={5} xs={12} sm={6}>
-              <Typography>Username</Typography>
+              <Typography>Name</Typography>
             </Grid>
             <Grid item md={3} xs={12} sm={6}>
               <Typography
@@ -66,15 +56,14 @@ const Settings = () => {
                 sx={{
                   border: "1px solid #ddd",
                   borderRadius: "10px",
-                  color: "#fff",
                   padding: "10px",
                 }}
               >
-                {data?.userName}
+                {data?.name}
               </Typography>
             </Grid>
             <Grid item md={5} xs={12} sm={6}>
-              <Typography>Phone number</Typography>
+              <Typography>Email</Typography>
             </Grid>
             <Grid item md={3} xs={12} sm={6}>
               <Typography
@@ -82,15 +71,14 @@ const Settings = () => {
                 sx={{
                   border: "1px solid #ddd",
                   borderRadius: "10px",
-                  color: "#fff",
                   padding: "10px",
                 }}
               >
-                {data?.mobileNumber}
+                {data?.email}
               </Typography>
             </Grid>
             <Grid item md={5} xs={12} sm={6}>
-              <Typography>Email address</Typography>
+              <Typography>Phone Number</Typography>
             </Grid>
             <Grid item md={3} xs={12} sm={6}>
               <Typography
@@ -98,59 +86,10 @@ const Settings = () => {
                 sx={{
                   border: "1px solid #ddd",
                   borderRadius: "10px",
-                  color: "#fff",
                   padding: "10px",
                 }}
               >
-                {data?.emailId}
-              </Typography>
-            </Grid>
-            <Grid item md={5} xs={12} sm={6}>
-              <Typography>address</Typography>
-            </Grid>
-            <Grid item md={3} xs={12} sm={6}>
-              <Typography
-                fullWidth
-                sx={{
-                  border: "1px solid #ddd",
-                  borderRadius: "10px",
-                  color: "#fff",
-                  padding: "10px",
-                }}
-              >
-                {data?.address}
-              </Typography>
-            </Grid>
-            <Grid item md={5} xs={12} sm={6}>
-              <Typography>Role</Typography>
-            </Grid>
-            <Grid item md={3} xs={12} sm={6}>
-              <Typography
-                fullWidth
-                sx={{
-                  border: "1px solid #ddd",
-                  borderRadius: "10px",
-                  color: "#fff",
-                  padding: "10px",
-                }}
-              >
-                {data?.role}
-              </Typography>
-            </Grid>
-            <Grid item md={5} xs={12} sm={6}>
-              <Typography>Level</Typography>
-            </Grid>
-            <Grid item md={3} xs={12} sm={6}>
-              <Typography
-                fullWidth
-                sx={{
-                  border: "1px solid #ddd",
-                  borderRadius: "10px",
-                  color: "#fff",
-                  padding: "10px",
-                }}
-              >
-                {data?.level}
+                {data?.phone}
               </Typography>
             </Grid>
           </Grid>
