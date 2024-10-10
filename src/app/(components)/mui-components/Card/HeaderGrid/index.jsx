@@ -98,7 +98,6 @@ const HeaderGrid = ({
   };
   const handleClick = (item) => {
     setButtonType(item);
-    handleTableData({ role: item });
   };
   return (
     <>

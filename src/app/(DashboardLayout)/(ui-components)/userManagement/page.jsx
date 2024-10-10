@@ -36,9 +36,10 @@ const UserManagement = () => {
       };
       setCustomers(result);
       if (result.menuItems.length > 0) {
+        const defaultCustomer = result.menuItems[0];
         setCustomerItems({
-          id: result.menuItems[0].id,
-          label: result.menuItems[0].label,
+          id: defaultCustomer.id,
+          label: defaultCustomer.label,
         });
       }
     } catch (error) {
@@ -46,13 +47,12 @@ const UserManagement = () => {
       throw error;
     }
   };
-
+  console.log("Check buttonType", buttonType);
   const handleTableData = async ({
     search = "",
     limit = 10,
     page = 1,
     customerId = customerItems && customerItems?.id,
-    role,
   } = {}) => {
     try {
       const params = new URLSearchParams({
@@ -61,8 +61,8 @@ const UserManagement = () => {
         page,
         customerId,
       });
-      const Type = role ?? "User";
-      const Url = Type == "User" ? "user/fetchUsers" : "role/fetchUserRoles";
+      const Url =
+        buttonType === "Roles" ? "role/fetchUserRoles" : "user/fetchUsers";
       const { status, data } = await axiosInstance.get(
         `${Url}?${params.toString()}`
       );
@@ -81,14 +81,16 @@ const UserManagement = () => {
       ...prev,
       [label]: item,
     }));
+    handleTableData();
   };
-
   useEffect(() => {
     fetchCustomers();
-    if (customerId) {
+  }, []);
+  useEffect(() => {
+    if (customerId && buttonType) {
       handleTableData();
     }
-  }, [customerId]);
+  }, [customerId, buttonType]);
   const breadcrumbItems = [
     { label: "Dashboard", link: "/" },
     { label: "User-Management", link: "/userManagement" },
@@ -119,6 +121,7 @@ const UserManagement = () => {
         setButtonType={setButtonType}
         selectedItems={selectedItems}
         setSelectedItems={setSelectedItems}
+        setFetchAllDetails={setFetchAllDetails}
         button={buttonType === "User" ? "Add User" : "Add Role"}
         handleClickOpen={handleOpen}
         CustomButtonGroup={tabLabel}

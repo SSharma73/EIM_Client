@@ -113,7 +113,6 @@ const Table = ({ type, fetchAllDetails, handleTableData }) => {
   };
   const getFormattedData = (data) => {
     return data?.map((item, index) => {
-      // Define common Action component
       const actionComponent = (
         <Grid container justifyContent="center" spacing={2} key={index}>
           <Grid item>
