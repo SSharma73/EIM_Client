@@ -37,7 +37,9 @@ const CustomerManagement = () => {
       });
       const Type = role ?? "Customer";
       const Url =
-        Type == "Customer" ? "customer/fetchCustomers" : "port/fetchPorts";
+        buttonType == "Customer"
+          ? "customer/fetchCustomers"
+          : "port/fetchPorts";
       const { status, data } = await axiosInstance.get(
         `${Url}?${params.toString()}`
       );
@@ -58,8 +60,10 @@ const CustomerManagement = () => {
     { label: "Customer-Management", link: "/customerManagement" },
   ];
   useEffect(() => {
-    handleTableData();
-  }, []);
+    if (buttonType) {
+      handleTableData();
+    }
+  }, [buttonType]);
   const TabPanelList = [{ component: "" }];
   return (
     <>
