@@ -42,8 +42,10 @@ const Page = () => {
     setDate(date);
   };
   const handleChange = (event, newValue) => {
+
     setValue(newValue);
     setTabsValue(tabs[newValue].label);
+    
   };
   useEffect(() => {
     if (customerId) {

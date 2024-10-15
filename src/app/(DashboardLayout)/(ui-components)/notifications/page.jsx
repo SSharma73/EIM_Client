@@ -12,7 +12,7 @@ const breadcrumbItems = [
 
 const Page = () => {
   const tabs = [
-    { label: `All ` },
+    { label: `All` },
     { label: "Pending" },
     { label: "Approved" },
     { label: "Rejected" },
@@ -43,7 +43,9 @@ const Page = () => {
   };
 
   useEffect(() => {
-    getData(tabsValue);
+    if (tabsValue) {
+      getData(tabsValue);
+    }
   }, [tabsValue]);
   return (
     <Grid container>
@@ -56,7 +58,7 @@ const Page = () => {
         handleChange={handleChange}
       />
       <Grid container>
-        <Read data={data} getData={getData} />
+        <Read data={data} getData={getData} tabsValue={tabsValue} />
       </Grid>
     </Grid>
   );
