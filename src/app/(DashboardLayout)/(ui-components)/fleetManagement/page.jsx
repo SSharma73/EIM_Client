@@ -5,7 +5,7 @@ import Overview from "@/app/(components)/pages-component/fleetManagement/overVie
 import Charging from "@/app/(components)/pages-component/fleetManagement/charging/charging";
 import Trip from "@/app/(components)/pages-component/fleetManagement/Trip";
 import Etractor from "@/app/(components)/pages-component/fleetManagement/Etractor";
-import ManagementGrid from "@/app/(components)/mui-components/Card";
+import HeaderGrid from "@/app/(components)/mui-components/Card/HeaderGrid";
 import AddTractor from "@/app/(components)/pages-component/fleetManagement/addTractor";
 import axiosInstance from "@/app/api/axiosInstance";
 import ToastComponent from "@/app/(components)/mui-components/Snackbar";
@@ -14,13 +14,7 @@ const breadcrumbItems = [
   { label: "Dashboard", link: "/" },
   { label: "Fleet-Management", link: "/fleetManagement" },
 ];
-const droDownButtons = [
-  {
-    label: "Region",
-    menuItems: ["Mumbai", "Delhi", "Agra", "Punjab", "Kolkata"],
-  },
-  { label: "Customer", menuItems: ["Customer 1", "Customer 2", "Customer 3"] },
-];
+
 const Page = () => {
   const [value, setValue] = useState(0);
   const [open, setOpen] = useState(false);
@@ -31,7 +25,18 @@ const Page = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [date, setDate] = useState(null);
   const [data, setData] = useState([]);
-
+  const [customers, setCustomers] = useState(null);
+  const [customerItems, setCustomerItems] = useState({
+    id: null,
+    label: "Select Customer",
+  });
+  const tabs = [
+    { label: `Overview ` },
+    { label: "Charging" },
+    { label: "Trip" },
+    { label: "E-tractor" },
+  ];
+  const customerId = customerItems && customerItems?.id;
   const [tabsValue, setTabsValue] = useState("Overview");
   const getDataFromChildHandler = (date, dataArr) => {
     setDate(date);
@@ -41,19 +46,53 @@ const Page = () => {
     setTabsValue(tabs[newValue].label);
   };
   useEffect(() => {
-    handleTableData();
-  }, [value, page, rowsPerPage, searchQuery, date]);
+    if (customerId) {
+      handleTableData();
+    }
+  }, [customerId, value]);
+  useEffect(() => {
+    fetchCustomers();
+  }, []);
 
-  const tabs = [
-    { label: `Overview ` },
-    { label: "Charging" },
-    { label: "Trip" },
-    { label: "E-tractor" },
-  ];
+  const fetchCustomers = async () => {
+    try {
+      const { data } = await axiosInstance.get("customer/fetchCustomers");
+      const result = {
+        menuItems:
+          data?.data?.result?.map((customer) => ({
+            id: customer._id,
+            label: customer.brandName,
+          })) || [],
+      };
+      setCustomers(result);
+      if (result.menuItems.length > 0) {
+        const defaultCustomer = result.menuItems[0];
+        setCustomerItems({
+          id: defaultCustomer.id,
+          label: defaultCustomer.label,
+        });
+      }
+    } catch (error) {
+      console.error("Error fetching customers:", error);
+      throw error;
+    }
+  };
+  const handleDropdownSelect = (label, item) => {
+    setSelectedItems((prev) => ({
+      ...prev,
+      [label]: item,
+    }));
+    handleTableData();
+  };
   const handleTableData = async () => {
     setLoading(true);
     try {
-      const { data } = await axiosInstance.get("fleet/fetchFleets");
+      const params = new URLSearchParams({
+        customerId,
+      });
+      const { data } = await axiosInstance.get(
+        `fleet/fetchFleets?${params.toString()}`
+      );
       setData(data.data);
     } catch (error) {
       notifyError(error?.response?.data?.message || "Failed to fetch data");
@@ -133,18 +172,25 @@ const Page = () => {
 
   return (
     <Grid container xs={12} sm={12} md={12}>
-      <AddTractor open={open} setOpen={setOpen} />
+      <AddTractor
+        open={open}
+        setOpen={setOpen}
+        handleTableData={handleTableData}
+      />
       <ToastComponent />
-      <ManagementGrid
+      <HeaderGrid
         moduleName={"Fleet Management"}
         breadcrumbItems={breadcrumbItems}
-        dropDown={droDownButtons}
+        dropDown={customers}
         button={"Add E-Tractor"}
         handleClickOpen={handleOpen}
         tabs={tabs}
         value={value}
         handleChange={handleChange}
         TabPanelList={TabPanelList}
+        handleDropdownSelect={handleDropdownSelect}
+        customerItems={customerItems}
+        setCustomerItems={setCustomerItems}
       />
     </Grid>
   );

@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { Grid, Typography, Box, Button, Chip } from "@mui/material";
+import { Grid, Typography, Avatar, Button, Chip } from "@mui/material";
 import CustomTable from "@/app/(components)/mui-components/Table/customTable/index";
 import TableSkeleton from "@/app/(components)/mui-components/Skeleton/tableSkeleton";
 import CommonDatePicker from "@/app/(components)/mui-components/Text-Field's/Date-range-Picker/index";
@@ -117,7 +117,13 @@ const Table = ({
 
       if (type === "Customer") {
         return {
-          "Brand logo": item?.brandLogo ?? "--",
+          "Brand logo": (
+            <Avatar
+              src={item?.brandLogo}
+              alt={item?.brandName || "Brand logo"}
+              sx={{ width: 40, height: 40 }}
+            />
+          ),
           "Brand name": item?.brandName ?? "--",
           "Customer name": item?.adminUser?.name ?? "--",
           Email: item?.adminUser?.email ?? "--",

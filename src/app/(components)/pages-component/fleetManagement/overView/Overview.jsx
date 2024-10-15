@@ -49,7 +49,6 @@ const Badge1 = styled(Badge)(({ color }) => ({
 }));
 
 const Overview = ({
-  value,
   data,
   rowsPerPage,
   setRowsPerPage,
@@ -58,8 +57,6 @@ const Overview = ({
   searchQuery,
   setSearchQuery,
   loading,
-  params,
-  getDataFromChildHandler,
 }) => {
   const [distance, setDistance] = useState(false);
   const [payload, setPayload] = useState(false);
@@ -72,7 +69,6 @@ const Overview = ({
   );
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState(searchQuery);
 
-  // Update search query with debouncing
   useEffect(() => {
     const handler = setTimeout(() => {
       setSearchQuery(debouncedSearchQuery);
@@ -93,7 +89,7 @@ const Overview = ({
     }
 
     const modifiedData = data?.map((row) => ({
-      region: row.port?.regionName || "--",
+      region: row?.region || "--",
       fleetId: row.fleetId || "--",
       status: row.status || "--",
       avgSpeed: `'${row.avgSpeed}` || "--",
@@ -142,8 +138,8 @@ const Overview = ({
 
   const getFormattedData = (data) => {
     return data?.map((item, index) => ({
-      region: item?.port ? item.port.regionName : "--",
-      fleetId: item.fleetId ? item.fleetId : "--",
+      region: item?.region ?? "--",
+      fleetId: item.fleetNumber ?? "--",
       status: (
         <Box>
           <Typography
@@ -162,10 +158,12 @@ const Overview = ({
       ),
       avgSpeed: item.avgSpeed || "--",
       avgPayload: item.avgPayload || "--",
-      totalDistance: item.totalDistance || "--",
+      totalDistance: item?.distanceTravelled
+        ? `${item.distanceTravelled} KM`
+        : "--",
       avgConsumption: item.avgConsumption || "--",
       breakdown: item.breakdown || "--",
-      currentSoc: item.currentSoc || "--",
+      currentSoc: item.batteryPercentage ? `${item.batteryPercentage}%` : "--",
       effectiveRange: item.effectiveRange || "--",
       Action: (
         <Grid container justifyContent="center" spacing={2}>

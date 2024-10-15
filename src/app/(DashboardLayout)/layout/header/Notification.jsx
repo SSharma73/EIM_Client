@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, Fragment } from "react";
+import React, { useState, useEffect, Fragment } from "react";
 import Box from "@mui/material/Box";
 import { Button, Typography, Badge, Grid, Avatar } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
@@ -83,49 +83,49 @@ const Notification = () => {
   const handleDropdownClose = () => {
     setAnchorEl(null);
   };
-  // const getData = async () => {
-  //   try {
-  //     const res = await axiosInstance.get(`/api/notification`);
-  //     if (res.status === 200 || res.status === 201) {
-  //       console.log(res);
-  //       SetDummyData(res?.data?.data?.result);
-  //     }
-  //   } catch (err) {}
-  // };
-  // useEffect(() => {
-  //   getData();
-  // }, []);
+
+  const getData = async () => {
+    const customerId = localStorage.getItem("customerId");
+    try {
+      const res = await axiosInstance.get(
+        `notification/notifications/?customerId=${customerId}`
+      );
+      if (res.status === 200 || res.status === 201) {
+        console.log(res);
+        SetDummyData(res?.data);
+      }
+    } catch (err) {
+      console.error("Error fetching notifications:", err);
+    }
+  };
+  useEffect(() => {
+    getData();
+    const intervalId = setInterval(() => {
+      getData();
+    }, 20000);
+    return () => clearInterval(intervalId);
+  }, []);
   return (
     <Fragment>
-      <Avatar
-        sx={{
-          width: 34,
-          height: 34,
-          backgroundColor: "transparent",
-        }}
+      <IconButton
+        aria-haspopup="true"
+        onClick={handleDropdownOpen}
+        aria-controls="customized-menu"
       >
-        <IconButton
-          aria-haspopup="true"
-          onClick={handleDropdownOpen}
-          aria-controls="customized-menu"
+        <Badge
+          color="warning"
+          // sx={{
+          //   "& .MuiBadge-badge": {
+          //     backgroundColor: "red",
+          //     color: "white",
+          //   },
+          // }}
+          max={999}
+          badgeContent={dummyData?.length}
         >
-          <Badge
-            color="warning"
-            // sx={{
-            //   "& .MuiBadge-badge": {
-            //     backgroundColor: "red",
-            //     color: "white",
-            //   },
-            // }}
-            max={999}
-            // badgeContent="0"
-          >
-            <NotificationsNoneIcon
-              sx={{ fontSize: "22px", color: "#C0FE72" }}
-            />
-          </Badge>
-        </IconButton>
-      </Avatar>
+          <NotificationsNoneIcon sx={{ fontSize: "22px", color: "#C0FE72" }} />
+        </Badge>
+      </IconButton>
       <Menu
         anchorEl={anchorEl}
         open={Boolean(anchorEl)}
@@ -166,17 +166,12 @@ const Notification = () => {
                         flexDirection: "column",
                       }}
                     >
-                      <MenuItemTitle className="tablecrow-cell-bg">
-                        {item?.name}
-                      </MenuItemTitle>
-                      <MenuItemTitle sx={{ fontSize: "10px", color: "gray" }}>
-                        {item?.message}
-                      </MenuItemTitle>
+                      <Typography variant="body1">
+                        {item?.fleetNumber} is requesting for{" "}
+                        {item?.requestType}
+                      </Typography>
                     </Box>
-                    <Typography
-                      variant="caption"
-                      sx={{ color: "text.disabled" }}
-                    >
+                    <Typography variant="caption" sx={{ color: "text" }}>
                       {moment(item?.date).format("ll")}
                     </Typography>
                   </Box>

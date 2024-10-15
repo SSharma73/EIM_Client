@@ -68,12 +68,15 @@ const AuthLogin = ({ title, subtitle }) => {
           callbackUrl: `/`,
           redirect: true,
         });
-        console.log("login", response);
         if (response.status == 201 || response.status == 200) {
           notifySuccess(response?.data?.message);
         }
         localStorage.setItem("token", response?.data?.data?.token);
         localStorage.setItem("userId", response?.data?.data?.user?._id);
+        localStorage.setItem(
+          "customerId",
+          response?.data?.data && response?.data?.data?.user?.customerId?._id
+        );
       }
     } catch (error) {
       notifyError(error?.response?.data?.message);

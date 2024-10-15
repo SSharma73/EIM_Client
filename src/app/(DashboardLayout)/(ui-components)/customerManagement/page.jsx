@@ -27,15 +27,13 @@ const CustomerManagement = () => {
     search = "",
     limit = 10,
     page = 1,
-    role,
-  } = {}) => {
+  } = {}) => { 
     try {
       const params = new URLSearchParams({
         search,
         limit,
         page,
       });
-      const Type = role ?? "Customer";
       const Url =
         buttonType == "Customer"
           ? "customer/fetchCustomers"

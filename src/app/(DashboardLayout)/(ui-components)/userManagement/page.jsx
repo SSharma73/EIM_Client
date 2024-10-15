@@ -47,7 +47,6 @@ const UserManagement = () => {
       throw error;
     }
   };
-  console.log("Check buttonType", buttonType);
   const handleTableData = async ({
     search = "",
     limit = 10,

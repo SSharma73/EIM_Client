@@ -1,8 +1,9 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Grid } from "@mui/material";
-import ManagementGrid from "@/app/(components)/mui-components/Card";
+import HeaderGrid from "@/app/(components)/mui-components/Card/HeaderGrid";
 import Read from "./read";
+import axiosInstance from "@/app/api/axiosInstance";
 
 const breadcrumbItems = [
   { label: "Dashboard", link: "/" },
@@ -10,25 +11,52 @@ const breadcrumbItems = [
 ];
 
 const Page = () => {
-  const [checkedStates, setCheckedStates] = useState({});
+  const tabs = [
+    { label: `All ` },
+    { label: "Pending" },
+    { label: "Approved" },
+    { label: "Rejected" },
+  ];
+  const [value, setValue] = useState(0);
+  const [tabsValue, setTabsValue] = useState("All");
 
-  const handleCheckboxChange = (index) => (event) => {
-    setCheckedStates((prev) => ({
-      ...prev,
-      [index]: event.target.checked,
-    }));
+  const handleChange = (event, newValue) => {
+    setValue(newValue);
+    setTabsValue(tabs[newValue].label);
+    getData(tabs[newValue].label);
   };
 
+  const [data, setData] = useState([]);
+  const getData = async (status) => {
+    const customerId = localStorage.getItem("customerId");
+    try {
+      const url = `notification/notifications/?customerId=${customerId}${
+        status === "All" ? "" : `&status=${status.toLowerCase()}`
+      }`;
+      const res = await axiosInstance.get(url);
+      if (res.status === 200 || res.status === 201) {
+        setData(res?.data || []);
+      }
+    } catch (err) {
+      console.error("Error fetching notifications:", err);
+    }
+  };
+
+  useEffect(() => {
+    getData(tabsValue);
+  }, [tabsValue]);
   return (
     <Grid container>
-      <ManagementGrid
+      <HeaderGrid
+        tabs={tabs}
+        value={value}
         moduleName="Notifications"
         subHeading="See all notifications below"
         breadcrumbItems={breadcrumbItems}
-        buttonItem={"Mark all as read"}
+        handleChange={handleChange}
       />
       <Grid container>
-        <Read />
+        <Read data={data} getData={getData} />
       </Grid>
     </Grid>
   );

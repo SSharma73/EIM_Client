@@ -24,7 +24,7 @@ import ToastComponent, {
 import axiosInstance from "@/app/api/axiosInstance";
 import CommonDialog from "../../mui-components/Dialog";
 
-export default function AddUser({ open, setOpen }) {
+export default function AddUser({ open, setOpen, handleTableData }) {
   const [openComman, setOpenComman] = useState(false);
   const [customers, setCustomers] = useState([]);
   const [ports, setPorts] = useState([]);
@@ -90,6 +90,7 @@ export default function AddUser({ open, setOpen }) {
       );
       if (status === 200 || status === 201) {
         notifySuccess(responseData?.msg);
+        handleTableData();
         handleClose();
       } else {
         notifyError("Failed to add E-Tractor");

@@ -73,6 +73,7 @@ const Table = ({
   const handleCancel = () => {
     setOpenDialog(false);
   };
+
   const handleExport = (data) => {
     console.log("Exporting data", data);
 
