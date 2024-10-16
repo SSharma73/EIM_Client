@@ -108,6 +108,8 @@ const CsManagement = () => {
           value="2"
           eventLabel={eventLabel}
           fetchAllDetails={fetchAllDetails}
+          fetchDetails={fetchDetails}
+          type={type}
         />
       ),
     },

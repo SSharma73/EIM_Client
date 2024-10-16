@@ -1,7 +1,7 @@
 "use client";
 import { Grid, IconButton, Typography } from "@mui/material";
-import React, { useState } from "react";
-import Map from "@/app/(components)/map/map";
+import React, { useState, useEffect } from "react";
+import Map from "@/app/(components)/map";
 import { Card, Divider, Avatar, Tooltip } from "@mui/material";
 import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
@@ -11,6 +11,7 @@ import CustomTextField from "../../mui-components/Text-Field's";
 import MapImg from "../../../../../public/Img/Vector.svg";
 import Image from "next/image";
 import { PiCarBattery } from "react-icons/pi";
+import axiosInstance from "@/app/api/axiosInstance";
 
 const coordinate = [
   { lat: "28.51079782059423", log: "77.40362813493975" },
@@ -21,6 +22,10 @@ const coordinate = [
   { lat: "28.512937158827324", log: "77.41783963937374" },
 ];
 const iconUrls = ["./available.svg", "charger.svg"];
+const iconMapping = {
+  sany: "./available.svg",
+  delta: "./charger.svg",
+};
 const buttonData = [
   { label: "All" },
   { label: "Charging : 3", color: "red" },
@@ -33,51 +38,51 @@ const VehicleScheduling = () => {
   const [icons, setIcons] = useState(null);
 
   const handleMapData = (index, point) => {
-    console.log("point", index, point);
     setActiveMarker(index);
     setIcons(point);
   };
   const onClose = () => {
     setActiveMarker(null);
   };
-  const data = [
-    {
-      title: "Available",
-      id: "--",
-      arrivalTime: "--",
-      soc: "--",
-      rate: "--",
-      charge: "--",
-      queue: "queue 0",
-    },
-    {
-      title: "Scheduled",
-      id: "GHVCD12",
-      arrivalTime: "35 Min",
-      soc: "78%",
-      rate: "2 hrs",
-      charge: "--",
-      queue: "queue 3",
-    },
-    {
-      title: "Available",
-      id: "--",
-      arrivalTime: "--",
-      soc: "--",
-      rate: "--",
-      charge: "--",
-      queue: "queue 0",
-    },
-    {
-      title: "Scheduled",
-      id: "GHVCD12",
-      arrivalTime: "35 Min",
-      soc: "78%",
-      rate: "2 hrs",
-      charge: "--",
-      queue: "queue 3",
-    },
-  ];
+  const [schedules, setSchedules] = useState([]);
+  useEffect(() => {
+    const fetchSchedules = async () => {
+      try {
+        const { data, status } = await axiosInstance.get(
+          "schedule/getAllSchedules"
+        );
+        setSchedules(data.data);
+      } catch (err) {
+        console.log("Check  err");
+      }
+    };
+
+    fetchSchedules();
+  }, []);
+  const [station, setStation] = useState([]);
+
+  useEffect(() => {
+    const fetchStation = async () => {
+      try {
+        const { data, status } = await axiosInstance.get(
+          "charger/fetchChargers"
+        );
+        const fleetLocations = data?.data?.result
+          .filter((fleet) => fleet.location && fleet.location.coordinates)
+          .map((fleet) => ({
+            lat: fleet.location.coordinates[1],
+            log: fleet.location.coordinates[0],
+            icon: iconMapping[fleet.type],
+          }));
+        setStation(fleetLocations);
+      } catch (err) {
+        console.log("Check error", err);
+      }
+    };
+
+    fetchStation();
+  }, []);
+
   const InfoRow = ({ label, value }) => (
     <Grid container justifyContent="space-between" marginTop={2}>
       <Typography>{label}</Typography>
@@ -93,7 +98,7 @@ const VehicleScheduling = () => {
           buttonData={buttonData}
           activeMarker={activeMarker}
           setActiveMarker={setActiveMarker}
-          coordinate={coordinate}
+          coordinate={station}
           onClose={onClose}
         />
       </Grid>
@@ -108,7 +113,7 @@ const VehicleScheduling = () => {
         </Grid>
       </CustomGrid>
       <Grid container spacing={2}>
-        {data.map((item, index) => (
+        {schedules.map((item, index) => (
           <Grid key={index} item xl={3} md={3} sm={12} xs={12}>
             <Card
               sx={{
@@ -120,15 +125,7 @@ const VehicleScheduling = () => {
               }}
             >
               <Grid container justifyContent={"center"}>
-                {index % 2 === 0 ? (
-                  <Image
-                    src="/not-charging.svg"
-                    alt="not charging"
-                    width={260}
-                    height={140}
-                    objectFit="contain"
-                  />
-                ) : (
+                {item.requestType === "charging" ? (
                   <Image
                     src="/on-charging.svg"
                     alt="on charging"
@@ -136,15 +133,23 @@ const VehicleScheduling = () => {
                     height={140}
                     objectFit="contain"
                   />
+                ) : (
+                  <Image
+                    src="/not-charging.svg"
+                    alt="not charging"
+                    width={260}
+                    height={140}
+                    objectFit="contain"
+                  />
                 )}
               </Grid>
-
               <CardContent
                 sx={{
-                  backgroundColor: index % 2 === 0 ? "#009660" : "#0042C6",
+                  backgroundColor:
+                    item.requestType === "charging" ? "#0179BD" : "#009660",
                 }}
               >
-                {item.title === "Available" && (
+                {(item.title === "Swapping" || item.title === "Scheduled") && (
                   <Grid
                     sx={{
                       position: "absolute",
@@ -161,7 +166,7 @@ const VehicleScheduling = () => {
                       justifyContent="center"
                       sx={{ color: "#000", alignItems: "center" }}
                     >
-                      <Tooltip title={"Discharged"}>
+                      <Tooltip title="Discharged">
                         <Grid
                           item
                           xs={6}
@@ -172,7 +177,7 @@ const VehicleScheduling = () => {
                           24%
                         </Grid>
                       </Tooltip>
-                      <Tooltip title={"Charging"}>
+                      <Tooltip title="Charging">
                         <Grid
                           item
                           xs={6}
@@ -183,7 +188,7 @@ const VehicleScheduling = () => {
                           40%
                         </Grid>
                       </Tooltip>
-                      <Tooltip title={"Charged"}>
+                      <Tooltip title="Charged">
                         <Grid
                           item
                           xs={6}
@@ -199,9 +204,10 @@ const VehicleScheduling = () => {
                 )}
                 <Grid container justifyContent={"space-between"}>
                   <Typography gutterBottom variant="h4" component="div">
-                    {item?.title} <br />
+                    {item.requestType === "charging" ? "Charging" : "Scheduled"}
+                    <br />
                     <span style={{ fontSize: "12px" }}>
-                      CS/SS ID {`(${item?.queue})`}
+                      CS/SS ID {`(${item?.stationCode})`}
                     </span>
                   </Typography>
                   <Avatar sx={{ borderRadius: "4px" }}>
@@ -210,31 +216,32 @@ const VehicleScheduling = () => {
                 </Grid>
                 <Divider sx={{ border: "0.1px solid #fff" }} />
                 <Grid container direction="column">
-                  <InfoRow label="Tractor ID" value={item?.id} />
-                  <InfoRow
-                    label="Expected arrival time"
-                    value={item?.arrivalTime}
-                  />
+                  <InfoRow label="Tractor ID" value={item?.fleetNumber} />
+                  <InfoRow label="Expected arrival time" value={item?.eta} />
                   <InfoRow
                     label={
-                      index === 0
-                        ? "Expected swapping time"
-                        : index === 2
-                        ? "Expected swapping time"
-                        : "Expected charging time"
+                      item.requestType === "charging"
+                        ? "Expected charging time"
+                        : "Expected swapping time"
                     }
-                    value={item?.rate}
+                    value={`${item?.AVG_CHARGING_TIME?.toFixed(2)} mins`}
                   />
-                  <InfoRow label="Charge rate" value={item?.charge} />
-                  <InfoRow label="Current SoC" value={item?.soc} />
+                  <InfoRow label="Charge rate" value={item?.chargingRate} />
+                  <InfoRow
+                    label="Current SoC"
+                    value={`${item?.batteryPercentage.toFixed(2)}%`}
+                  />
                 </Grid>
               </CardContent>
               <CardActions
                 sx={{
-                  backgroundColor: index % 2 === 0 ? "#02BB78" : "#0042C6",
+                  backgroundColor:
+                    item.requestType === "charging" ? "#008CDB" : "#02BB78",
                 }}
               >
-                <Typography variant="body2">Reason : --</Typography>
+                <Typography variant="body2">
+                  Reason : -- {item?.description}
+                </Typography>
               </CardActions>
             </Card>
           </Grid>

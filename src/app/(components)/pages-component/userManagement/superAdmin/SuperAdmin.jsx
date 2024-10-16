@@ -23,6 +23,7 @@ import {
   notifyError,
   notifySuccess,
 } from "@/app/(components)/mui-components/Snackbar/index.jsx";
+import ViewPermission from "@/app/(components)/pages-component/userManagement/actions/viewPermissions.jsx";
 const columns = ["Name", "Action"];
 const columns2 = ["User name", "Mob. no.", "Email", "Assigned role"];
 
@@ -32,8 +33,9 @@ const Table = ({ type, fetchAllDetails, handleTableData }) => {
   const [rowsPerPage, setRowsPerPage] = React.useState(25);
   const [data, setData] = useState(null);
   const [open, setOpenDialog] = React.useState(false);
+  const [openPermission, setOpenPermission] = React.useState(false);
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
-  const [Id, setId] = useState();
+  const [selectedItem, setSelectedItem] = useState(null);
 
   const handleSearchChange = (event) => {
     setDebouncedSearchQuery(event.target.value);
@@ -96,28 +98,27 @@ const Table = ({ type, fetchAllDetails, handleTableData }) => {
   };
 
   const handleConfirm = () => {
-    handleDelete();
     handleCancel();
   };
 
   const handleCancel = () => {
     setOpenDialog(false);
   };
-
-  const handleDelete = async () => {
-    try {
-      const response1 = await axiosInstance.delete(`/user/delete/${Id}`);
-    } catch (error) {
-      console.log(error);
-    }
+  const handleOpenPermission = (item) => {
+    setSelectedItem(item);
+    setOpenPermission(true);
   };
+
   const getFormattedData = (data) => {
     return data?.map((item, index) => {
       const actionComponent = (
         <Grid container justifyContent="center" spacing={2} key={index}>
           <Grid item>
-            <Tooltip title="View">
-              <IconButton size="small">
+            <Tooltip title="View Permission">
+              <IconButton
+                size="small"
+                onClick={() => handleOpenPermission(item)}
+              >
                 <IoEyeOutline color="rgba(14, 1, 71, 1)" />
               </IconButton>
             </Tooltip>
@@ -216,6 +217,11 @@ const Table = ({ type, fetchAllDetails, handleTableData }) => {
           handleTableData={handleTableData}
         />
       )}
+      <ViewPermission
+        rows={selectedItem}
+        open={openPermission}
+        setOpen={setOpenPermission}
+      />
     </Grid>
   );
 };

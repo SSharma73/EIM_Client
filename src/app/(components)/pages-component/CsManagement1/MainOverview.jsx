@@ -5,7 +5,6 @@ import Graph2 from "./overview/Graph/graph2";
 import Graph3 from "./overview/Graph/graph3";
 import { CustomDropdownEvent } from "@/app/(components)/mui-components/Card/HeaderGrid/DropdownButton/dropDownEvent";
 import axiosInstance from "@/app/api/axiosInstanceImg";
-
 import Overview from "@/app/(components)/pages-component/CsManagement1/overview/Overview";
 import TimerIcon from "@mui/icons-material/Timer";
 import styled from "@emotion/styled";
@@ -61,11 +60,11 @@ const Overview1 = ({ type }) => {
         break;
       case 3:
         status = "available";
-        type = "available";
+        type = "";
         break;
       case 4:
         status = "offline";
-        type = "offline";
+        type = "";
         break;
       default:
         status = "";

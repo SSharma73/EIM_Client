@@ -17,7 +17,6 @@ const Read = ({ data, getData, tabsValue }) => {
         { status }
       );
       if (res.status === 200 || res.status === 201) {
-        console.log("check res?.data?.message", res?.data?.message);
         notifySuccess(res?.data?.message);
         getData(tabsValue);
       }

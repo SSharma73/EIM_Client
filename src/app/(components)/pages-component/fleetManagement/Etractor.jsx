@@ -8,6 +8,7 @@ import {
   Tooltip,
   Button,
   IconButton,
+  Box,
 } from "@mui/material";
 import CustomTable from "@/app/(components)/mui-components/Table/customTable/index";
 import TableSkeleton from "@/app/(components)/mui-components/Skeleton/tableSkeleton";
@@ -170,8 +171,30 @@ const Charging = ({
   };
   const getFormattedData = (data) => {
     return data?.map((item, index) => ({
-      region: item?.port ? item?.port?.regionName : "--",
-      fleetId: item?.fleetId ?? "--",
+      fleetId: item.fleetNumber ?? "--",
+      status: (
+        <Box>
+          <Typography
+            sx={{
+              color:
+                item.status === "available"
+                  ? "#BFFC72"
+                  : item.status === "parked"
+                  ? "#FFC700"
+                  : "#fff",
+            }}
+          >
+            {item.status || "--"}
+          </Typography>
+        </Box>
+      ),
+      fleetId: item.fleetNumber ?? "--",
+      currentSoc: item.batteryPercentage
+        ? `${item.batteryPercentage?.toFixed(2)}%`
+        : "--",
+      avgPayload: item.avgPayload || "--",
+      totalHandle: item?.totalHandle ? item?.totalHandle : "--",
+      maxPayload: item?.maxPayload ? item?.maxPayload : "--",
       trip: (
         <Chip
           key={index}
@@ -180,10 +203,9 @@ const Charging = ({
           label={item?.trip ?? "NA"}
         />
       ),
-      avgSpeed: item?.avgSpeed ? item?.avgSpeed : "--",
-      avgPayload: item?.avgPayload ? item?.avgPayload : "--",
-      maxPayload: item?.maxPayload ? item?.maxPayload : "--",
-      distance: item?.distance ? item?.distance : "--",
+      totalDistance: item?.distanceTravelled
+        ? `${item.distanceTravelled?.toFixed(2)} KM`
+        : "--",
       breakdown: item?.breakdown ? item?.breakdown : "--",
       totalUnit: item?.totalUnit ? item?.totalUnit : "--",
       totalHandle: item?.totalHandle ? item?.totalHandle : "--",
@@ -195,11 +217,8 @@ const Charging = ({
       mobileNumber3: item?.mobileNumber ? item?.mobileNumber : "--",
       mobileNumber11: item?.mobileNumber ? item?.mobileNumber : "--",
       mobileNumber1: item?.mobileNumber ? item?.mobileNumber : "--",
-      mobileNumber2: item?.mobileNumber ? item?.mobileNumber : "--",
       mobileNumber12: item?.mobileNumber ? item?.mobileNumber : "--",
-      mobileNumber13: item?.mobileNumber ? item?.mobileNumber : "--",
-      mobileNumbe14: item?.mobileNumber ? item?.mobileNumber : "--",
-      jobRole: item?.jobRole ? item?.jobRole : "--",
+      effectiveRange: item.effectiveRange || "--",
       Action: [
         <Grid container justifyContent="center" spacing={2} key={index}>
           <Grid item xs={12}>
@@ -272,7 +291,7 @@ const Charging = ({
         ) : (
           <CustomTable
             page={page}
-            rows={getFormattedData(data?.data?.result)}
+            rows={getFormattedData(data?.result)}
             count={data?.totalDocuments}
             columns={columns}
             setPage={setPage}

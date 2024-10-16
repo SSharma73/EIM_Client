@@ -1,10 +1,17 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { Grid, Typography, Avatar, Button, Chip } from "@mui/material";
+import {
+  Grid,
+  Typography,
+  Avatar,
+  Button,
+  Chip,
+  IconButton,
+} from "@mui/material";
 import CustomTable from "@/app/(components)/mui-components/Table/customTable/index";
 import TableSkeleton from "@/app/(components)/mui-components/Skeleton/tableSkeleton";
-import CommonDatePicker from "@/app/(components)/mui-components/Text-Field's/Date-range-Picker/index";
 import Papa from "papaparse";
+import { IoEyeOutline } from "react-icons/io5";
 import { saveAs } from "file-saver";
 import { FaRegFileExcel } from "react-icons/fa";
 import ToastComponent, {
@@ -12,6 +19,7 @@ import ToastComponent, {
   notifySuccess,
 } from "@/app/(components)/mui-components/Snackbar";
 import { useRouter } from "next/navigation";
+import TariffPlan from "./viewTariffPlan";
 
 const Table = ({
   type,
@@ -39,7 +47,8 @@ const Table = ({
   ];
   const columns2 = ["Port name", "Port address", "Customer", "Tariff"];
 
-  const [open, setOpenDialog] = React.useState(false);
+  const [open, setOpen] = React.useState(false);
+  const [selectedRow, setSelectedRow] = useState(null);
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState(searchQuery);
   const router = useRouter();
 
@@ -52,11 +61,8 @@ const Table = ({
     };
   }, [debouncedSearchQuery, setSearchQuery]);
 
-  const handleSearchChange = (event) => {
-    setDebouncedSearchQuery(event.target.value);
-  };
   const handleOpenDialog = () => {
-    setOpenDialog(true);
+    setOpen(true);
   };
   const handleExport = (data) => {
     if (!Array.isArray(data) || data.length === 0) {
@@ -106,12 +112,29 @@ const Table = ({
   const getFormattedData = (data) => {
     return data?.map((item, index) => {
       const actionComponent = (
-        <Grid container justifyContent={"center"} spacing={2} key={index}>
-          <Chip
-            sx={{ mt: 2 }}
-            label={item?.tariff?.name || item?.subscription?.name || "--"}
-            color="primary"
-          />
+        <Grid
+          container
+          justifyContent={"center"}
+          alignItems={"center"}
+          spacing={2}
+          key={index}
+        >
+          <Grid item>
+            {type === "Customer" ? (
+              <Chip label={item?.subscription?.name || "N/A"} color="primary" />
+            ) : (
+              <IconButton
+                size="small"
+                key={index}
+                onClick={() => {
+                  setSelectedRow(item);
+                  setOpen(true);
+                }}
+              >
+                <IoEyeOutline color="#fff" />
+              </IconButton>
+            )}{" "}
+          </Grid>
         </Grid>
       );
 
@@ -199,6 +222,7 @@ const Table = ({
           setRowsPerPage={setRowsPerPage}
         />
       )}
+      {open && <TariffPlan rows={selectedRow} open={open} setOpen={setOpen} />}
     </Grid>
   );
 };

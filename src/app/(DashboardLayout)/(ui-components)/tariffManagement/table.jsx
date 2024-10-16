@@ -4,7 +4,6 @@ import CustomTable from "@/app/(components)/mui-components/Table/customTable/ind
 import TableSkeleton from "@/app/(components)/mui-components/Skeleton/tableSkeleton";
 import Papa from "papaparse";
 import { saveAs } from "file-saver";
-import { IoIosSearch } from "react-icons/io";
 import { FaRegFileExcel } from "react-icons/fa";
 import ToastComponent, {
   notifyError,

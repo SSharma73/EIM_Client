@@ -17,9 +17,19 @@ import { FaRegFileExcel } from "react-icons/fa";
 import Papa from "papaparse";
 import { saveAs } from "file-saver";
 import { notifyError, notifySuccess } from "../../mui-components/Snackbar";
+import CommonDialog from "@/app/(components)/mui-components/Dialog";
+import { RiShutDownLine } from "react-icons/ri";
+import axiosInstance from "@/app/api/axiosInstance";
+import { MdRestartAlt } from "react-icons/md";
 import { PiCarBattery } from "react-icons/pi";
 
-const Charging = ({ value, eventLabel, fetchAllDetails }) => {
+const Charging = ({
+  type,
+  value,
+  eventLabel,
+  fetchAllDetails,
+  fetchDetails,
+}) => {
   const labelStatus = eventLabel?.slice(0, 8);
   const columns = [
     `${eventLabel} ID`,
@@ -51,38 +61,29 @@ const Charging = ({ value, eventLabel, fetchAllDetails }) => {
   const [page, setPage] = React.useState(0);
   const [loading, setLoading] = useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(25);
-  const [deviceData, setDeviceData] = useState([]);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [date, setDate] = useState(null);
-  const [open, setOpenDialog] = React.useState(false);
-  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState(searchQuery);
-
-  const getDataFromChildHandler = (date, dataArr) => {
-    setDate(date);
+  const [openComman, setOpenComman] = useState(false);
+  const [dialogMessage, setDialogMessage] = useState(
+    "This charger is online. Are you sure you want to proceed?"
+  );
+  const [items, setItems] = useState(null);
+  const handleCommanCancel = () => {
+    setOpenComman(false);
   };
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      setSearchQuery(debouncedSearchQuery);
-    }, 500);
-    return () => {
-      clearTimeout(handler);
-    };
-  }, [debouncedSearchQuery, setSearchQuery]);
-
-  const handleSearchChange = (event) => {
-    setDebouncedSearchQuery(event.target.value);
+  const handleCommanConfirm = () => {
+    updateChargerStatus(items._id, items.status);
   };
-
-  const handleOpenDialog = () => {
-    setOpenDialog(true);
-  };
-
-  const handleConfirm = () => {
-    handleCancel();
-  };
-
-  const handleCancel = () => {
-    setOpenDialog(false);
+  const handleCommanDialog = (data) => {
+    setItems(data);
+    if (data.status === "available") {
+      setDialogMessage(
+        "This charger is online. Are you sure you want to proceed?"
+      );
+    } else if (data.status === "offline") {
+      setDialogMessage(
+        "This charger is offline. Are you sure you want to proceed?"
+      );
+    }
+    setOpenComman(true);
   };
 
   const handleExport = (data) => {
@@ -138,7 +139,24 @@ const Charging = ({ value, eventLabel, fetchAllDetails }) => {
     saveAs(blob, "CSChargingData.csv");
     notifySuccess("Download Excel Succefully");
   };
-
+  const updateChargerStatus = async (chargerId, currentStatus) => {
+    const breakDownValue = currentStatus === "available" ? 1 : 0;
+    const url = `charger/updateChargerById/${chargerId}`;
+    const requestBody = {
+      breakDown: breakDownValue,
+    };
+    try {
+      const { data, status } = await axiosInstance.put(url, requestBody);
+      if (status === 200) {
+        fetchDetails({ limit: 10, page: 1, type: type });
+        handleCommanCancel();
+        notifySuccess(data?.message);
+      }
+    } catch (error) {
+      notifyError(error.data.msg);
+      console.error("Error updating charger:", error);
+    }
+  };
   const getFormattedData = (data) => {
     return data?.map((item, index) => {
       const color =
@@ -197,7 +215,12 @@ const Charging = ({ value, eventLabel, fetchAllDetails }) => {
           </Grid>
         ),
         action: (
-          <Grid container justifyContent="center" spacing={2} key={index}>
+          <Grid
+            container
+            justifyContent="space-between"
+            spacing={2}
+            key={index}
+          >
             <Grid item xs={6}>
               <Tooltip title="View">
                 <Link
@@ -208,6 +231,18 @@ const Charging = ({ value, eventLabel, fetchAllDetails }) => {
                   </IconButton>
                 </Link>
               </Tooltip>
+              <Tooltip title={"change status"}>
+                <IconButton
+                  size={"small"}
+                  onClick={() => handleCommanDialog(item)}
+                >
+                  {label === "available" ? (
+                    <RiShutDownLine />
+                  ) : (
+                    <MdRestartAlt />
+                  )}
+                </IconButton>
+              </Tooltip>
             </Grid>
           </Grid>
         ),
@@ -217,6 +252,16 @@ const Charging = ({ value, eventLabel, fetchAllDetails }) => {
 
   return (
     <Grid container>
+      <CommonDialog
+        open={openComman}
+        fullWidth={true}
+        maxWidth={"xs"}
+        title="Cancel"
+        message={dialogMessage}
+        color="error"
+        onClose={handleCommanCancel}
+        onConfirm={handleCommanConfirm}
+      />
       <Grid container>
         <Grid
           container

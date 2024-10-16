@@ -145,7 +145,7 @@ const Overview = ({
           <Typography
             sx={{
               color:
-                item.status === "charging"
+                item.status === "available"
                   ? "#BFFC72"
                   : item.status === "parked"
                   ? "#FFC700"
@@ -159,11 +159,13 @@ const Overview = ({
       avgSpeed: item.avgSpeed || "--",
       avgPayload: item.avgPayload || "--",
       totalDistance: item?.distanceTravelled
-        ? `${item.distanceTravelled} KM`
+        ? `${item.distanceTravelled?.toFixed(2)} KM`
         : "--",
       avgConsumption: item.avgConsumption || "--",
       breakdown: item.breakdown || "--",
-      currentSoc: item.batteryPercentage ? `${item.batteryPercentage}%` : "--",
+      currentSoc: item.batteryPercentage
+        ? `${item.batteryPercentage?.toFixed(2)}%`
+        : "--",
       effectiveRange: item.effectiveRange || "--",
       Action: (
         <Grid container justifyContent="center" spacing={2}>

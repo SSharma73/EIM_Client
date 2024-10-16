@@ -27,7 +27,7 @@ const CustomerManagement = () => {
     search = "",
     limit = 10,
     page = 1,
-  } = {}) => { 
+  } = {}) => {
     try {
       const params = new URLSearchParams({
         search,

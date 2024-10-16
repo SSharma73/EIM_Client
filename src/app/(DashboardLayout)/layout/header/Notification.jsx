@@ -91,7 +91,6 @@ const Notification = () => {
         `notification/notifications/?customerId=${customerId}`
       );
       if (res.status === 200 || res.status === 201) {
-        console.log(res);
         SetDummyData(res?.data);
       }
     } catch (err) {

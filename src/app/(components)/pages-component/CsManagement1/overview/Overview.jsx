@@ -1,33 +1,39 @@
 "use client";
 import { Grid, Divider, Typography, Button, Tooltip } from "@mui/material";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import RoomOutlinedIcon from "@mui/icons-material/RoomOutlined";
 import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
-import Map from "@/app/(components)/map/map";
+import Map from "@/app/(components)/map";
 import { CustomGrid } from "../../../mui-components/CustomGrid";
 import CustomTextField from "@/app/(components)/mui-components/Text-Field's/index";
 import { PiCarBattery } from "react-icons/pi";
 import Image from "next/image"; // Ensure to import Image
 import noData from "../../../../../../public/Img/Nodata.svg";
-const coordinate = [
-  { lat: "28.51079782059423", log: "77.40362813493975" },
-  { lat: "28.510404514720925", log: "77.40712974097106" },
-  { lat: "28.512297585971584", log: "77.40356012099012" },
-  { lat: "28.510728275696316", log: "77.40199688895548" },
-  { lat: "28.511107212816803", log: "77.4063730115565" },
-  { lat: "28.512937158827324", log: "77.41783963937374" },
-];
 
 const Overview = ({ fetchAllDetails }) => {
   const MapHeight = "630px";
   const iconUrls = ["./available.svg", "charger.svg"];
+  const iconMapping = {
+    sany: "./available.svg",
+    delta: "./charger.svg",
+  };
   const [activeMarker, setActiveMarker] = useState(null);
-
   const handleMapData = (index, point) => {
     setActiveMarker(index);
   };
+  const [coordinates, setCoordinates] = useState([]);
+  useEffect(() => {
+    if (fetchAllDetails?.result) {
+      const newCoordinates = fetchAllDetails.result.map((item) => ({
+        lat: item.location.coordinates[1],
+        log: item.location.coordinates[0],
+        icon: iconMapping[item.type],
+      }));
+      setCoordinates(newCoordinates);
+    }
+  }, [fetchAllDetails]);
 
   const onClose = () => {
     setActiveMarker(null);
@@ -54,7 +60,7 @@ const Overview = ({ fetchAllDetails }) => {
           {fetchAllDetails?.result?.length > 0 ? (
             fetchAllDetails.result.map((item, index) => {
               const onlineStatusColor =
-                item.status === "online" ? "#1CD28E" : "#FE7272";
+                item.status === "available" ? "#1CD28E" : "#FE7272";
               const batteryStates = [{ index: 3 }, { index: 2 }, { index: 1 }];
               return (
                 <Grid item xs={12} key={index} mt={1}>
@@ -173,7 +179,7 @@ const Overview = ({ fetchAllDetails }) => {
             iconUrls={iconUrls}
             activeMarker={activeMarker}
             setActiveMarker={setActiveMarker}
-            coordinate={coordinate}
+            coordinate={coordinates}
             onClose={onClose}
           />
         </Grid>
