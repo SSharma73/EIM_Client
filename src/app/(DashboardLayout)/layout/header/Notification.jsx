@@ -120,7 +120,7 @@ const Notification = () => {
           //   },
           // }}
           max={999}
-          badgeContent={dummyData?.length}
+          badgeContent={dummyData && dummyData?.length}
         >
           <NotificationsNoneIcon sx={{ fontSize: "22px", color: "#C0FE72" }} />
         </Badge>
@@ -146,7 +146,7 @@ const Notification = () => {
           </Box>
         </MenuItem>
         <ScrollWrapper>
-          {dummyData ? (
+          {dummyData?.length > 0 ? (
             <>
               {dummyData?.map((item, index) => (
                 <MenuItem key={index}>
