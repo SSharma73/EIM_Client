@@ -26,10 +26,10 @@ const Overview = ({ fetchAllDetails }) => {
   const [coordinates, setCoordinates] = useState([]);
   useEffect(() => {
     if (fetchAllDetails?.result) {
-      const newCoordinates = fetchAllDetails.result.map((item) => ({
-        lat: item.location.coordinates[1],
-        log: item.location.coordinates[0],
-        icon: iconMapping[item.type],
+      const newCoordinates = fetchAllDetails?.result?.map((item) => ({
+        lat: item?.location?.coordinates[1],
+        log: item?.location?.coordinates[0],
+        icon: iconMapping[item?.type],
       }));
       setCoordinates(newCoordinates);
     }
