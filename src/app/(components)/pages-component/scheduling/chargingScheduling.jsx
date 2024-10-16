@@ -13,14 +13,6 @@ import Image from "next/image";
 import { PiCarBattery } from "react-icons/pi";
 import axiosInstance from "@/app/api/axiosInstance";
 
-const coordinate = [
-  { lat: "28.51079782059423", log: "77.40362813493975" },
-  { lat: "28.510404514720925", log: "77.40712974097106" },
-  { lat: "28.512297585971584", log: "77.40356012099012" },
-  { lat: "28.510728275696316", log: "77.40199688895548" },
-  { lat: "28.511107212816803", log: "77.4063730115565" },
-  { lat: "28.512937158827324", log: "77.41783963937374" },
-];
 const iconUrls = ["./available.svg", "charger.svg"];
 const iconMapping = {
   sany: "./available.svg",
@@ -51,7 +43,7 @@ const VehicleScheduling = () => {
         const { data, status } = await axiosInstance.get(
           "schedule/getAllSchedules"
         );
-        setSchedules(data.data);
+        setSchedules(data?.data);
       } catch (err) {
         console.log("Check  err");
       }
@@ -68,11 +60,11 @@ const VehicleScheduling = () => {
           "charger/fetchChargers"
         );
         const fleetLocations = data?.data?.result
-          .filter((fleet) => fleet.location && fleet.location.coordinates)
-          .map((fleet) => ({
-            lat: fleet.location.coordinates[1],
-            log: fleet.location.coordinates[0],
-            icon: iconMapping[fleet.type],
+          ?.filter((fleet) => fleet?.location && fleet?.location?.coordinates)
+          ?.map((fleet) => ({
+            lat: fleet?.location?.coordinates[1],
+            log: fleet?.location?.coordinates[0],
+            icon: iconMapping[fleet?.type],
           }));
         setStation(fleetLocations);
       } catch (err) {

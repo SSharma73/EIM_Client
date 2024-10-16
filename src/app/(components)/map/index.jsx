@@ -32,16 +32,16 @@ const Page = ({ Height, coordinate, setActiveMarker, handleMapData }) => {
         >
           <div>
             {coordinate &&
-              coordinate.map((point, index) => (
+              coordinate?.map((point, index) => (
                 <Marker
                   key={index}
                   position={{
-                    lat: point.lat,
-                    lng: point.log,
+                    lat: point?.lat,
+                    lng: point?.log,
                   }}
                   onClick={() => handleMapData(index, point.icon)}
                   icon={{
-                    url: point.icon,
+                    url: point?.icon,
                     anchor: new google.maps.Point(17, 46),
                     scaledSize: new google.maps.Size(80, 80),
                   }}

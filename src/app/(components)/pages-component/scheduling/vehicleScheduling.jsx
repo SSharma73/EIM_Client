@@ -56,11 +56,11 @@ const VehicleScheduling = () => {
       try {
         const { data, status } = await axiosInstance.get("fleet/fetchFleets");
         const fleetLocations = data?.data?.result
-          .filter((fleet) => fleet.location && fleet.location.coordinates)
-          .map((fleet) => ({
-            lat: fleet.location.coordinates[0],
-            log: fleet.location.coordinates[1],
-            icon: iconMapping[fleet.type],
+          ?.filter((fleet) => fleet?.location && fleet?.location?.coordinates)
+          ?.map((fleet) => ({
+            lat: fleet?.location?.coordinates[0],
+            log: fleet?.location?.coordinates[1],
+            icon: iconMapping[fleet?.type],
           }));
 
         setLocations(fleetLocations);
@@ -71,7 +71,6 @@ const VehicleScheduling = () => {
 
     fetchFleets();
   }, []);
-
 
   const handleMapData = (index, point) => {
     console.log("point", index, point);
