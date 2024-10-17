@@ -26,6 +26,13 @@ const TimeSlot = ({
   adjustment,
   onAdjustmentChange,
 }) => {
+  // Parse adjustment to handle empty or invalid cases
+  const parsedAdjustment = Number(adjustment) || 0; // Default to 0 if NaN or empty
+  const adjustedRate = Number(baseRate) + parsedAdjustment;
+
+  // Ensure adjustedRate is not less than or equal to 0
+  const displayRate = adjustedRate > 0 ? adjustedRate : 0.0;
+
   return (
     <Grid container pt={2} sx={{ alignItems: "center" }}>
       <Grid item md={4} sm={4} xs={12}>
@@ -33,14 +40,16 @@ const TimeSlot = ({
       </Grid>
       <Grid item md={4} sm={4} xs={12}>
         <TextField
-          type="number"
+          type="text" // Keep as "text" to allow negative values
           value={adjustment}
-          onChange={(e) => onAdjustmentChange(startTime, e.target.value)}
+          onChange={(e) =>
+            onAdjustmentChange(startTime, e.target.value, baseRate)
+          }
           placeholder="Adjustment"
         />
       </Grid>
       <Grid item md={4} sm={4} xs={12}>
-        <Typography>{adjustment}</Typography>
+        <Typography>{displayRate.toFixed(2)}</Typography>
       </Grid>
     </Grid>
   );
@@ -55,15 +64,46 @@ const CreateTariff = () => {
   } = useForm();
   const [baseRate, setBaseRate] = useState("");
   const [adjustments, setAdjustments] = useState(Array(24).fill("0"));
-
-  const handleAdjustmentChange = (hour, value) => {
-    const newAdjustments = [...adjustments];
-    const parsedValue = Number(value);
-    // Ensure only to add new adjustment values, not replace them
-    if (!isNaN(parsedValue)) {
-      newAdjustments[hour] = parsedValue; // Update the adjustment for the specific hour
+  const handleAdjustmentChange = (hour, value, baseRate) => {
+    // Allow an empty string (for deletion)
+    if (value === "") {
+      const newAdjustments = [...adjustments];
+      newAdjustments[hour] = ""; // Allow empty for clearing
+      setAdjustments(newAdjustments);
+      return;
     }
-    setAdjustments(newAdjustments);
+
+    // Allow "-" as a valid input temporarily
+    if (value === "-" || value === "-0") {
+      const newAdjustments = [...adjustments];
+      newAdjustments[hour] = value; // Set as negative input
+      setAdjustments(newAdjustments);
+      return;
+    }
+
+    // Parse the value
+    const parsedValue = parseFloat(value);
+
+    // Validate if the input is a number (including negative)
+    if (!isNaN(parsedValue)) {
+      const adjustedRate = Number(baseRate) + parsedValue;
+
+      // Check if the adjusted rate is less than 1
+      if (adjustedRate < 1) {
+        notifyError("Adjustment results in rate below minimum of 1.");
+        // Optionally, display an error message to the user (e.g., using state)
+        return; // Prevent further action
+      }
+
+      const newAdjustments = [...adjustments];
+      newAdjustments[hour] = parsedValue.toString(); // Store valid input
+      setAdjustments(newAdjustments);
+    } else {
+      // For non-numeric input, keep the last valid value
+      const newAdjustments = [...adjustments];
+      newAdjustments[hour] = adjustments[hour]; // Keep the last valid value
+      setAdjustments(newAdjustments);
+    }
   };
 
   const timeSlots = Array.from({ length: 24 }, (_, index) => ({
@@ -73,9 +113,7 @@ const CreateTariff = () => {
 
   useEffect(() => {
     if (baseRate) {
-      setAdjustments(Array(24).fill(baseRate));
-    } else {
-      setAdjustments(Array(24).fill("0"));
+      setAdjustments(Array(24).fill("0")); // Reset adjustments to 0 when baseRate changes
     }
   }, [baseRate]);
 
@@ -90,8 +128,14 @@ const CreateTariff = () => {
     const payload = {
       name: data.name,
       baseRate: Number(data.baseRate),
-      hourlyRate,
+      hourlyRate: Object.fromEntries(
+        adjustments.map((adjustment, index) => [
+          index.toString(),
+          Number(baseRate) + Number(adjustment),
+        ])
+      ),
     };
+
     try {
       const { status, data } = await axiosInstance.post(
         "tariff/addTariff",
@@ -105,11 +149,13 @@ const CreateTariff = () => {
       notifyError(error?.response?.data?.msg || "Failed to fetch data");
     }
   };
+
   const breadcrumbItems = [
     { label: "Dashboard", link: "/" },
     { label: "Tariff-Management", link: "/tariffManagement" },
     { label: "Create-Tariff", link: "/tariffManagement/createTariff" },
   ];
+
   return (
     <Grid container rowGap={2}>
       <ToastComponent />
@@ -140,9 +186,6 @@ const CreateTariff = () => {
             helperText={errors.baseRate?.message}
             onChange={(e) => setBaseRate(e.target.value)}
           />
-        </Grid>
-        <Grid item md={2} sm={4} xs={12}>
-          <Typography>{baseRate}</Typography>
         </Grid>
       </CustomGrid>
       <CustomGrid container>
