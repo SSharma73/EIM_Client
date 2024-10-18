@@ -93,7 +93,7 @@ const CustomTable = ({
                     whiteSpace: "nowrap",
                     overflow: "hidden",
                     textOverflow: "ellipsis",
-                    maxWidth: "200px", // Adjust max width as needed
+                    maxWidth: "270px", // Adjust max width as needed
                   }}
                 >
                   {!Array.isArray(ele) ? (
@@ -109,7 +109,7 @@ const CustomTable = ({
         <TableFooter>
           {!loading && rows?.length === 0 && (
             <TableRow>
-              <TableCell sx={{ minWidth: "300px" }} colSpan={columns.length}>
+              <TableCell colSpan={columns.length}>
                 <Box
                   sx={{
                     display: "flex",

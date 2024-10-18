@@ -44,7 +44,7 @@ const VehicleScheduling = () => {
         const { data, status } = await axiosInstance.get(
           "schedule/getAllSchedules"
         );
-        const fleetLocations = data?.data
+        const fleetLocations = data?.data?.result
           ?.filter(
             (fleet) =>
               fleet?.stationLat && fleet?.stationType && fleet?.stationLong
@@ -55,7 +55,7 @@ const VehicleScheduling = () => {
             icon: iconMapping[fleet?.stationType],
           }));
         setStation(fleetLocations);
-        setSchedules(data?.data);
+        setSchedules(data?.data?.result);
       } catch (err) {
         console.log("Check  err");
       }

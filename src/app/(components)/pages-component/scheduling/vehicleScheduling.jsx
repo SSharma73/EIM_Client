@@ -37,13 +37,14 @@ const VehicleScheduling = () => {
   const [icons, setIcons] = useState(null);
   const [schedules, setSchedules] = useState([]);
   const [locations, setLocations] = useState([]);
+  console.log("check schedules", schedules);
   useEffect(() => {
     const fetchSchedules = async () => {
       try {
         const { data, status } = await axiosInstance.get(
           "schedule/getAllSchedules"
         );
-        const fleetLocations = data?.data
+        const fleetLocations = data?.data?.result
           ?.filter(
             (fleet) => fleet?.fleetLat && fleet?.fleetType && fleet?.fleetLong
           )
@@ -53,9 +54,9 @@ const VehicleScheduling = () => {
             icon: iconMapping[fleet?.fleetType],
           }));
         setLocations(fleetLocations);
-        setSchedules(data.data);
+        setSchedules(data?.data?.result);
       } catch (err) {
-        console.log("Check  err");
+        console.log("Check  err", err);
       }
     };
 
