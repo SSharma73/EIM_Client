@@ -190,9 +190,11 @@ const Charging = ({
       ),
       fleetId: item.fleetNumber ?? "--",
       currentSoc: item.batteryPercentage
-        ? `${item.batteryPercentage?.toFixed(2)}%`
+        ? `${item.batteryPercentage?.toFixed(1)}%`
         : "--",
-      avgPayload: item.avgPayload || "--",
+      currentSoh: item.batteryHealth
+        ? `${item.batteryHealth?.toFixed(1)}%`
+        : "--",
       totalHandle: item?.totalHandle ? item?.totalHandle : "--",
       maxPayload: item?.maxPayload ? item?.maxPayload : "--",
       trip: (
@@ -208,7 +210,7 @@ const Charging = ({
         : "--",
       breakdown: item?.breakdown ? item?.breakdown : "--",
       totalUnit: item?.totalUnit ? item?.totalUnit : "--",
-      avgSpeed: item.averageSpeed.toFixed(2) || "--",
+      avgSpeed: item.averageSpeed.toFixed(1) || "--",
       mobileNumber8: item?.mobileNumber ? item?.mobileNumber : "--",
       mobileNumber9: item?.mobileNumber ? item?.mobileNumber : "--",
       mobileNumber6: item?.mobileNumber ? item?.mobileNumber : "--",

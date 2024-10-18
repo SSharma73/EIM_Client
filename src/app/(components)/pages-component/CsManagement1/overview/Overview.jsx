@@ -61,7 +61,12 @@ const Overview = ({ fetchAllDetails }) => {
             fetchAllDetails.result.map((item, index) => {
               const onlineStatusColor =
                 item.status === "available" ? "#1CD28E" : "#FE7272";
-              const batteryStates = [{ index: 3 }, { index: 2 }, { index: 1 }];
+              const batteryStates = [
+                { index: 4 },
+                { index: 3 },
+                { index: 2 },
+                { index: 1 },
+              ];
               return (
                 <Grid item xs={12} key={index} mt={1}>
                   <Card sx={{ backgroundColor: "transparent" }}>
@@ -91,6 +96,8 @@ const Overview = ({ fetchAllDetails }) => {
                                 const batteryInfo = getBatteryStatus(
                                   item?.batterySoc[state.index]
                                 );
+                                console.log("Check state", item?.batterySoc);
+                                console.log("Check batteryInfo", batteryInfo);
 
                                 return (
                                   <Tooltip

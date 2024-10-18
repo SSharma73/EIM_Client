@@ -156,7 +156,7 @@ const Overview = ({
           </Typography>
         </Box>
       ),
-      avgSpeed: item.averageSpeed.toFixed(2) || "--",
+      avgSpeed: item.averageSpeed.toFixed(1) || "--",
       avgPayload: item.avgPayload || "--",
       totalDistance: item?.distanceTravelled
         ? `${item.distanceTravelled?.toFixed(2)} KM`

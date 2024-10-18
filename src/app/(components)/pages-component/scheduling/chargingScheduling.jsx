@@ -5,13 +5,13 @@ import Map from "@/app/(components)/map";
 import { Card, Divider, Avatar, Tooltip } from "@mui/material";
 import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
-import CardMedia from "@mui/material/CardMedia";
 import { CustomGrid } from "../../mui-components/CustomGrid";
 import CustomTextField from "../../mui-components/Text-Field's";
 import MapImg from "../../../../../public/Img/Vector.svg";
 import Image from "next/image";
 import { PiCarBattery } from "react-icons/pi";
 import axiosInstance from "@/app/api/axiosInstance";
+import moment from "moment";
 
 const iconUrls = ["./available.svg", "charger.svg"];
 const iconMapping = {
@@ -37,12 +37,24 @@ const VehicleScheduling = () => {
     setActiveMarker(null);
   };
   const [schedules, setSchedules] = useState([]);
+  const [station, setStation] = useState([]);
   useEffect(() => {
     const fetchSchedules = async () => {
       try {
         const { data, status } = await axiosInstance.get(
           "schedule/getAllSchedules"
         );
+        const fleetLocations = data?.data
+          ?.filter(
+            (fleet) =>
+              fleet?.stationLat && fleet?.stationType && fleet?.stationLong
+          )
+          ?.map((fleet) => ({
+            lat: fleet?.stationLat,
+            log: fleet?.stationLong,
+            icon: iconMapping[fleet?.stationType],
+          }));
+        setStation(fleetLocations);
         setSchedules(data?.data);
       } catch (err) {
         console.log("Check  err");
@@ -50,29 +62,6 @@ const VehicleScheduling = () => {
     };
 
     fetchSchedules();
-  }, []);
-  const [station, setStation] = useState([]);
-
-  useEffect(() => {
-    const fetchStation = async () => {
-      try {
-        const { data, status } = await axiosInstance.get(
-          "charger/fetchChargers"
-        );
-        const fleetLocations = data?.data?.result
-          ?.filter((fleet) => fleet?.location && fleet?.location?.coordinates)
-          ?.map((fleet) => ({
-            lat: fleet?.location?.coordinates[1],
-            log: fleet?.location?.coordinates[0],
-            icon: iconMapping[fleet?.type],
-          }));
-        setStation(fleetLocations);
-      } catch (err) {
-        console.log("Check error", err);
-      }
-    };
-
-    fetchStation();
   }, []);
 
   const InfoRow = ({ label, value }) => (
@@ -105,139 +94,163 @@ const VehicleScheduling = () => {
         </Grid>
       </CustomGrid>
       <Grid container spacing={2}>
-        {schedules.map((item, index) => (
-          <Grid key={index} item xl={3} md={3} sm={12} xs={12}>
-            <Card
-              sx={{
-                maxWidth: "auto",
-                backgroundColor: "#6099EB",
-                paddingTop: 3,
-                borderRadius: "10px",
-                position: "relative",
-              }}
-            >
-              <Grid container justifyContent={"center"}>
-                {item.requestType === "charging" ? (
-                  <Image
-                    src="/on-charging.svg"
-                    alt="on charging"
-                    width={260}
-                    height={140}
-                    objectFit="contain"
-                  />
-                ) : (
-                  <Image
-                    src="/not-charging.svg"
-                    alt="not charging"
-                    width={260}
-                    height={140}
-                    objectFit="contain"
-                  />
-                )}
-              </Grid>
-              <CardContent
+        {schedules.map((item, index) => {
+          const eta = moment(item?.eta);
+          const currentTime = moment();
+          const minutesDifference = eta.diff(currentTime, "minutes");
+          return (
+            <Grid key={index} item xl={3} md={3} sm={12} xs={12}>
+              <Card
                 sx={{
-                  backgroundColor:
-                    item.requestType === "charging" ? "#0179BD" : "#009660",
+                  maxWidth: "auto",
+                  backgroundColor: "#6099EB",
+                  paddingTop: 3,
+                  borderRadius: "10px",
+                  position: "relative",
                 }}
               >
-                {(item.title === "Swapping" || item.title === "Scheduled") && (
-                  <Grid
-                    sx={{
-                      position: "absolute",
-                      top: "138px",
-                      backgroundColor: "rgba(255, 255, 255, 1)",
-                      width: "90%",
-                      height: "22px",
-                      right: "15px",
-                      borderRadius: "8px",
-                    }}
-                  >
+                <Grid container justifyContent={"center"}>
+                  {item.requestType === "charging" ? (
+                    <Image
+                      src="/on-charging.svg"
+                      alt="on charging"
+                      width={260}
+                      height={140}
+                      objectFit="contain"
+                    />
+                  ) : (
+                    <Image
+                      src="/not-charging.svg"
+                      alt="not charging"
+                      width={260}
+                      height={140}
+                      objectFit="contain"
+                    />
+                  )}
+                </Grid>
+                <CardContent
+                  sx={{
+                    backgroundColor:
+                      item.requestType === "charging" ? "#0179BD" : "#009660",
+                  }}
+                >
+                  {(item.title === "Swapping" ||
+                    item.title === "Scheduled") && (
                     <Grid
-                      container
-                      justifyContent="center"
-                      sx={{ color: "#000", alignItems: "center" }}
+                      sx={{
+                        position: "absolute",
+                        top: "138px",
+                        backgroundColor: "rgba(255, 255, 255, 1)",
+                        width: "90%",
+                        height: "22px",
+                        right: "15px",
+                        borderRadius: "8px",
+                      }}
                     >
-                      <Tooltip title="Discharged">
-                        <Grid
-                          item
-                          xs={6}
-                          md={3}
-                          sx={{ display: "flex", alignItems: "center", gap: 1 }}
-                        >
-                          <PiCarBattery color={"#FF0000"} size={"20px"} />
-                          24%
-                        </Grid>
-                      </Tooltip>
-                      <Tooltip title="Charging">
-                        <Grid
-                          item
-                          xs={6}
-                          md={3}
-                          sx={{ display: "flex", alignItems: "center", gap: 1 }}
-                        >
-                          <PiCarBattery color={"#FFC300"} size={"20px"} />
-                          40%
-                        </Grid>
-                      </Tooltip>
-                      <Tooltip title="Charged">
-                        <Grid
-                          item
-                          xs={6}
-                          md={3}
-                          sx={{ display: "flex", alignItems: "center", gap: 1 }}
-                        >
-                          <PiCarBattery color={"#C0FE72"} size={"20px"} />
-                          100%
-                        </Grid>
-                      </Tooltip>
+                      <Grid
+                        container
+                        justifyContent="center"
+                        sx={{ color: "#000", alignItems: "center" }}
+                      >
+                        <Tooltip title="Discharged">
+                          <Grid
+                            item
+                            xs={6}
+                            md={3}
+                            sx={{
+                              display: "flex",
+                              alignItems: "center",
+                              gap: 1,
+                            }}
+                          >
+                            <PiCarBattery color={"#FF0000"} size={"20px"} />
+                            24%
+                          </Grid>
+                        </Tooltip>
+                        <Tooltip title="Charging">
+                          <Grid
+                            item
+                            xs={6}
+                            md={3}
+                            sx={{
+                              display: "flex",
+                              alignItems: "center",
+                              gap: 1,
+                            }}
+                          >
+                            <PiCarBattery color={"#FFC300"} size={"20px"} />
+                            40%
+                          </Grid>
+                        </Tooltip>
+                        <Tooltip title="Charged">
+                          <Grid
+                            item
+                            xs={6}
+                            md={3}
+                            sx={{
+                              display: "flex",
+                              alignItems: "center",
+                              gap: 1,
+                            }}
+                          >
+                            <PiCarBattery color={"#C0FE72"} size={"20px"} />
+                            100%
+                          </Grid>
+                        </Tooltip>
+                      </Grid>
                     </Grid>
+                  )}
+                  <Grid container justifyContent={"space-between"}>
+                    <Typography gutterBottom variant="h4" component="div">
+                      {minutesDifference < 1 ? "Charging" : "Scheduled"}
+
+                      <br />
+                      <span style={{ fontSize: "12px" }}>
+                        CS/SS ID {`(${item?.stationCode})`}
+                      </span>
+                    </Typography>
+                    <Avatar sx={{ borderRadius: "4px" }}>
+                      <Image src={MapImg} alt="map" />
+                    </Avatar>
                   </Grid>
-                )}
-                <Grid container justifyContent={"space-between"}>
-                  <Typography gutterBottom variant="h4" component="div">
-                    {item.requestType === "charging" ? "Charging" : "Scheduled"}
-                    <br />
-                    <span style={{ fontSize: "12px" }}>
-                      CS/SS ID {`(${item?.stationCode})`}
-                    </span>
+                  <Divider sx={{ border: "0.1px solid #fff" }} />
+                  <Grid container direction="column">
+                    <InfoRow label="Tractor ID" value={item?.fleetNumber} />
+                    <InfoRow
+                      label="Expected arrival time"
+                      value={`${
+                        minutesDifference < 1 ? 0 : minutesDifference
+                      } mins`}
+                    />
+                    <InfoRow
+                      label={
+                        item.requestType === "charging"
+                          ? "Expected charging time"
+                          : "Expected swapping time"
+                      }
+                      value={`${item?.AVG_CHARGING_TIME?.toFixed(2)} mins`}
+                    />
+                    <InfoRow label="Charge rate" value={item?.chargingRate} />
+                    <InfoRow
+                      label="Current SoC"
+                      value={`${item?.batteryPercentage.toFixed(2)}%`}
+                    />
+                  </Grid>
+                </CardContent>
+                <CardActions
+                  sx={{
+                    backgroundColor:
+                      item.requestType === "charging" ? "#008CDB" : "#02BB78",
+                  }}
+                >
+                  <Typography variant="body2">
+                    Reason : -- {item?.description}
                   </Typography>
-                  <Avatar sx={{ borderRadius: "4px" }}>
-                    <Image src={MapImg} alt="map" />
-                  </Avatar>
-                </Grid>
-                <Divider sx={{ border: "0.1px solid #fff" }} />
-                <Grid container direction="column">
-                  <InfoRow label="Tractor ID" value={item?.fleetNumber} />
-                  <InfoRow label="Expected arrival time" value={item?.eta} />
-                  <InfoRow
-                    label={
-                      item.requestType === "charging"
-                        ? "Expected charging time"
-                        : "Expected swapping time"
-                    }
-                    value={`${item?.AVG_CHARGING_TIME?.toFixed(2)} mins`}
-                  />
-                  <InfoRow label="Charge rate" value={item?.chargingRate} />
-                  <InfoRow
-                    label="Current SoC"
-                    value={`${item?.batteryPercentage.toFixed(2)}%`}
-                  />
-                </Grid>
-              </CardContent>
-              <CardActions
-                sx={{
-                  backgroundColor:
-                    item.requestType === "charging" ? "#008CDB" : "#02BB78",
-                }}
-              >
-                <Typography variant="body2">
-                  Reason : -- {item?.description}
-                </Typography>
-              </CardActions>
-            </Card>
-          </Grid>
-        ))}
+                </CardActions>
+              </Card>
+            </Grid>
+          );
+        })}
       </Grid>
     </Grid>
   );
