@@ -96,8 +96,6 @@ const Overview = ({ fetchAllDetails }) => {
                                 const batteryInfo = getBatteryStatus(
                                   item?.batterySoc[state.index]
                                 );
-                                console.log("Check state", item?.batterySoc);
-                                console.log("Check batteryInfo", batteryInfo);
 
                                 return (
                                   <Tooltip

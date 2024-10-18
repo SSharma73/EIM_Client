@@ -166,7 +166,12 @@ const Charging = ({
           ? "error"
           : "warning";
       const label = item?.status ? item?.status : "--";
-      const batteryStates = [{ index: 3 }, { index: 2 }, { index: 1 }];
+      const batteryStates = [
+        { index: 4 },
+        { index: 3 },
+        { index: 2 },
+        { index: 1 },
+      ];
       return {
         id: item?.stationCode ?? "--",
         status: (
@@ -183,30 +188,27 @@ const Charging = ({
           </Box>
         ),
         hubName: item?.name ?? "--",
-        eTractorInQueue: item?.queue ?? "--",
+        eTractorInQueue: item?.queue?.length ?? "--",
         currentlyStatus: item?.currentlyCharging ?? "--",
         totalCharged: item?.totalCharged ?? "--",
         totalSwapped: labelStatus === "Swapping" && item?.totalSwapped,
         unitConsumed: item?.unitConsumed?.toFixed(2) ?? "--",
         avgTime: item?.averageChargingTime ?? "--",
         batteryPacks: labelStatus === "Swapping" && (
-          <Grid container key={index} width={250}>
-            {batteryStates.map((state) => {
-              const batterySoc = item?.batterySoc?.[state.index];
-              const batteryInfo = getBatteryStatus(batterySoc);
+          <Grid container key={index} width={270}>
+            {batteryStates?.map((state) => {
+              const batteryInfo = getBatteryStatus(
+                item?.batterySoc[state.index]
+              );
               return (
-                <Grid item xs={6} md={3} key={state.index}>
+                <Grid item key={state.index}>
                   <Tooltip title={batteryInfo.percent}>
                     <Button
                       size="small"
                       sx={{ color: batteryInfo.color }}
                       startIcon={<PiCarBattery color={batteryInfo.color} />}
                     >
-                      {batterySoc !== undefined && batterySoc !== null ? (
-                        batteryInfo.percent
-                      ) : (
-                        <span>0</span>
-                      )}
+                      {batteryInfo?.percent}
                     </Button>
                   </Tooltip>
                 </Grid>

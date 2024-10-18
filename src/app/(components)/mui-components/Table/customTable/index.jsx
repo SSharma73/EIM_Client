@@ -51,7 +51,7 @@ const CustomTable = ({
           }}
         >
           <TableRow>
-            {columns.map((column, index) => (
+            {columns?.map((column, index) => (
               <TableCell
                 key={index}
                 align={
@@ -109,7 +109,7 @@ const CustomTable = ({
         <TableFooter>
           {!loading && rows?.length === 0 && (
             <TableRow>
-              <TableCell colSpan={columns.length}>
+              <TableCell sx={{ minWidth: "300px" }} colSpan={columns.length}>
                 <Box
                   sx={{
                     display: "flex",
