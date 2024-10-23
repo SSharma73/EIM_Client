@@ -134,8 +134,8 @@ const Overview = ({ fetchAllDetails }) => {
                         </Grid>
                         <Grid item xs={10}>
                           <Typography color={"secondary"}>
-                            {item.queue > 0
-                              ? `${item.queue} Queue in charging`
+                            {item.queue.length > 0
+                              ? `${item.queue?.length} Queue`
                               : "No Queue"}
                           </Typography>
                           <Typography color={"secondary"} mb={1}>
