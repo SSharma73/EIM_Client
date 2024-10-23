@@ -267,19 +267,19 @@ const Charging = ({
                   Download Excel
                 </Button>
               </Grid>
-              <Grid item ml={1} mr={1}>
+              {/* <Grid item ml={1} mr={1}>
                 <CustomDropdown
                   variant="outlined"
                   size="large"
                   buttonname={"Region"}
                   menuitems={menuItems}
                 />
-              </Grid>
-              <Grid item mr={1}>
+              </Grid> */}
+              {/* <Grid item mr={1}>
                 <CommonDatePicker
                   getDataFromChildHandler={getDataFromChildHandler}
                 />
-              </Grid>
+              </Grid> */}
             </Grid>
           </Grid>
         </Grid>

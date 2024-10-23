@@ -37,7 +37,6 @@ const VehicleScheduling = () => {
   const [icons, setIcons] = useState(null);
   const [schedules, setSchedules] = useState([]);
   const [locations, setLocations] = useState([]);
-  console.log("check schedules", schedules);
   useEffect(() => {
     const fetchSchedules = async () => {
       try {
@@ -116,7 +115,7 @@ const VehicleScheduling = () => {
                 }}
               >
                 <Grid container justifyContent={"center"}>
-                  {item.requestType === "charging" ? (
+                  {item.stationType === "delta" ? (
                     <Image
                       src="/on-charging.svg"
                       alt="on charging"
@@ -137,7 +136,7 @@ const VehicleScheduling = () => {
                 <CardContent
                   sx={{
                     backgroundColor:
-                      item.requestType === "charging" ? "#0179BD" : "#009660",
+                      item.stationType === "delta" ? "#0179BD" : "#009660",
                   }}
                 >
                   {(item.title === "Swapping" ||
@@ -208,7 +207,7 @@ const VehicleScheduling = () => {
                   )}
                   <Grid container justifyContent={"space-between"}>
                     <Typography gutterBottom variant="h4" component="div">
-                      {minutesDifference < 1 ? "Charging" : "Scheduled"}
+                      {minutesDifference < 1 ? item?.requestType : "scheduled"}
                       <br />
                       <span style={{ fontSize: "12px" }}>
                         CS/SS ID {`(${item?.stationCode})`}
@@ -245,7 +244,7 @@ const VehicleScheduling = () => {
                 <CardActions
                   sx={{
                     backgroundColor:
-                      item.requestType === "charging" ? "#008CDB" : "#02BB78",
+                      item.stationType === "delta" ? "#008CDB" : "#02BB78",
                   }}
                 >
                   <Typography variant="body2">

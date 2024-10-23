@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import Map from "../../../map/map";
+import Map from "../../../map";
 import { Grid, Typography, Button, Tooltip, IconButton } from "@mui/material";
 import CustomTable from "@/app/(components)/mui-components/Table/customTable/index";
 import TableSkeleton from "@/app/(components)/mui-components/Skeleton/tableSkeleton";
@@ -18,20 +18,12 @@ import {
 } from "@/app/(components)/mui-components/Snackbar";
 import { CustomDropdown } from "@/app/(components)/mui-components/DropdownButton";
 
-const iconUrls = [
-  "./truck1.svg",
-  "./truck2.svg",
-  "./truck3.svg",
-  "./truck4.svg",
-];
-const coordinate = [
-  { lat: "28.51079782059423", log: "77.40362813493975" },
-  { lat: "28.510404514720925", log: "77.40712974097106" },
-  { lat: "28.512297585971584", log: "77.40356012099012" },
-  { lat: "28.510728275696316", log: "77.40199688895548" },
-  { lat: "28.511107212816803", log: "77.4063730115565" },
-  { lat: "28.512937158827324", log: "77.41783963937374" },
-];
+const iconMapping = {
+  sany: "./truck1.svg",
+  byd: "./truck2.svg",
+  photon: "./truck3.svg",
+};
+
 const buttonData = [
   { label: "Charging : 3", color: "red" },
   { label: "Swapping : 0", color: "green" },
@@ -59,51 +51,31 @@ const Charging = ({
   setRowsPerPage,
   page,
   setPage,
-  searchQuery,
-  setSearchQuery,
   loading,
-  getDataFromChildHandler,
 }) => {
-  const [open, setOpenDialog] = React.useState(false);
-  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState(searchQuery);
+  const [coordinates, setCoordinates] = useState([]);
+  useEffect(() => {
+    if (data?.result) {
+      const newCoordinates = data?.result?.map((item) => ({
+        lat: item?.location?.coordinates[0],
+        log: item?.location?.coordinates[1],
+        icon: iconMapping[item?.type],
+      }));
+      setCoordinates(newCoordinates);
+    }
+  }, [data]);
   const [icons, setIcons] = React.useState(null);
   const [activeMarker, setActiveMarker] = useState(null);
 
   const handleMapData = (index, point) => {
-    console.log("point", index, point);
     setActiveMarker(index);
     setIcons(point);
   };
   const onClose = () => {
     setActiveMarker(null);
   };
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      setSearchQuery(debouncedSearchQuery);
-    }, 500);
-    return () => {
-      clearTimeout(handler);
-    };
-  }, [debouncedSearchQuery, setSearchQuery]);
 
-  const handleSearchChange = (event) => {
-    setDebouncedSearchQuery(event.target.value);
-  };
-
-  const handleOpenDialog = () => {
-    setOpenDialog(true);
-  };
-
-  const handleConfirm = () => {
-    handleCancel();
-  };
-
-  const handleCancel = () => {
-    setOpenDialog(false);
-  };
   const handleExport = (data) => {
-    console.log("Exporting data", data);
-
     if (!Array.isArray(data) || data.length === 0) {
       notifyError("No data available to export");
       return;
@@ -167,19 +139,21 @@ const Charging = ({
 
   const getFormattedData = (data) => {
     return data?.map((item, index) => ({
-      region: item?.port ? item?.port?.regionName : "--",
-      fleetId: item?.fleetId ?? "--",
-      currentSoc: item?.currentSoc ?? "--",
-      currentSoh: item?.currentSoh ?? "--",
-      currentUnit: item?.currentUnit ? item?.currentUnit : "--",
-      status: item?.status ? item?.status : "--",
-      estimatedCharging: item?.estimatedCharging
-        ? item?.estimatedCharging
+      region: item?.region ?? "--",
+      fleetId: item?.fleetNumber ?? "--",
+      currentSoc: item.batteryPercentage
+        ? `${item.batteryPercentage?.toFixed(1)}%`
         : "--",
-      chargingCycle: item?.chargingCycle ? item?.chargingCycle : "--",
-      swappingCycle: item?.swappingCycle ? item?.swappingCycle : "--",
-      totalUnits: item?.totalUnits ? item?.totalUnits : "--",
-      avgCharging: item?.avgCharging ? item?.avgCharging : "--",
+      currentSoh: item.batteryHealth
+        ? `${item.batteryHealth?.toFixed(1)}%`
+        : "--",
+      currentUnit: "--",
+      status: item?.status ?? "--",
+      estimatedCharging: item?.estimatedCharging ?? "--",
+      chargingCycle: item?.chargingCycle ?? "--",
+      swappingCycle: item?.swappingCycle ?? "--",
+      totalUnits: "--",
+      avgCharging: "--",
       Action: [
         <Grid
           container
@@ -190,7 +164,7 @@ const Charging = ({
         >
           <Grid item xs={6}>
             <Tooltip title="View">
-              <Link href={`/fleetManagement/123?tab=${value}`}>
+              <Link href={`/fleetManagement/${item._id}?tab=${value}`}>
                 <IconButton size="small">
                   <IoEyeOutline color="rgba(14, 1, 71, 1)" />
                 </IconButton>
@@ -198,7 +172,7 @@ const Charging = ({
             </Tooltip>
           </Grid>
           <Grid item xs={6}>
-            <Tooltip title="map">
+            <Tooltip title="Map">
               <IconButton size="small">
                 <GrMapLocation color="rgba(14, 1, 71, 1)" />
               </IconButton>
@@ -208,34 +182,17 @@ const Charging = ({
       ],
     }));
   };
-  const menuItems = ["Mumbai", "Delhi", "Agra", "Punjab", "Kolkata"];
+
   return (
     <Grid container columnGap={2}>
-      {activeMarker && activeMarker !== null ? (
-        <Grid item md={8.8} xs={12} height={"380px"}>
-          <Map
-            handleMapData={handleMapData}
-            iconUrls={iconUrls}
-            activeMarker={activeMarker}
-            setActiveMarker={setActiveMarker}
-            buttonData={buttonData}
-            coordinate={coordinate}
-            onClose={onClose}
-          />
-        </Grid>
-      ) : (
-        <Grid item xs={12} height={"380px"}>
-          <Map
-            handleMapData={handleMapData}
-            iconUrls={iconUrls}
-            activeMarker={activeMarker}
-            setActiveMarker={setActiveMarker}
-            buttonData={buttonData}
-            coordinate={coordinate}
-            onClose={onClose}
-          />
-        </Grid>
-      )}
+      <Map
+        coordinate={coordinates}
+        handleMapData={handleMapData}
+        activeMarker={activeMarker}
+        setActiveMarker={setActiveMarker}
+        buttonData={buttonData}
+        onClose={onClose}
+      />
       {activeMarker && activeMarker !== null && (
         <Grid item md={3} xs={12} height={"380px"}>
           <MapDetails icons={icons} onClose={onClose} title={"Charging Data"} />
@@ -270,19 +227,19 @@ const Charging = ({
                   Download Excel
                 </Button>
               </Grid>
-              <Grid item mr={1}>
+              {/* <Grid item mr={1}>
                 <CustomDropdown
                   variant="outlined"
                   size="large"
                   buttonname={"Region"}
                   menuitems={menuItems}
                 />
-              </Grid>
-              <Grid item mr={1}>
+              </Grid> */}
+              {/* <Grid item mr={1}>
                 <CommonDatePicker
                   getDataFromChildHandler={getDataFromChildHandler}
                 />
-              </Grid>
+              </Grid> */}
             </Grid>
           </Grid>
         </Grid>
@@ -295,7 +252,7 @@ const Charging = ({
         ) : (
           <CustomTable
             page={page}
-            rows={getFormattedData(data?.data?.result)}
+            rows={getFormattedData(data?.result)}
             count={data?.totalDocuments}
             columns={columns}
             setPage={setPage}

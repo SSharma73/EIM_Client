@@ -38,14 +38,13 @@ const Page = () => {
   ];
   const customerId = customerItems && customerItems?.id;
   const [tabsValue, setTabsValue] = useState("Overview");
+  console.log("check tabsValue", tabsValue);
   const getDataFromChildHandler = (date, dataArr) => {
     setDate(date);
   };
   const handleChange = (event, newValue) => {
-
     setValue(newValue);
     setTabsValue(tabs[newValue].label);
-    
   };
   useEffect(() => {
     if (customerId) {
@@ -91,10 +90,13 @@ const Page = () => {
     try {
       const params = new URLSearchParams({
         customerId,
+        status: tabsValue === "Charging" ? "charging" : "",
       });
+
       const { data } = await axiosInstance.get(
         `fleet/fetchFleets?${params.toString()}`
       );
+
       setData(data.data);
     } catch (error) {
       notifyError(error?.response?.data?.message || "Failed to fetch data");
@@ -102,6 +104,7 @@ const Page = () => {
       setLoading(false);
     }
   };
+
   const handleOpen = () => {
     setOpen(true);
   };
