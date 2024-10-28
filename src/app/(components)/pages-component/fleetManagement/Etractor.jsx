@@ -170,6 +170,7 @@ const Charging = ({
     notifySuccess("Download Excel Successfully");
   };
   const getFormattedData = (data) => {
+    console.log("data", data);
     return data?.map((item, index) => ({
       fleetId: item.fleetNumber ?? "--",
       status: (
@@ -195,8 +196,8 @@ const Charging = ({
       currentSoh: item.batteryHealth
         ? `${item.batteryHealth?.toFixed(1)}%`
         : "--",
-      totalHandle: item?.totalHandle ? item?.totalHandle : "--",
-      maxPayload: item?.maxPayload ? item?.maxPayload : "--",
+      chargingCycle: item?.chargingCycle ? item?.chargingCycle : "0",
+      swappingCycle: item?.swappingCycle ? item?.swappingCycle : "0",
       trip: (
         <Chip
           key={index}
