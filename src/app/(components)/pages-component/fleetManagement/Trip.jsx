@@ -28,21 +28,14 @@ const iconUrls = [
   "./truck3.svg",
   "./truck4.svg",
 ];
-const coordinate = [
-  { lat: "28.51079782059423", log: "77.40362813493975" },
-  { lat: "28.510404514720925", log: "77.40712974097106" },
-  { lat: "28.512297585971584", log: "77.40356012099012" },
-  { lat: "28.510728275696316", log: "77.40199688895548" },
-  { lat: "28.511107212816803", log: "77.4063730115565" },
-  { lat: "28.512937158827324", log: "77.41783963937374" },
-];
+const coordinate = [];
 const buttonData = [
-  { label: "All : 200" },
+  { label: "All : 0" },
   { label: "Charging : 0", color: "blue" },
-  { label: "Swapping: 10", color: "green" },
-  { label: "Online : 20", color: "skyblue" },
+  { label: "Swapping: 0", color: "green" },
+  { label: "Online : 0", color: "skyblue" },
   { label: "Offline : 0", color: "red" },
-  { label: "In Trip : 20", color: "#161821" },
+  { label: "In Trip : 0", color: "#161821" },
 ];
 
 const columns = [

@@ -122,11 +122,10 @@ const Charging = ({ value }) => {
   };
 
   useEffect(() => {
-    setData(RevenueManagementData);
+    setData([]);
   }, []);
 
   const getFormattedData = (data) => {
-    console.log("data", data);
     return data?.map((item, index) => ({
       Id: item?.Id ? item?.Id : "--",
       chargingcycle: (

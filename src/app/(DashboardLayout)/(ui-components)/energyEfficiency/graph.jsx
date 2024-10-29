@@ -9,7 +9,7 @@ const data1 = {
   datasets: [
     {
       label: "Max power (kW)",
-      data: [65, 59, 80, 81, 56, 55, 40, 20, 36, 48, 16],
+      data: [0],
       backgroundColor: "rgba(247, 187, 187, .2)", // Fill color for the area chart
       borderColor: "#C0FE72",
       borderWidth: 2,
@@ -17,7 +17,7 @@ const data1 = {
     },
     {
       label: "Optimization limit (kW)",
-      data: [10, 29, 50, 81, 16, 25, 70, 10, 76, 38, 16],
+      data: [0],
       backgroundColor: "rgba(247, 187, 187, .2)", // Fill color for the area chart
       borderColor: "#ffff",
       borderWidth: 2,
@@ -25,7 +25,7 @@ const data1 = {
     },
     {
       label: "Charging power(kW)",
-      data: [15, 39, 20, 81, 56, 55, 40, 20, 36, 48, 16],
+      data: [0],
       backgroundColor: "rgba(247, 187, 187, .2)", // Fill color for the area chart
       borderColor: "#1A1C67",
       borderWidth: 2,

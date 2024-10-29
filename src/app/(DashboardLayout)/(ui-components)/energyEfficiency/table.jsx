@@ -1,9 +1,8 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { Grid, Typography, Box, Button } from "@mui/material";
+import { Grid, Typography, Box, Button, Chip } from "@mui/material";
 import CustomTable from "@/app/(components)/mui-components/Table/customTable/index";
 import TableSkeleton from "@/app/(components)/mui-components/Skeleton/tableSkeleton";
-import CommonDatePicker from "@/app/(components)/mui-components/Text-Field's/Date-range-Picker/index";
 import Papa from "papaparse";
 import { saveAs } from "file-saver";
 import { FaRegFileExcel } from "react-icons/fa";
@@ -12,18 +11,15 @@ import ToastComponent, {
   notifyError,
   notifySuccess,
 } from "@/app/(components)/mui-components/Snackbar";
+import axiosInstance from "@/app/api/axiosInstance";
 
 const Table = ({
   data,
-  value,
   rowsPerPage,
   setRowsPerPage,
   page,
   setPage,
-  searchQuery,
-  setSearchQuery,
   loading,
-  getDataFromChildHandler,
 }) => {
   const dropDownEvent = [
     {
@@ -31,6 +27,8 @@ const Table = ({
       menuItems: ["Charging station", "Swapping station"],
     },
   ];
+  const [fetchAllDetails, setFetchAllDetails] = useState(null);
+
   const [selectedItems, setSelectedItems] = useState({
     "Charging station": "",
   });
@@ -45,8 +43,8 @@ const Table = ({
       ? "Swapping station"
       : "Charging station";
 
-  console.log("label", eventLabel);
-
+  const type =
+    selectedItems["Charging Station"] === "Swapping station" ? "sany" : "delta";
   const labelStatus = eventLabel?.slice(0, 8);
   const columns = [
     `${labelStatus} Station ID`,
@@ -55,33 +53,41 @@ const Table = ({
     "Queue",
     "Max. capacity(kW)",
     "Current load(kW)",
-    "E-Tractor",
     "Last session started",
     "Alerts",
   ];
-  const [open, setOpenDialog] = React.useState(false);
-  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState(searchQuery);
 
+  const fetchDetails = async ({
+    limit = 10,
+    page = 1,
+    type = "",
+    status = "",
+  } = {}) => {
+    try {
+      const params = new URLSearchParams({
+        limit,
+        page,
+        type,
+        status,
+      });
+      const { data } = await axiosInstance.get(
+        `charger/fetchChargers?${params.toString()}`
+      );
+      setFetchAllDetails(data?.data);
+    } catch (error) {
+      console.error("Error fetching chargers:", error);
+      throw error;
+    }
+  };
   useEffect(() => {
-    const handler = setTimeout(() => {
-      setSearchQuery(debouncedSearchQuery);
-    }, 500);
-    return () => {
-      clearTimeout(handler);
-    };
-  }, [debouncedSearchQuery, setSearchQuery]);
+    fetchDetails({
+      search: "",
+      limit: 10,
+      page: 1,
+      type: type,
+    });
+  }, [eventLabel]);
 
-  const handleSearchChange = (event) => {
-    setDebouncedSearchQuery(event.target.value);
-  };
-
-  const handleOpenDialog = () => {
-    setOpenDialog(true);
-  };
-
-  const handleConfirm = () => {
-    handleCancel();
-  };
   const handleExport = (data) => {
     console.log("Exporting data", data);
 
@@ -114,7 +120,6 @@ const Table = ({
       "Queue",
       "Max. capacity(kW)",
       "Current charging load(kW)",
-      "E-Tractor",
       "Last session started",
       "Alerts",
     ];
@@ -139,39 +144,40 @@ const Table = ({
     saveAs(blob, "CS/SS-EfficiencyData.csv");
     notifySuccess("Download Excel Succefully");
   };
-  const handleCancel = () => {
-    setOpenDialog(false);
-  };
+
   const getFormattedData = (data) => {
-    return data?.map((item, index) => ({
-      batteryId: (
-        <Box>
-          <span>{item?.batteryId}</span>
-          <Box
-            component="span"
-            sx={{
-              display: "inline-block",
-              width: "10px",
-              height: "10px",
-              borderRadius: "50%",
-              backgroundColor: item.color,
-              marginLeft: "10px",
-            }}
-          />
-        </Box>
-      ),
-      region: item.region,
-      status:
-        labelStatus === "Swapping" && item?.status === "In Charging"
-          ? "Available"
-          : item?.status,
-      queue: item?.queue ?? "--",
-      maxCapacity: item?.maxCapacity ?? "--",
-      currentCharging: item?.currentCharging ?? "--",
-      ETractor: item?.ETractor ?? "--",
-      lastSessionStarted: item?.lastSessionStarted ?? "--",
-      alerts: item?.alerts ?? "--",
-    }));
+    return data?.map((item, index) => {
+      const color =
+        item?.status === "available"
+          ? "success"
+          : item?.status === "offline"
+          ? "error"
+          : "warning";
+      const label = item?.status ? item?.status : "--";
+
+      return {
+        id: item?.stationCode ?? "--",
+        region: item.region ?? "--",
+        status: (
+          <Box>
+            <Chip
+              size="small"
+              label={<Typography variant="body2">{label}</Typography>}
+              color={color}
+              sx={{
+                backgroundColor: color,
+                color: "white",
+              }}
+            />
+          </Box>
+        ),
+        eTractorInQueue: item?.queue?.length ?? "--",
+        maxCapacity: item?.maxCapacity ?? "--",
+        currentCharging: item?.currentCharging ?? "--",
+        lastSessionStarted: item?.lastSessionStarted ?? "--",
+        alerts: item?.alerts ?? "--",
+      };
+    });
   };
 
   return (
@@ -220,11 +226,6 @@ const Table = ({
                 />
               ))}
             </Grid>
-            <Grid item mr={1}>
-              <CommonDatePicker
-                getDataFromChildHandler={getDataFromChildHandler}
-              />
-            </Grid>
           </Grid>
         </Grid>
       </Grid>
@@ -237,8 +238,8 @@ const Table = ({
       ) : (
         <CustomTable
           page={page}
-          rows={getFormattedData(data)}
-          count={data?.length}
+          rows={getFormattedData(fetchAllDetails?.result)}
+          count={fetchAllDetails?.totalPage}
           columns={columns}
           setPage={setPage}
           rowsPerPage={rowsPerPage}

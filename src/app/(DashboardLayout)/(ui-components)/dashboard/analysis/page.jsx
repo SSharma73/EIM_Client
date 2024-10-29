@@ -244,7 +244,7 @@ const Analysis = () => {
     setDate(date);
   };
   return (
-    <CustomGrid xs={12}>
+    <CustomGrid mt={2} xs={12}>
       <Grid container>
         <Grid container justifyContent={"space-between"} alignItems={"center"}>
           <Typography variant="h4">

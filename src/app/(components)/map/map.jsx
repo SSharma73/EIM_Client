@@ -67,6 +67,7 @@ const Page = ({
 
   const [activeButton, setActiveButton] = useState(null);
   const [filteredMarkers, setFilteredMarkers] = useState(null);
+
   useEffect(() => {
     if (activeButton !== null) {
       const filtered = snap.filter((point, index) => {
@@ -79,6 +80,7 @@ const Page = ({
       setFilteredMarkers(snap);
     }
   }, [activeButton, snap]);
+
   const handleButtonClick = (buttonData) => {
     setActiveButton(buttonData);
     setActiveMarker(null);
@@ -97,13 +99,6 @@ const Page = ({
           mapContainerStyle={containerStyle}
           center={center}
           zoom={15}
-          // onLoad={() => {
-          //   snap.forEach((point, index) => {
-          //     setTimeout(() => {
-          //       setActiveMarker(index);
-          //     }, index * 2000);
-          //   });
-          // }}
           onUnmount={() => {
             setActiveMarker(null);
           }}
@@ -125,31 +120,11 @@ const Page = ({
                       anchor: new google.maps.Point(17, 46),
                       scaledSize: new google.maps.Size(80, 80),
                     }}
-                  >
-                    {/* {activeMarker === index && (
-                      <InfoWindow onCloseClick={onClose}>
-                        <Grid container rowGap={1} sx={{ color: "#000" }}>
-                          <Typography>Payload</Typography>
-                          <Typography ml={10}>20 Ton</Typography>
-                        </Grid>
-                      </InfoWindow>
-                    )} */}
-                  </Marker>
+                  ></Marker>
                 );
               })}
             <Grid container xs={12} sx={{ position: "relative" }}>
               {buttonData && (
-                // <Grid
-                //   container
-                //   sx={{
-                //     padding: "8px",
-                //     position: "absolute",
-                //     backgroundColor: "#161861",
-                //     top: 315,
-                //     transform: "translateX(-50%)",
-                //     left: "50%",
-                //   }}
-                // >
                 <Box
                   sx={{
                     position: "absolute",
@@ -175,8 +150,6 @@ const Page = ({
                               color: "#fff",
                             },
                             "&:hover": {
-                              // border: "1px solid #C0FE72",
-                              // backgroundColor: "rgba(0, 0, 0, 0.08)",
                               color: "#C0FE72",
                             },
                           }}
@@ -195,7 +168,6 @@ const Page = ({
                     </ButtonGroup>
                   )}
                 </Box>
-                // </Grid>
               )}
             </Grid>
           </div>

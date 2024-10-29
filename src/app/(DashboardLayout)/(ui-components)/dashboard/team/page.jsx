@@ -1,5 +1,6 @@
 "use client";
-import { Grid, Typography, Box } from "@mui/material";
+import React, { useState, useEffect } from "react";
+import { Grid, Typography } from "@mui/material";
 import { Doughnut } from "react-chartjs-2";
 import { Chart, registerables } from "chart.js";
 import List from "@mui/material/List";
@@ -7,10 +8,8 @@ import ListItem from "@mui/material/ListItem";
 import ListItemText from "@mui/material/ListItemText";
 import styled from "@emotion/styled";
 import Badge from "@mui/material/Badge";
-import Image from "next/image";
-import Station from "../../../../../../public/on-charging.svg";
+import axiosInstance from "@/app/api/axiosInstanceImg";
 
-// import {CustomGrid} from '@/components/CustomGrid/index'
 const CustomGrid = styled(Grid)(({ theme }) => ({
   padding: theme.spacing(2),
   backgroundColor: "#6099EB",
@@ -19,17 +18,7 @@ const CustomGrid = styled(Grid)(({ theme }) => ({
 }));
 
 Chart.register(...registerables);
-const data1 = {
-  labels: ["Offline CS", "Online CS", "Occupied CS", "Available CS"],
-  datasets: [
-    {
-      data: [225, 50, 40, 20],
-      backgroundColor: ["#326EC3", "#A5D964", "#D7FFA6", "#D7E7FF"],
-      hoverOffset: 15,
-      borderColor: "transparent",
-    },
-  ],
-};
+
 const options = {
   animations: {
     animateScale: true,
@@ -47,7 +36,7 @@ const options = {
         usePointStyle: true,
         textAlign: "left",
         padding: 20,
-        boxWidth: 10,
+        boxWidth: 120,
         generateLabels: function (chart) {
           const datasets = chart.data.datasets;
           const labels = chart.data.labels;
@@ -74,7 +63,7 @@ const options = {
       },
     },
     tooltip: {
-      enabled: true,
+      enabled: true, // Hide tooltips
     },
   },
   interaction: {
@@ -82,20 +71,7 @@ const options = {
     intersect: false,
   },
 };
-const config = {
-  type: "line",
-  data: data1,
-  options: {
-    ...options,
-  },
-};
 
-const data = [
-  { labels: "Offline CS ", value: "1895", color: "#326EC3" },
-  { labels: "Online CS", value: "60", color: "#A5D964" },
-  { labels: "Occupied CS", value: "120", color: "#D7FFA6" },
-  { labels: "Available CS", value: "20", color: "#D7E7FF" },
-];
 const Badge1 = styled(Badge)(({ color }) => ({
   marginRight: "16px",
   "& .MuiBadge-badge": {
@@ -106,38 +82,86 @@ const Badge1 = styled(Badge)(({ color }) => ({
   },
 }));
 
-const BalancePage = () => {
+const BalancePage = ({ state }) => {
+  const [allStation, setAllStation] = useState(null);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const chargingResponse = await axiosInstance.get(`dashboard/getAll`, {
+          params: {
+            customerId: state.brandId,
+            region: state.region,
+          },
+        });
+        setAllStation(chargingResponse?.data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        console.error("Error fetching finally:");
+      }
+    };
+    fetchData();
+  }, [state]);
+  const data = [
+    { labels: "Queue in CS", value: allStation?.QueueCs, color: "#D7FFA6" },
+    { labels: "Queue in SS", value: allStation?.QueueSs, color: "#A5D964" },
+    {
+      labels: "E-tractor Charged",
+      value: allStation?.Charged,
+      color: "#83B4F9",
+    },
+    {
+      labels: "E-tractor Swapped",
+      value: allStation?.swapped,
+      color: "#326EC3",
+    },
+  ];
+  const data2 = (
+    allStation && typeof allStation === "object" ? Object.keys(allStation) : []
+  )
+    .filter((key) => key !== "All")
+    .map((key) => ({
+      value: allStation[key] !== undefined ? allStation[key] : 0,
+    }));
+  const data1 = {
+    labels: [
+      "Queue in CS",
+      "Queue in SS",
+      "E-tractor Charged",
+      "E-tractor Swapped",
+    ],
+    datasets: [
+      {
+        label: "My First Datasetsss",
+        data: data2,
+        backgroundColor: ["#D7FFA6", "#A5D964", "#83B4F9", "#326EC3"],
+        hoverOffset: 15,
+        borderColor: "transparent",
+      },
+    ],
+  };
+  const config = {
+    type: "line",
+    data: data1,
+    options: {
+      ...options,
+    },
+  };
   return (
     <Grid item md={4} xs={12}>
       <CustomGrid>
         <Grid
           container
-          sx={{ height: "200px" }}
+          sx={{ height: "303px" }}
           justifyContent={"center"}
           alignItems={"center"}
         >
           <Doughnut data={data1} options={config.options} />
-          <Box
-            sx={{
-              borderRadius: "16px",
-              padding: "10px 40px",
-
-              // background:
-              //   "linear-gradient(111.41deg, rgba(139, 153, 173, 0.36) 0%, rgba(255, 255, 255, 0.12) 100%)",
-            }}
-          >
-            <Image
-              src={Station}
-              height={140}
-              width={200}
-              alt="Charging Station"
-            />
-          </Box>
         </Grid>
-        <Grid container mt={20} mb={2}>
+        <Grid container mt={7} mb={2}>
           <Grid container justifyContent={"space-between"}>
-            <Typography variant="h6">All charging station </Typography>
-            <Typography variant="h6">2000</Typography>
+            <Typography variant="h6">All CS/SS</Typography>
+            <Typography variant="h6">{allStation?.All}</Typography>
           </Grid>
           <List sx={{ width: "100%" }}>
             {data.map((text, item) => (

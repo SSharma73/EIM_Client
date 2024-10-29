@@ -1,10 +1,9 @@
-"use client";
 import React from "react";
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
 import { Avatar } from "@mui/material";
-import { CiSearch } from "react-icons/ci";
 import Image from "next/image";
+import ClearIcon from "@mui/icons-material/Clear"; // Import ClearIcon
 
 function sleep(duration) {
   return new Promise((resolve) => {
@@ -14,9 +13,8 @@ function sleep(duration) {
   });
 }
 
-export default function Asynchronous({ icon, place, data }) {
+export default function Asynchronous({ icon, place, data, onChange }) {
   const [open, setOpen] = React.useState(false);
-
   const [options, setOptions] = React.useState([]);
   const loading = open && options.length === 0;
 
@@ -27,7 +25,7 @@ export default function Asynchronous({ icon, place, data }) {
     }
 
     (async () => {
-      await sleep(1e1);
+      await sleep(100);
       if (active) {
         setOptions([...data]);
       }
@@ -36,7 +34,7 @@ export default function Asynchronous({ icon, place, data }) {
     return () => {
       active = false;
     };
-  }, [loading]);
+  }, [loading, data]);
 
   React.useEffect(() => {
     if (!open) {
@@ -49,16 +47,15 @@ export default function Asynchronous({ icon, place, data }) {
       id="asynchronous-demo"
       fullWidth
       open={open}
-      onOpen={() => {
-        setOpen(true);
-      }}
-      onClose={() => {
-        setOpen(false);
-      }}
+      onOpen={() => setOpen(true)}
+      onClose={() => setOpen(false)}
       isOptionEqualToValue={(option, value) => option.title === value.title}
       getOptionLabel={(option) => option.title}
       options={options}
       loading={loading}
+      onChange={(event, value) => {
+        onChange(value);
+      }}
       renderInput={(params) => (
         <TextField
           sx={{
@@ -90,12 +87,6 @@ export default function Asynchronous({ icon, place, data }) {
           placeholder={place}
           InputProps={{
             ...params.InputProps,
-            // endAdornment: (
-            //   <React.Fragment>
-            //     <CiSearch />
-            //     {params.InputProps.endAdornment}
-            //   </React.Fragment>
-            // ),
             startAdornment: (
               <>
                 <Avatar

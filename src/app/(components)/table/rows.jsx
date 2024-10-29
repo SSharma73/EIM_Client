@@ -554,7 +554,7 @@ export const E_tractorData = [
 ];
 export const RevenueManagementData = [
   {
-    region: "India",
+    region: "--",
     Id: "75hkjuz94",
     status: "Occupied",
     avgSpeed: 3287263,

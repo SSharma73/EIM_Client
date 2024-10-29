@@ -74,7 +74,7 @@ const Dashboard = ({ rows, columns, setPage, setRowsPerPage, loading }) => {
                     whiteSpace: "nowrap",
                     overflow: "hidden",
                     textOverflow: "ellipsis",
-                    maxWidth: "200px", // Adjust max width as needed
+                    maxWidth: "200px",
                   }}
                 >
                   {!Array.isArray(ele) ? (
@@ -111,23 +111,6 @@ const Dashboard = ({ rows, columns, setPage, setRowsPerPage, loading }) => {
               </TableCell>
             </TableRow>
           )}
-          {/* <TableRow>
-            <TablePagination sx={{color:"#fff"}}
-              page={page}
-              count={count}
-              rowsPerPageOptions={[
-                10,
-                25,
-                50,
-                100,
-                200,
-                { label: "All", value: 10000 },
-              ]}
-              rowsPerPage={rowsPerPage}
-              onPageChange={handleChangePage}
-              onRowsPerPageChange={handleChangeRowsPerPage}
-            />
-          </TableRow> */}
         </TableFooter>
       </Table>
     </TableContainer>

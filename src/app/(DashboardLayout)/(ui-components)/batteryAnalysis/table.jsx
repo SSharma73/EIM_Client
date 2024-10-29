@@ -16,6 +16,8 @@ import ToastComponent, {
   notifyError,
   notifySuccess,
 } from "@/app/(components)/mui-components/Snackbar";
+import Image from "next/image";
+import noData from "../../../../../public/Img/Nodata.svg";
 
 const columns = [
   "Battery packs ID",
@@ -236,6 +238,7 @@ const Table = ({
           </Grid>
         </Grid>
       </Grid>
+
       {loading ? (
         <TableSkeleton
           rowNumber={new Array(10).fill(0)}

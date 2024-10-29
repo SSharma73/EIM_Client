@@ -10,14 +10,14 @@ const data = {
   datasets: [
     {
       label: "Units consumption",
-      data: Array.from({ length: 20 }, () => Math.floor(Math.random() * 20)), // Adjusted length to match labels
+      data: Array.from({ length: 0 }, () => Math.floor(Math.random() * 0)), // Adjusted length to match labels
       backgroundColor: "rgba(247, 187, 187, .2)", // Fill color
       borderColor: "#C0FE72",
       borderWidth: 2,
     },
     {
       label: "Battery SoC",
-      data: Array.from({ length: 20 }, () => Math.floor(Math.random() * 20)), // Adjusted length to match labels
+      data: Array.from({ length: 0 }, () => Math.floor(Math.random() * 0)), // Adjusted length to match labels
       backgroundColor: "rgba(247, 187, 187, .2)", // Fill color
       borderColor: "#1A1C67",
       borderWidth: 2,

@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { Grid, Typography, Box, Button } from "@mui/material";
+import { Grid, Typography, Box, Button, Chip } from "@mui/material";
 import CustomTable from "../index";
 import TableSkeleton from "@/app/(components)/mui-components/Skeleton/tableSkeleton";
 const Table = ({
@@ -34,35 +34,34 @@ const Table = ({
     };
   }, [debouncedSearchQuery, setSearchQuery]);
 
-  const handleCancel = () => {
-    setOpenDialog(false);
-  };
-  const Colordata = [
-    { id: 1, color: "#C0FE72" },
-    { id: 2, color: "#FF0000" },
-    { id: 3, color: "#FF0000" },
-    { id: 4, color: "#FFC300" },
-    // Add more items as needed
-  ];
-
   const getFormattedData = (data) => {
-    console.log("data", data);
-    return data?.map((item, index) => ({
-      Id: item?.Id ?? "--",
-      status: (
-        <Box>
-          <Typography
-            sx={{
-              color: item?.status === "Occupied" ? "#C2FD73" : "#fff",
-            }}
-          >
-            {item?.status ? item?.status : "--"}
-          </Typography>
-        </Box>
-      ),
-      chargingcycle: item?.chargingcycle ?? "--",
-      avgSpeed: item?.avgSpeed ?? "--",
-    }));
+    return data?.map((item) => {
+      const color =
+        item?.status === "available"
+          ? "success"
+          : item?.status === "offline"
+          ? "error"
+          : "warning";
+      const label = item?.status ? item?.status : "--";
+      return {
+        id: item?.stationCode ?? "--",
+        status: (
+          <Box>
+            <Chip
+              size="small"
+              label={<Typography variant="body2">{label}</Typography>}
+              color={color}
+              sx={{
+                backgroundColor: color,
+                color: "white",
+              }}
+            />
+          </Box>
+        ),
+        eTractorInQueue: item?.queue?.length ?? "--",
+        unitConsumed: item?.unitConsumed?.toFixed(2) ?? "--",
+      };
+    });
   };
 
   return (
@@ -102,7 +101,7 @@ const Table = ({
       ) : (
         <CustomTable
           page={page}
-          rows={getFormattedData(data)}
+          rows={getFormattedData(data?.result)}
           count={data?.length}
           columns={columns}
           setPage={setPage}

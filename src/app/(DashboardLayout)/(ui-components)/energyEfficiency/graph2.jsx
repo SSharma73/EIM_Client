@@ -5,11 +5,11 @@ import { Chart, registerables } from "chart.js";
 
 Chart.register(...registerables);
 const data = {
-  labels: Array.from({ length: 20 }, (_, i) => (i + 1).toString()), // Labels from 1 to 50
+  labels: Array.from({ length: 0 }, (_, i) => (i + 1).toString()), // Labels from 1 to 50
   datasets: [
     {
       label: "Active session",
-      data: Array.from({ length: 230 }, () => Math.floor(Math.random() * 20)), // 50 random data points
+      data: Array.from({ length: 0 }, () => Math.floor(Math.random() * 20)), // 50 random data points
       backgroundColor: "rgba(247, 187, 187, .2)", // Fill color for the area chart
       borderColor: "#C0FE72",
 
@@ -17,7 +17,7 @@ const data = {
     },
     {
       label: "Current time",
-      data: Array.from({ length: 230 }, () => Math.floor(Math.random() * 20)), // 50 random data points
+      data: Array.from({ length: 0 }, () => Math.floor(Math.random() * 20)), // 50 random data points
       backgroundColor: "rgba(247, 187, 187, .2)", // Fill color for the area chart
       borderColor: "#1A1C67",
 
@@ -71,11 +71,7 @@ const options = {
   //     }
   // }
 };
-const config = {
-  type: "line",
-  data: data,
-  options: options,
-};
+
 const Graph = () => {
   return (
     <Grid container>

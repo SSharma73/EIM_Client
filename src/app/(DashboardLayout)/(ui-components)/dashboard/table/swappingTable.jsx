@@ -11,8 +11,7 @@ import {
 } from "@mui/material";
 import CustomTable from "../index";
 import TableSkeleton from "@/app/(components)/mui-components/Skeleton/tableSkeleton";
-import { GrMapLocation } from "react-icons/gr";
-
+import { PiCarBattery } from "react-icons/pi";
 const Table = ({
   data,
   heading,
@@ -30,14 +29,11 @@ const Table = ({
   getDataFromChildHandler,
 }) => {
   const columns = [
-    "Region",
-    "E-Tractor ID",
-    "Current status",
-    "Total distance travelled (km)",
-    "Avg. consumption(kWh/km)",
-    "Total units consumed(kWh)",
-    "Avg. payload (Ton)",
-    "Action",
+    "Station ID",
+    "SS status",
+    "Swapping queue",
+    "Unit consumed(kWh)",
+    "Battery availability status",
   ];
   const [open, setOpenDialog] = React.useState(false);
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState(searchQuery);
@@ -66,46 +62,75 @@ const Table = ({
   const handleCancel = () => {
     setOpenDialog(false);
   };
+  const getBatteryStatus = (batterySoc) => {
+    if (batterySoc === undefined || batterySoc === null) {
+      return { color: "#B0B0B0", percent: "No data" }; // Handle no data scenario
+    }
+    if (batterySoc <= 50) {
+      return { color: "#FF0000", percent: `${batterySoc}%` };
+    } else if (batterySoc > 50 && batterySoc < 90) {
+      return { color: "#FFC300", percent: `${batterySoc}%` };
+    } else {
+      return { color: "#C0FE72", percent: "100%" };
+    }
+  };
 
   const getFormattedData = (data) => {
-    console.log("data", data);
-    return data?.map((item, index) => ({
-      region: item?.region ?? "NA",
-      id: item?.id ?? "--",
-      status: (
-        <Box>
-          <Typography
-            sx={{
-              color:
-                item?.status === "Charging"
-                  ? "#BFFC72"
-                  : item?.status === "Parked"
-                  ? "#FFC700"
-                  : item?.status === "Trip"
-                  ? "#1A2773"
-                  : "#FF0000",
-            }}
-          >
-            {item?.status ? item?.status : "NA"}
-          </Typography>
-        </Box>
-      ),
-      totaltraveled: item?.totaltraveled ?? "--",
-      avgconsumption: item?.avgconsumption ? item?.avgconsumption : "--",
-      mobileNumber1: item?.mobileNumber1 ? item?.mobileNumber1 : "--",
-      mobileNumber2: item?.mobileNumber2 ? item?.mobileNumber2 : "--",
-      Action: [
-        <Grid container justifyContent="center" spacing={2} key={index}>
-          <Grid item xs={12}>
-            <Tooltip title="View">
-              <IconButton size="small">
-                <GrMapLocation color="#C0FE72" />
-              </IconButton>
-            </Tooltip>
+    return data?.map((item, index) => {
+      const color =
+        item?.status === "available"
+          ? "success"
+          : item?.status === "offline"
+          ? "error"
+          : "warning";
+      const label = item?.status ? item?.status : "--";
+      const batteryStates = [
+        { index: 4 },
+        { index: 3 },
+        { index: 2 },
+        { index: 1 },
+      ];
+      return {
+        id: item?.stationCode ?? "--",
+        status: (
+          <Box>
+            <Chip
+              size="small"
+              label={<Typography variant="body2">{label}</Typography>}
+              color={color}
+              sx={{
+                backgroundColor: color,
+                color: "white",
+              }}
+            />
+          </Box>
+        ),
+        eTractorInQueue: item?.queue?.length ?? "--",
+        unitConsumed: item?.unitConsumed?.toFixed(2) ?? "--",
+        batteryPacks: (
+          <Grid container justifyContent={"center"} key={index}>
+            {batteryStates?.map((state) => {
+              const batteryInfo = getBatteryStatus(
+                item?.batterySoc[state.index]
+              );
+              return (
+                <Grid item key={state.index}>
+                  <Tooltip title={batteryInfo.percent}>
+                    <Button
+                      size="small"
+                      sx={{ color: batteryInfo.color }}
+                      startIcon={<PiCarBattery color={batteryInfo.color} />}
+                    >
+                      {batteryInfo?.percent}
+                    </Button>
+                  </Tooltip>
+                </Grid>
+              );
+            })}
           </Grid>
-        </Grid>,
-      ],
-    }));
+        ),
+      };
+    });
   };
 
   return (
@@ -133,17 +158,6 @@ const Table = ({
                 </Button>
               )}
             </Grid>
-            {/* <Grid item mr={1}>
-              <CommonDatePicker
-                getDataFromChildHandler={getDataFromChildHandler}
-              />
-            </Grid> */}
-            {/* <CustomTextField
-                            type="search"
-                            placeholder="Search empId / Name"
-                            value={debouncedSearchQuery}
-                            onChange={handleSearchChange}
-                        /> */}
           </Grid>
         </Grid>
       </Grid>
@@ -156,7 +170,7 @@ const Table = ({
       ) : (
         <CustomTable
           page={page}
-          rows={getFormattedData(data)}
+          rows={getFormattedData(data?.result)}
           count={data?.length}
           columns={columns}
           setPage={setPage}

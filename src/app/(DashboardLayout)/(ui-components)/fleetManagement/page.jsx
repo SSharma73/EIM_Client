@@ -38,7 +38,6 @@ const Page = () => {
   ];
   const customerId = customerItems && customerItems?.id;
   const [tabsValue, setTabsValue] = useState("Overview");
-  console.log("check tabsValue", tabsValue);
   const getDataFromChildHandler = (date, dataArr) => {
     setDate(date);
   };

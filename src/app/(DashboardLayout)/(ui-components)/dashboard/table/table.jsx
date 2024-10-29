@@ -1,17 +1,9 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import {
-  Grid,
-  Typography,
-  Box,
-  Button,
-  Chip,
-  Tooltip,
-  IconButton,
-} from "@mui/material";
+import { Grid, Typography, Box, Button } from "@mui/material";
 import CustomTable from "../index";
 import TableSkeleton from "@/app/(components)/mui-components/Skeleton/tableSkeleton";
-import { PiCarBattery } from "react-icons/pi";
+
 const Table = ({
   data,
   heading,
@@ -25,15 +17,7 @@ const Table = ({
   searchQuery,
   setSearchQuery,
   loading,
-  handleExport,
-  getDataFromChildHandler,
 }) => {
-  const columns = [
-    "Station ID",
-    "SS status",
-    "Swapping queue",
-    "Battery availability status",
-  ];
   const [open, setOpenDialog] = React.useState(false);
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState(searchQuery);
 
@@ -61,62 +45,38 @@ const Table = ({
   const handleCancel = () => {
     setOpenDialog(false);
   };
+
   const getFormattedData = (data) => {
-    console.log("data", data);
     return data?.map((item, index) => ({
-      Id: item?.Id ?? "--",
+      region: item?.region ?? "--",
+      fleetId: item.fleetNumber ?? "--",
       status: (
         <Box>
           <Typography
             sx={{
-              color: item?.status === "Occupied" ? "#C2FD73" : "#fff",
+              color:
+                item.status === "available"
+                  ? "#BFFC72"
+                  : item.status === "parked"
+                  ? "#FFC700"
+                  : "#fff",
             }}
           >
-            {item?.status ? item?.status : "NA"}
+            {item.status || "--"}
           </Typography>
         </Box>
       ),
-      chargingcycle: item?.chargingcycle ?? "--",
-
-      Action: [
-        <Grid container justifyContent="center" spacing={2} key={index}>
-          <Grid item xs={6} md={3}>
-            <Tooltip title={"discharged"}>
-              <Button
-                size="small"
-                color="error"
-                startIcon={<PiCarBattery color={"#FF0000"} />}
-              >
-                24%
-              </Button>
-            </Tooltip>
-          </Grid>
-          <Grid item xs={6} md={3}>
-            <Tooltip title={"charging"}>
-              <Button
-                variant="text"
-                color="warning"
-                size="small"
-                startIcon={<PiCarBattery color={"#FFC300"} />}
-              >
-                40%
-              </Button>
-            </Tooltip>
-          </Grid>
-          <Grid item xs={6} md={3}>
-            <Tooltip title={"charged"}>
-              <Button
-                variant="text"
-                color="secondary"
-                size="small"
-                startIcon={<PiCarBattery color={"#C0FE72"} />}
-              >
-                100%
-              </Button>
-            </Tooltip>
-          </Grid>
-        </Grid>,
-      ],
+      avgSpeed: item.averageSpeed.toFixed(1) || "--",
+      avgPayload: item.avgPayload || "--",
+      totalDistance: item?.distanceTravelled
+        ? `${item.distanceTravelled?.toFixed(2)} KM`
+        : "--",
+      avgConsumption: item.avgConsumption || "--",
+      breakdown: item.breakdown || "--",
+      currentSoc: item.batteryPercentage
+        ? `${item.batteryPercentage?.toFixed(2)}%`
+        : "--",
+      effectiveRange: item.effectiveRange || "--",
     }));
   };
 
@@ -157,9 +117,20 @@ const Table = ({
       ) : (
         <CustomTable
           page={page}
-          rows={getFormattedData(data)}
+          rows={getFormattedData(data?.result)}
           count={data?.length}
-          columns={columns}
+          columns={[
+            "Region",
+            "E-tractor ID",
+            "Status",
+            "Avg. speed (km/hr)",
+            "Avg. payload (Ton)",
+            "Total distance travelled(km)",
+            "Avg. consumption(kWh/km)",
+            "Breakdown",
+            "Current SoC(%)",
+            "Effective range(km)",
+          ]}
           setPage={setPage}
           rowsPerPage={rowsPerPage}
           setRowsPerPage={setRowsPerPage}

@@ -89,21 +89,21 @@ const config = {
   },
 };
 const data2 = [
-  { label: "Total battery packs", value: 50 },
-  { label: "Offline battery", value: 1250 },
+  { label: "Total battery packs", value: "--" },
+  { label: "Offline battery", value: "--" },
   {
     label: "On E-Tractor",
-    Tripvalue: 150,
+    Tripvalue: "--",
     trip: "Trip",
     charging: "Charging",
-    chargingValue: 1000,
+    chargingValue: "--",
   },
   {
     label: "Swapping station",
-    Tripvalue: 150,
+    Tripvalue: "--",
     trip: "Available",
     charging: "Charging",
-    chargingValue: 1000,
+    chargingValue: "--",
   },
 ];
 const menuItems = ["Today", "Weekly", "Monthly", "Yearly"];
@@ -151,6 +151,9 @@ const Page = () => {
   const handleOpen = () => {
     setOpen(true);
   };
+  useEffect(() => {
+    setData([]);
+  }, []);
   return (
     <Grid container spacing={2}>
       <ToastComponent />

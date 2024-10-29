@@ -7,6 +7,7 @@ import { CustomGrid } from "@/app/(components)/mui-components/CustomGrid/index";
 import ManagementGrid from "@/app/(components)/mui-components/Card";
 import Table from "./table";
 import ViewGraph from "./viewgraph";
+import axiosInstance from "@/app/api/axiosInstanceImg";
 
 const EnergyEfficiency = () => {
   const [page, setPage] = React.useState(0);
@@ -18,13 +19,30 @@ const EnergyEfficiency = () => {
   const [data, setData] = useState(null);
   const [openGraph, setOpenGraph] = useState(false);
 
+  const [efficiency, setEfficiency] = useState(null);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const chargingResponse = await axiosInstance.get(
+          `dashboard/getCsSsefficiency`
+        );
+        setEfficiency(chargingResponse?.data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        console.error("Error fetching finally:");
+      }
+    };
+    fetchData();
+  }, []);
+  console.log("Check efficiency", efficiency);
   const getDataFromChildHandler = (date, dataArr) => {
     setDate(date);
   };
   const handleOpenGraph = () => {
     setOpenGraph(true);
   };
-  
+
   const data1 = [
     {
       content: "20 Vehicle",
@@ -49,15 +67,15 @@ const EnergyEfficiency = () => {
     },
   ];
   const CSstatus = [
-    { label: "Occupied", data: "20 ", color: "#00BE2A" },
-    { label: "Offline", data: "3 ", color: "#FF7474" },
-    { label: "Available", data: "20 ", color: "#8B99AD" },
+    { label: "Occupied", data: efficiency?.Occupied, color: "#00BE2A" },
+    { label: "Offline", data: efficiency?.Offline, color: "#FF7474" },
+    { label: "Available", data: efficiency?.Available, color: "#8B99AD" },
   ];
   const Connectorstatus = [
-    { label: "Available guns", data: "20", color: "#56C5D8" },
-    { label: "Charging", data: "3 ", color: "#94C6FF" },
-    { label: "Finishing", data: "20 ", color: "#FFE895" },
-    { label: "Down guns", data: "25", color: "#F1F1F1" },
+    { label: "Available guns", data: "--", color: "#56C5D8" },
+    { label: "Charging", data: "--", color: "#94C6FF" },
+    { label: "Finishing", data: "--", color: "#FFE895" },
+    { label: "Down guns", data: "--", color: "#F1F1F1" },
   ];
   const droDownButtons = [
     {
@@ -83,7 +101,6 @@ const EnergyEfficiency = () => {
         <ManagementGrid
           breadcrumbItems={breadcrumbItems}
           moduleName={"CS/SS Efficiency"}
-          dropDown={droDownButtons}
         />
       </Grid>
       {data1.map((item, index) => (
@@ -105,7 +122,7 @@ const EnergyEfficiency = () => {
                   height={180}
                   innerRadius={"85%"}
                   cornerRadius={"20px"}
-                  value={245}
+                  value={"--"}
                   startAngle={-110}
                   endAngle={110}
                   sx={{
@@ -126,7 +143,7 @@ const EnergyEfficiency = () => {
                   alignItems="center"
                 >
                   <Typography variant="h6">{item.title}</Typography>
-                  <Typography>Total CS/SS : 210</Typography>
+                  <Typography>Total CS/SS : {efficiency?.Total}</Typography>
                 </Grid>
                 {CSstatus.map((item1, index) => (
                   <Grid
@@ -154,7 +171,7 @@ const EnergyEfficiency = () => {
                   alignItems="center"
                 >
                   <Typography variant="h6">{item.title}</Typography>
-                  <Typography>Total guns : 210</Typography>
+                  <Typography>Total guns --</Typography>
                 </Grid>
                 {Connectorstatus.map((item1, index) => (
                   <Grid

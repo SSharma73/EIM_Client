@@ -62,7 +62,7 @@ export default function AlertDialog({ open, setOpen }) {
                     }}
                     color={"#fff"}
                   >
-                    274 kW
+                    -- kW
                   </Typography>
                 </Grid>
                 <Grid item xs={6}>
@@ -81,7 +81,7 @@ export default function AlertDialog({ open, setOpen }) {
                       fontSize: "12px",
                     }}
                   >
-                    91%
+                    --
                   </Typography>
                 </Grid>
               </Grid>
@@ -100,7 +100,7 @@ export default function AlertDialog({ open, setOpen }) {
                 color="primary"
                 sx={{ fontSize: "12px", fontWeight: "700" }}
               >
-                Active Session 7
+                Active Session 0
               </Typography>
               <Graph2 />
             </Grid>

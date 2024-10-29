@@ -39,7 +39,6 @@ const Scheduling = () => {
         <ManagementGrid
           breadcrumbItems={breadcrumbItems}
           moduleName={"Scheduling"}
-          dropDown={droDownButtons}
           tabs={tabs}
           TabPanelList={TabPanelList}
           value={value}
