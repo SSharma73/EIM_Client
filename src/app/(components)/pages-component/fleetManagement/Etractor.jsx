@@ -236,7 +236,6 @@ const Charging = ({
       ],
     }));
   };
-  const menuItems = ["Mumbai", "Delhi", "Agra", "Punjab", "Kolkata"];
   return (
     <Grid container columnGap={2}>
       <Grid container>

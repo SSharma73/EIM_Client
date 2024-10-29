@@ -23,13 +23,8 @@ const Charging = ({ value, eventLabel }) => {
   const [page, setPage] = useState(0);
   const [loading, setLoading] = useState(false);
   const [rowsPerPage, setRowsPerPage] = useState(25);
-  const [deviceData, setDeviceData] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [data, setData] = useState([]);
-
-  const getDataFromChildHandler = (date, dataArr) => {
-    setDate(date);
-  };
 
   const labelStatus = eventLabel?.slice(0, 8);
   const columns = [
