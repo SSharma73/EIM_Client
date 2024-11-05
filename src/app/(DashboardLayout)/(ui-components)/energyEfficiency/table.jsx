@@ -28,7 +28,7 @@ const Table = ({
     },
   ];
   const [fetchAllDetails, setFetchAllDetails] = useState(null);
-
+  const [type, setType] = useState("delta");
   const [selectedItems, setSelectedItems] = useState({
     "Charging station": "",
   });
@@ -37,14 +37,15 @@ const Table = ({
       ...prevState,
       [label]: item,
     }));
+    setType(item === "Swapping station" ? "sany" : "delta");
+    setFetchAllDetails(null);
   };
   const eventLabel =
     selectedItems["Charging station"] === "Swapping station"
       ? "Swapping station"
       : "Charging station";
-
-  const type =
-    selectedItems["Charging Station"] === "Swapping station" ? "sany" : "delta";
+  // const type =
+  //   selectedItems["Charging Station"] === "Swapping station" ? "sany" : "delta";
   const labelStatus = eventLabel?.slice(0, 8);
   const columns = [
     `${labelStatus} Station ID`,
@@ -86,7 +87,9 @@ const Table = ({
       page: 1,
       type: type,
     });
-  }, [eventLabel]);
+  }, [type, eventLabel]);
+
+  console.log("Check eventLabel", eventLabel, type);
 
   const handleExport = (data) => {
     console.log("Exporting data", data);
