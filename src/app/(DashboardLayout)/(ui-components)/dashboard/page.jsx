@@ -85,7 +85,7 @@ function ShorterGrid() {
     setState((prev) => ({
       ...prev,
       fleetNumber: "",
-      fleetId: null, // Reset fleet ID
+      fleetId: null,
     }));
   };
 
@@ -100,86 +100,63 @@ function ShorterGrid() {
     setState((prev) => ({
       ...prev,
       brandName: "",
-      brandId: null, // Reset brand ID
+      brandId: null,
     }));
   };
 
-  useEffect(() => {
-    const fetchFleets = async () => {
-      try {
-        const fleetResponse = await axiosInstance.get(`fleet/fetchFleets`, {
-          params: {
-            customerId: state.brandId,
-            region: state.region,
-          },
-        });
-        setFetchFleet(fleetResponse?.data?.data);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      } finally {
-        console.error("Error fetching finally:");
-      }
-    };
-    fetchFleets();
-  }, [state]);
+  const fetchData = async () => {
+    try {
+      const [regionsResponse, customersResponse, fleetsResponse] =
+        await Promise.all([
+          axiosInstance.get("dashboard/regions"),
+          axiosInstance.get("dashboard/customers"),
+          axiosInstance.get("dashboard/fleets"),
+        ]);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [regionsResponse, customersResponse, fleetsResponse] =
-          await Promise.all([
-            axiosInstance.get("dashboard/regions"),
-            axiosInstance.get("dashboard/customers"),
-            axiosInstance.get("dashboard/fleets"),
-          ]);
-
-        const regions = regionsResponse?.data?.regions;
-        const customers = customersResponse?.data?.customers;
-        const fleets = fleetsResponse?.data?.fleets;
-        const fetchedData = [
-          {
-            label: "Region",
-            value: regions?.length,
-            icon: "/Img/map.svg",
-            data1: regions?.map((region) => ({ title: region })),
-          },
-          {
-            label: "Customer",
-            value: customers?.length,
-            icon: "/Img/id-card-solid.svg",
-            data1: customers?.map((customer) => ({
-              title: customer?.brandName,
-              _id: customer?._id,
-            })),
-          },
-          {
-            label: "Fleet",
-            value: fleets?.length,
-            icon: "/Img/truck-moving-solid.svg",
-            data1: fleets?.map((fleet) => ({
-              title: fleet?.fleetNumber,
-              _id: fleet?._id,
-            })),
-          },
-          {
-            label: "Consumption rate",
-            value: 0,
-            icon: "/Img/road-solid.svg",
-          },
-          {
-            label: "Total mileage accumulated",
-            value: 0,
-            icon: "/Img/route-solid.svg",
-          },
-        ];
-        setState((prev) => ({ ...prev, data: fetchedData }));
-      } catch (error) {
-        console.error("Error fetching data: ", error);
-      }
-    };
-
-    fetchData();
-  }, []);
+      const regions = regionsResponse?.data?.regions;
+      const customers = customersResponse?.data?.customers;
+      const fleets = fleetsResponse?.data?.fleets;
+      const fetchedData = [
+        {
+          label: "Region",
+          value: regions?.length,
+          icon: "/Img/map.svg",
+          data1: regions?.map((region) => ({ title: region })),
+        },
+        {
+          label: "Customer",
+          value: customers?.length,
+          icon: "/Img/id-card-solid.svg",
+          data1: customers?.map((customer) => ({
+            title: customer?.brandName,
+            _id: customer?._id,
+          })),
+        },
+        {
+          label: "Fleet",
+          value: fleets?.length,
+          icon: "/Img/truck-moving-solid.svg",
+          data1: fleets?.map((fleet) => ({
+            title: fleet?.fleetNumber,
+            _id: fleet?._id,
+          })),
+        },
+        {
+          label: "Consumption rate",
+          value: 0,
+          icon: "/Img/road-solid.svg",
+        },
+        {
+          label: "Total mileage accumulated",
+          value: 0,
+          icon: "/Img/route-solid.svg",
+        },
+      ];
+      setState((prev) => ({ ...prev, data: fetchedData }));
+    } catch (error) {
+      console.error("Error fetching data: ", error);
+    }
+  };
 
   const fetchMileageData = async () => {
     try {
@@ -237,6 +214,28 @@ function ShorterGrid() {
     }
   };
   useEffect(() => {
+    const fetchFleets = async () => {
+      try {
+        const fleetResponse = await axiosInstance.get("fleet-data", {
+          params: {
+            action: "fleets",
+            region: state.region,
+          },
+        });
+        setFetchFleet(fleetResponse?.data?.data);
+      } catch (error) {
+        console.error("Error fetching fleet data:", error);
+      } finally {
+        console.log("Fleet fetch attempt completed");
+      }
+    };
+    if (state.fleetNumber && state.region) {
+      fetchFleets();
+    }
+  }, [state.fleetNumber, state.region]);
+
+  useEffect(() => {
+    fetchData();
     if (state.brandName || state.fleetNumber || state.region) {
       fetchMileageData();
       fetchConsumptionData();

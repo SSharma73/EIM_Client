@@ -2,13 +2,12 @@
 import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import dayjs from "dayjs";
-import { addDays, subDays, differenceInDays } from "date-fns";
-import { Dialog, InputAdornment, IconButton } from "@mui/material";
+import { addDays, subDays } from "date-fns";
+import { Dialog } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { DateRangePicker } from "react-date-range";
 import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
-import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
@@ -19,8 +18,8 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   },
 }));
 const defaultDateRange = {
-  startDate: subDays(new Date(), 14),
-  endDate: addDays(new Date(), 1),
+  startDate: subDays(new Date(), 1),
+  endDate: addDays(new Date(), 0),
   key: "selection",
 };
 const Calendar = ({ getDataFromChildHandler }) => {

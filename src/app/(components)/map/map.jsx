@@ -129,7 +129,7 @@ const Page = ({
                   sx={{
                     position: "absolute",
                     left: "50%",
-                    top: 322,
+                    top: 322, 
                     display: "flex",
                     transform: "translateX(-50%)",
                     justifyContent: "center",
@@ -143,7 +143,7 @@ const Page = ({
                       {buttonData.map((button, index) => (
                         <Button
                           variant="contained"
-                          key={index}
+                          key={index} 
                           sx={{
                             ".MuiButton-outlined": {
                               border: "1px solid #fff",
@@ -160,7 +160,7 @@ const Page = ({
                                 activeButton === index ? "black" : button.color
                               }
                             />
-                          }
+                          }                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
                         >
                           {button.label}
                         </Button>

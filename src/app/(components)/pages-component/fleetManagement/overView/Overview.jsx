@@ -82,60 +82,6 @@ const Overview = ({
     setData2(data);
   }, [distance, payload, trips]);
 
-  const handleExport = (data) => {
-    if (!Array.isArray(data) || data.length === 0) {
-      notifyError("No data available to export");
-      return;
-    }
-
-    const modifiedData = data?.map((row) => ({
-      region: row?.region || "--",
-      fleetId: row.fleetId || "--",
-      status: row.status || "--",
-      avgSpeed: `'${row.avgSpeed}` || "--",
-      avgPayload: row.avgPayload || "--",
-      totalDistance: row.totalDistance || "--",
-      avgConsumption: row.avgConsumption || "--",
-      breakdown: row.breakdown || "--",
-      currentSoc: row.currentSoc || "--",
-      effectiveRange: row.effectiveRange || "--",
-    }));
-
-    const csvData = [];
-    const headerRow = [
-      "Region",
-      "E-tractor ID",
-      "Status",
-      "Avg. speed (km/hr.)",
-      "Avg. payload (Ton)",
-      "Total distance travelled(km)",
-      "Avg. consumption(kwh/km)",
-      "Breakdown",
-      "Current SoC(%)",
-      "Effective range(km)",
-    ];
-    csvData.push(headerRow);
-    modifiedData.forEach((row) => {
-      csvData.push([
-        row.region,
-        row.fleetId,
-        row.status,
-        `'${row.avgSpeed}`,
-        row.avgPayload,
-        row.totalDistance,
-        row.avgConsumption,
-        row.breakdown,
-        row.currentSoc,
-        row.effectiveRange,
-      ]);
-    });
-
-    const csvString = Papa.unparse(csvData);
-    const blob = new Blob([csvString], { type: "text/csv;charset=utf-8" });
-    saveAs(blob, "FleetData.csv");
-    notifySuccess("Download Excel Successfully");
-  };
-
   const getFormattedData = (data) => {
     return data?.map((item, index) => ({
       region: item?.region ?? "--",

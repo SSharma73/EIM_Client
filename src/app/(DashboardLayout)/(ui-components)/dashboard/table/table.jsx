@@ -71,7 +71,7 @@ const Table = ({
       totalDistance: item?.distanceTravelled
         ? `${item.distanceTravelled?.toFixed(2)} KM`
         : "--",
-      avgConsumption: item.avgConsumption || "--",
+      avgConsumption: item.avgConsumption?.toFixed(2) || "--",
       breakdown: item.breakdown || "--",
       currentSoc: item.batteryPercentage
         ? `${item.batteryPercentage?.toFixed(2)}%`

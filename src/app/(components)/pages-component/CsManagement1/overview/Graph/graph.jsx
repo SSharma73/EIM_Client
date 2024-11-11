@@ -18,7 +18,7 @@ const Graph = ({ graphType, type }) => {
       },
     ],
   });
-  const [totalSessions, setTotalSessions] = useState(0); // State for total sessions
+  const [totalSessions, setTotalSessions] = useState(0);
 
   const options = {
     scales: {

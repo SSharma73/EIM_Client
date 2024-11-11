@@ -31,7 +31,7 @@ const Page = ({ state }) => {
           params: {
             customerId: state.brandId,
             region: state.region,
-            sort: "-avgConsumption",
+            sort: "avgConsumption",
           },
         });
         setData(fleetResponse?.data?.data);
