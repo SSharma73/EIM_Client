@@ -5,17 +5,11 @@ import { Chart, registerables } from "chart.js";
 
 Chart.register(...registerables);
 const data = {
-  labels: [
-    "25 Jul 2024",
-    "28 Jul 2024",
-    "30 July 2024",
-    "5 Aug 2024",
-    "9 Aug 2024",
-  ],
+  labels: ["DD MM YYYY", "DD MM YYYY", "DD MM YYYY"],
   datasets: [
     {
       label: "My First Dataset",
-      data: [65, 59, 80, 81, 56, 55, 40, 20, 36, 48, 16],
+      data: [],
       backgroundColor: "rgba(247, 187, 187, .2)", // Fill color for the area chart
       borderColor: "#C0FE72",
       borderWidth: 2,

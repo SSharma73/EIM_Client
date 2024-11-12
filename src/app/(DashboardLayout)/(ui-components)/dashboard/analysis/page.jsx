@@ -249,7 +249,7 @@ const Analysis = () => {
         </Grid>
         <Grid mt={2}>
           <Typography variant="h3">
-            {loading ? "Loading..." : TotalDistance?.toFixed(2)} Km
+            {loading ? "Loading..." : TotalDistance.toFixed(2)}
           </Typography>
         </Grid>
       </Grid>

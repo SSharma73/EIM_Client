@@ -62,10 +62,10 @@ const Overview = ({ fetchAllDetails }) => {
               const onlineStatusColor =
                 item.status === "available" ? "#1CD28E" : "#FE7272";
               const batteryStates = [
-                { index: 4 },
-                { index: 3 },
-                { index: 2 },
                 { index: 1 },
+                { index: 2 },
+                { index: 3 },
+                { index: 4 },
               ];
               return (
                 <Grid item xs={12} key={index} mt={1}>

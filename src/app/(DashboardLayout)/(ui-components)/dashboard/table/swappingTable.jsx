@@ -85,10 +85,10 @@ const Table = ({
           : "warning";
       const label = item?.status ? item?.status : "--";
       const batteryStates = [
-        { index: 4 },
-        { index: 3 },
-        { index: 2 },
         { index: 1 },
+        { index: 2 },
+        { index: 3 },
+        { index: 4 },
       ];
       return {
         id: item?.stationCode ?? "--",

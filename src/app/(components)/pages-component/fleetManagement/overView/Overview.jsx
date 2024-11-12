@@ -13,23 +13,18 @@ import {
   ListItem,
   ListItemText,
 } from "@mui/material";
+import dayjs from "dayjs";
+import styled from "@emotion/styled";
+import Map from "@/app/(components)/map/map";
 import { IoEyeOutline } from "react-icons/io5";
+import axiosInstance from "@/app/api/axiosInstance";
+import MapDetails from "@/app/(components)/map/mapDetails";
 import Graph from "@/app/(components)/pages-component/fleetManagement/vehicle/graph";
 import Graph2 from "@/app/(components)/pages-component/fleetManagement/vehicle/graph2";
 import Graph3 from "@/app/(components)/pages-component/fleetManagement/vehicle/graph3";
 import CustomTable from "@/app/(components)/mui-components/Table/customTable/index";
 import TableSkeleton from "@/app/(components)/mui-components/Skeleton/tableSkeleton";
-import { CustomDropdown } from "@/app/(components)/mui-components/DropdownButton";
-import DistanceTravel from "../ViewReport/DistanceTravel";
-import Map from "@/app/(components)/map/map";
-import MapDetails from "@/app/(components)/map/mapDetails";
-import Papa from "papaparse";
-import { saveAs } from "file-saver";
-import {
-  notifyError,
-  notifySuccess,
-} from "@/app/(components)/mui-components/Snackbar";
-import styled from "@emotion/styled";
+import { CustomDropdownEvent } from "@/app/(components)/mui-components/Card/HeaderGrid/DropdownButton/dropDownEvent";
 
 const CustomGrid = styled(Grid)(({ theme }) => ({
   padding: theme.spacing(2),
@@ -61,26 +56,106 @@ const Overview = ({
   const [distance, setDistance] = useState(false);
   const [payload, setPayload] = useState(false);
   const [trips, setTrips] = useState(false);
-  const [data2, setData2] = useState(null);
   const [activeMarker, setActiveMarker] = useState(null);
   const [icons, setIcons] = useState(null);
   const [totalDocuments, setTotalDocuments] = useState(
     data?.totalDocuments || 0
   );
-  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState(searchQuery);
+  const [graphData, setGraphData] = useState([]);
+  console.log("Check graphData", graphData);
+  const days = ["Today", "Weekly", "Monthly", "Yearly"];
+  const data1 = [
+    {
+      content: graphData?.fleetCount,
+      value: "E-tractor",
+      avg: graphData?.averageDistance?.toFixed(2),
+      titleParts: [
+        {
+          text: "Distance travelled ",
+          style: { fontSize: "16px", fontWeight: 600 },
+        },
+        { text: "(km)", style: { fontSize: "13px", fontWeight: 600 } },
+      ],
+      label: "View report",
+      data: "Distance travelled",
+      handleFunction: () => setDistance(true),
+    },
+    {
+      content: "0",
+      value: "Vehicle",
+      avg: "0 (Ton)",
+      titleParts: [
+        { text: "Trip payload ", style: { fontSize: "16px", fontWeight: 600 } },
+        { text: "(Ton)", style: { fontSize: "13px", fontWeight: 600 } },
+      ],
+      label: "View report",
+      data: "Trip payload",
+      handleFunction: () => setPayload(true),
+    },
+    {
+      content: "0",
+      value: "Vehicle",
+      avg: "0 (kWh)",
+      titleParts: [
+        { text: "Trips ", style: { fontSize: "16px", fontWeight: 600 } },
+        {
+          text: "(Units consumed)",
+          style: { fontSize: "13px", fontWeight: 600 },
+        },
+      ],
+      label: "View report",
+      data: "Trips",
+      handleFunction: () => setTrips(true),
+    },
+  ];
+  const [selectedTimeFrames, setSelectedTimeFrames] = useState(
+    data1?.map(() => days[0])
+  );
+  const calculateDateRange = (timeFrame) => {
+    const endDate = dayjs().format("YYYY-MM-DD");
+    let startDate;
+    switch (timeFrame) {
+      case "Today":
+        startDate = endDate;
+        break;
+      case "Weekly":
+        startDate = dayjs().subtract(7, "days").format("YYYY-MM-DD");
+        break;
+      case "Monthly":
+        startDate = dayjs().startOf("month").format("YYYY-MM-DD");
+        break;
+      case "Yearly":
+        startDate = dayjs().startOf("year").format("YYYY-MM-DD");
+        break;
+      default:
+        startDate = endDate;
+    }
+    return { startDate, endDate };
+  };
+
+  const handleTimeFrameChange = (index, newTimeFrame) => {
+    const updatedTimeFrames = [...selectedTimeFrames];
+    updatedTimeFrames[index] = newTimeFrame;
+    setSelectedTimeFrames(updatedTimeFrames);
+  };
+  const fetchGraphData = () => {
+    const { startDate, endDate } = calculateDateRange(selectedTimeFrames[0]);
+
+    axiosInstance
+      .get("dashboard/getGraphData", {
+        params: { startDate, endDate },
+      })
+      .then((response) => {
+        setGraphData(response?.data || []);
+      })
+      .catch((error) => {
+        console.error("Error fetching graph data:", error);
+      });
+  };
 
   useEffect(() => {
-    const handler = setTimeout(() => {
-      setSearchQuery(debouncedSearchQuery);
-    }, 500);
-    return () => {
-      clearTimeout(handler);
-    };
-  }, [debouncedSearchQuery, setSearchQuery]);
-
-  useEffect(() => {
-    setData2(data);
-  }, [distance, payload, trips]);
+    fetchGraphData();
+  }, [selectedTimeFrames]);
 
   const getFormattedData = (data) => {
     return data?.map((item, index) => ({
@@ -135,52 +210,9 @@ const Overview = ({
   const onClose = () => {
     setActiveMarker(null);
   };
-
-  const data1 = [
-    {
-      content: "20 ",
-      value: "E-tractor",
-      avg: "20 (km)",
-      titleParts: [
-        {
-          text: "Distance travelled ",
-          style: { fontSize: "16px", fontWeight: 600 },
-        },
-        { text: "(km)", style: { fontSize: "13px", fontWeight: 600 } },
-      ],
-      label: "View report",
-      data: "Distance travelled",
-      handleFunction: () => setDistance(true),
-    },
-    {
-      content: "30",
-      value: "Vehicle",
-      avg: "10 (Ton)",
-      titleParts: [
-        { text: "Trip payload ", style: { fontSize: "16px", fontWeight: 600 } },
-        { text: "(Ton)", style: { fontSize: "13px", fontWeight: 600 } },
-      ],
-      label: "View report",
-      data: "Trip payload",
-      handleFunction: () => setPayload(true),
-    },
-    {
-      content: "10",
-      value: "Vehicle",
-      avg: "20 (kWh)",
-      titleParts: [
-        { text: "Trips ", style: { fontSize: "16px", fontWeight: 600 } },
-        {
-          text: "(Units consumed)",
-          style: { fontSize: "13px", fontWeight: 600 },
-        },
-      ],
-      label: "View report",
-      data: "Trips",
-      handleFunction: () => setTrips(true),
-    },
-  ];
-  const days = ["Today", "Weekly", "Monthly", "Yearly"];
+  const progressValue = graphData?.result?.length
+    ? (graphData?.result?.length / 100) * 100
+    : 0;
 
   return (
     <Grid container spacing={2}>
@@ -199,11 +231,14 @@ const Overview = ({
                   </span>
                 ))}
               </Typography>
-              <CustomDropdown
+              <CustomDropdownEvent
                 variant="contained"
                 size="small"
-                buttonname="Weekly"
                 menuitems={days}
+                buttonname={selectedTimeFrames[index]}
+                onItemSelect={(newTimeFrame) =>
+                  handleTimeFrameChange(index, newTimeFrame)
+                }
               />
             </Grid>
             <Typography
@@ -226,26 +261,49 @@ const Overview = ({
                 {item.avg}
               </span>
             </Typography>
-            {index === 0 && <Graph />} {index === 1 && <Graph2 />}{" "}
-            {index === 2 && <Graph3 />}
-            <LinearProgress
-              variant="determinate"
-              value={100}
-              sx={{ border: "0.6px" }}
-            />
+            {index === 0 && (
+              <>
+                <Graph graphData={graphData && graphData?.result} />{" "}
+                <LinearProgress
+                  variant="determinate"
+                  value={progressValue}
+                  sx={{ border: "0.6px" }}
+                />{" "}
+              </>
+            )}
+            {index === 1 && (
+              <>
+                <Graph2 />
+                <LinearProgress
+                  variant="determinate"
+                  value={0}
+                  sx={{ border: "0.6px" }}
+                />
+              </>
+            )}
+            {index === 2 && (
+              <>
+                <Graph3 />
+                <LinearProgress
+                  variant="determinate"
+                  value={0}
+                  sx={{ border: "0.6px" }}
+                />
+              </>
+            )}
             <List>
               <ListItem
                 disableGutters
                 key={index}
-                secondaryAction={
-                  <Button
-                    variant="text"
-                    color="secondary"
-                    onClick={item.handleFunction}
-                  >
-                    {item.label}
-                  </Button>
-                }
+                // secondaryAction={
+                //   <Button
+                //     variant="text"
+                //     color="secondary"
+                //     onClick={item.handleFunction}
+                //   >
+                //     {item.label}
+                //   </Button>
+                // }
               >
                 <Badge1 color="secondary" variant="dot" />
                 <ListItemText primary={item.data} sx={{ marginLeft: "10px" }} />
