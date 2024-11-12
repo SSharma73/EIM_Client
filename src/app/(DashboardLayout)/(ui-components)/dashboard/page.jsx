@@ -216,12 +216,7 @@ function ShorterGrid() {
   useEffect(() => {
     const fetchFleets = async () => {
       try {
-        const fleetResponse = await axiosInstance.get("fleet-data", {
-          params: {
-            action: "fleets",
-            region: state.region,
-          },
-        });
+        const fleetResponse = await axiosInstance.get("dashboard/fleet-data");
         setFetchFleet(fleetResponse?.data?.data);
       } catch (error) {
         console.error("Error fetching fleet data:", error);
@@ -229,9 +224,7 @@ function ShorterGrid() {
         console.log("Fleet fetch attempt completed");
       }
     };
-    if (state.fleetNumber && state.region) {
-      fetchFleets();
-    }
+    fetchFleets();
   }, [state.fleetNumber, state.region]);
 
   useEffect(() => {

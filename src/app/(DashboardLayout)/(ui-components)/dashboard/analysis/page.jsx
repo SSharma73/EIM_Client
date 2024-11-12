@@ -122,20 +122,15 @@ const Analysis = () => {
     endDate: addDays(new Date(), 1),
     key: "selection",
   };
-  const [amData, setAmData] = useState([]);
-  const [pmData, setPmData] = useState([]);
+  const [graphData, setGraphData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [dateRange, setDateRange] = useState([defaultDateRange]);
   const getDataFromChildHandler = (dateRange) => {
     setDateRange(dateRange);
   };
 
-  const amTotalDistance = amData.reduce((acc, data) => {
-    return acc + (data?.distanceTravelled || 0);
-  }, 0);
-
-  const pmTotalDistance = pmData.reduce((acc, data) => {
-    return acc + (data?.distanceTravelled || 0);
+  const TotalDistance = graphData?.reduce((acc, data) => {
+    return acc + (data?.totalDistanceDifference || 0);
   }, 0);
 
   const fetchGraphData = (startDate, endDate) => {
@@ -143,15 +138,12 @@ const Analysis = () => {
     axiosInstance
       .get("dashboard/getGraphData", {
         params: {
-          customerId: "66d6cd773939bf477f63b3a5",
           startDate: startDate,
           endDate: endDate,
         },
       })
       .then((response) => {
-        const { amData, pmData } = response.data;
-        setAmData(amData);
-        setPmData(pmData);
+        setGraphData(response?.data?.result);
         setLoading(false);
       })
       .catch((error) => {
@@ -173,25 +165,11 @@ const Analysis = () => {
   }, [dateRange]);
 
   const data = {
-    labels: [
-      "12 ",
-      "1 ",
-      "2 ",
-      "3 ",
-      "4 ",
-      "5 ",
-      "6 ",
-      "7 ",
-      "8 ",
-      "9 ",
-      "10 ",
-      "11 ",
-      "12 ",
-    ],
+    labels: graphData.map((item) => item.dateTime),
     datasets: [
       {
-        label: "AM",
-        data: amData.map((item) => item.distanceTravelled),
+        label: "Distance travel",
+        data: graphData.map((item) => item.totalDistanceDifference),
         fill: true,
         backgroundColor: function (context) {
           const chart = context.chart;
@@ -203,22 +181,6 @@ const Analysis = () => {
         },
         borderColor: "rgba(0, 36, 166, 1)",
         borderWidth: 2,
-        responsive: true,
-      },
-      {
-        label: "PM",
-        data: pmData.map((item) => item.distanceTravelled),
-        fill: true,
-        backgroundColor: function (context) {
-          const chart = context.chart;
-          const { ctx, chartArea } = chart;
-          if (!chartArea) {
-            return;
-          }
-          return getGradient1(ctx, chartArea);
-        },
-        borderColor: "rgba(193, 254, 114, 1)",
-        borderWidth: 1.5,
         responsive: true,
       },
     ],
@@ -287,7 +249,7 @@ const Analysis = () => {
         </Grid>
         <Grid mt={2}>
           <Typography variant="h3">
-            {loading ? "Loading..." : amTotalDistance + pmTotalDistance}
+            {loading ? "Loading..." : TotalDistance?.toFixed(2)} Km
           </Typography>
         </Grid>
       </Grid>

@@ -16,7 +16,7 @@ const data = {
     {
       label: "My First Dataset",
       data: [65, 59, 80, 81, 56, 55, 40, 20, 36, 48, 16],
-      backgroundColor: "rgba(247, 187, 187, .2)", // Fill color for the area chart
+      backgroundColor: "rgba(247, 187, 187, .2)",
       borderColor: "#C0FE72",
       borderWidth: 2,
     },
