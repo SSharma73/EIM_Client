@@ -355,7 +355,7 @@ function ShorterGrid() {
           </Grid>
         )}
       </Grid>
-      <Analysis />
+      <Analysis state={state} />
       <Grid container mt={1} spacing={2}>
         <Balance state={state} />
         <Balance2 state={state} />

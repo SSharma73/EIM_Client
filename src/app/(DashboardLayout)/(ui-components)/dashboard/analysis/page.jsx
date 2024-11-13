@@ -116,7 +116,7 @@ const options = {
   },
 };
 
-const Analysis = () => {
+const Analysis = ({ state }) => {
   const defaultDateRange = {
     startDate: subDays(new Date(), 1),
     endDate: addDays(new Date(), 1),
@@ -140,6 +140,8 @@ const Analysis = () => {
         params: {
           startDate: startDate,
           endDate: endDate,
+          customerId: state?.brandId,
+          fleetNumber: state?.fleetId,
         },
       })
       .then((response) => {
@@ -154,15 +156,17 @@ const Analysis = () => {
 
   useEffect(() => {
     if (
-      dateRange.length > 0 &&
-      dateRange[0]?.startDate &&
-      dateRange[0]?.endDate
+      (dateRange.length > 0 &&
+        dateRange[0]?.startDate &&
+        dateRange[0]?.endDate) ||
+      state?.brandId ||
+      state?.fleetId
     ) {
       const startDate = dayjs(dateRange[0]?.startDate).format("YYYY-MM-DD");
       const endDate = dayjs(dateRange[0]?.endDate).format("YYYY-MM-DD");
       fetchGraphData(startDate, endDate);
     }
-  }, [dateRange]);
+  }, [dateRange, state?.brandId, state?.fleetId]);
 
   const data = {
     labels: graphData.map((item) => item.dateTime),
