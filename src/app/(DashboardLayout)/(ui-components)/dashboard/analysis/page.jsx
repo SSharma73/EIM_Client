@@ -141,7 +141,7 @@ const Analysis = ({ state }) => {
           startDate: startDate,
           endDate: endDate,
           customerId: state?.brandId,
-          fleetNumber: state?.fleetId,
+          fleetNumber: state?.fleetNumber,
         },
       })
       .then((response) => {
@@ -160,13 +160,13 @@ const Analysis = ({ state }) => {
         dateRange[0]?.startDate &&
         dateRange[0]?.endDate) ||
       state?.brandId ||
-      state?.fleetId
+      state?.fleetNumber
     ) {
       const startDate = dayjs(dateRange[0]?.startDate).format("YYYY-MM-DD");
       const endDate = dayjs(dateRange[0]?.endDate).format("YYYY-MM-DD");
       fetchGraphData(startDate, endDate);
     }
-  }, [dateRange, state?.brandId, state?.fleetId]);
+  }, [dateRange, state?.brandId, state?.fleetNumber]);
 
   const data = {
     labels: graphData.map((item) => item.dateTime),
