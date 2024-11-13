@@ -132,7 +132,6 @@ const BalancePage = ({ state }) => {
     ],
     datasets: [
       {
-        label: "My First Datasetsss",
         data: data2,
         backgroundColor: ["#D7FFA6", "#A5D964", "#83B4F9", "#326EC3"],
         hoverOffset: 15,

@@ -115,13 +115,13 @@ const BalancePage = ({ state }) => {
   )
     .filter((key) => key !== "All")
     .map((key) => ({
-      value: swapping[key] !== undefined ? swapping[key] : 0, // Fallback to 0 if undefined
+      value: swapping[key] !== undefined ? swapping[key] : 0,
     }));
   const data1 = {
     labels: ["Offline CS", "Online CS", "Occupied CS", "Available CS"],
     datasets: [
       {
-        label: "My First Datasetsss",
+        label: "",
         data: data2?.map((item) => item.value),
         backgroundColor: ["#326EC3", "#C8DFFF", "#D7FFA6", "#A5D964"],
         hoverOffset: 15,
@@ -157,8 +157,6 @@ const BalancePage = ({ state }) => {
             sx={{
               borderRadius: "16px",
               padding: "10px 40px",
-              // background:
-              //   "linear-gradient(111.41deg, rgba(139, 153, 173, 0.36) 0%, rgba(255, 255, 255, 0.12) 100%)",
             }}
           >
             <Image

@@ -116,6 +116,75 @@ const options = {
   },
 };
 
+const options2 = {
+  scales: {
+    y: {
+      beginAtZero: true,
+      title: {
+        color: "white",
+        font: {
+          family: "Arial",
+          weight: "bold",
+        },
+      },
+      ticks: {
+        color: "white",
+        callback: function (value) {
+          return value + " kWh";
+        },
+      },
+    },
+    x: {
+      beginAtZero: true,
+      display: true,
+      title: {
+        color: "white",
+        font: {
+          size: 16,
+          family: "Arial",
+          weight: "bold",
+        },
+      },
+      ticks: {
+        color: "white",
+      },
+    },
+  },
+  plugins: {
+    legend: {
+      display: true,
+      position: "top",
+      align: "end",
+      fullSize: true,
+      labels: {
+        pointStyle: "circle",
+        usePointStyle: true,
+        textAlign: "left",
+        color: "#fff",
+      },
+    },
+    tooltip: {
+      callbacks: {
+        footer: function (items) {
+          if (items.length > 0) {
+            const index = items[0].dataIndex;
+            const total = items[0].chart.data.datasets.reduce(
+              (sum, dataset) => sum + dataset.data[index],
+              0
+            );
+            return `Total: ${total}`;
+          }
+          return "";
+        },
+      },
+    },
+  },
+  interaction: {
+    mode: "index",
+    intersect: false,
+  },
+};
+
 const Analysis = ({ state }) => {
   const defaultDateRange = {
     startDate: subDays(new Date(), 1),
@@ -123,6 +192,7 @@ const Analysis = ({ state }) => {
     key: "selection",
   };
   const [graphData, setGraphData] = useState([]);
+  const [consumptionGraphData, setConsumptionGraphData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [dateRange, setDateRange] = useState([defaultDateRange]);
   const getDataFromChildHandler = (dateRange) => {
@@ -132,20 +202,33 @@ const Analysis = ({ state }) => {
   const TotalDistance = graphData?.reduce((acc, data) => {
     return acc + (data?.totalDistanceDifference || 0);
   }, 0);
+  const TotalDistanceConsumption = consumptionGraphData?.reduce((acc, data) => {
+    return acc + (data?.totalConsumption || 0);
+  }, 0);
 
   const fetchGraphData = (startDate, endDate) => {
     setLoading(true);
-    axiosInstance
-      .get("dashboard/getGraphData", {
+    Promise.all([
+      axiosInstance.get("dashboard/getGraphData", {
         params: {
           startDate: startDate,
           endDate: endDate,
           customerId: state?.brandId,
           fleetNumber: state?.fleetNumber,
         },
-      })
-      .then((response) => {
-        setGraphData(response?.data?.result);
+      }),
+      axiosInstance.get("dashboard/getConsumptionGraphData", {
+        params: {
+          startDate: startDate,
+          endDate: endDate,
+          customerId: state?.brandId,
+          fleetNumber: state?.fleetNumber,
+        },
+      }),
+    ])
+      .then(([graphDataResponse, consumptionDataResponse]) => {
+        setGraphData(graphDataResponse?.data?.result);
+        setConsumptionGraphData(consumptionDataResponse?.data?.result);
         setLoading(false);
       })
       .catch((error) => {
@@ -169,7 +252,7 @@ const Analysis = ({ state }) => {
   }, [dateRange, state?.brandId, state?.fleetNumber]);
 
   const data = {
-    labels: graphData.map((item) => item.dateTime),
+    labels: graphData?.map((item) => item.dateTime),
     datasets: [
       {
         label: "Distance travel",
@@ -190,24 +273,10 @@ const Analysis = ({ state }) => {
     ],
   };
   const data2 = {
-    labels: [
-      "12 ",
-      "1 ",
-      "2 ",
-      "3 ",
-      "4 ",
-      "5 ",
-      "6 ",
-      "7 ",
-      "8 ",
-      "9 ",
-      "10 ",
-      "11 ",
-      "12 ",
-    ],
+    labels: consumptionGraphData?.map((item) => item.dateTime),
     datasets: [
       {
-        label: "AM",
+        label: "Average consumption",
         data: [],
         fill: true,
         backgroundColor: function (context) {
@@ -220,22 +289,6 @@ const Analysis = ({ state }) => {
         },
         borderColor: "rgba(0, 36, 166, 1)",
         borderWidth: 2,
-        responsive: true,
-      },
-      {
-        label: "PM",
-        data: [],
-        fill: true,
-        backgroundColor: function (context) {
-          const chart = context.chart;
-          const { ctx, chartArea } = chart;
-          if (!chartArea) {
-            return;
-          }
-          return getGradient1(ctx, chartArea);
-        },
-        borderColor: "rgba(193, 254, 114, 1)",
-        borderWidth: 1.5,
         responsive: true,
       },
     ],
@@ -267,10 +320,12 @@ const Analysis = ({ state }) => {
             </Typography>
           </Grid>
           <Grid mt={2}>
-            <Typography variant="h3">257</Typography>
+            <Typography variant="h3">
+              {loading ? "Loading..." : TotalDistanceConsumption?.toFixed(2)}
+            </Typography>{" "}
           </Grid>
         </Grid>
-        <Line data={data2} options={options} width={1000} />
+        <Line data={data2} options={options2} width={1000} />
       </Grid>
     </CustomGrid>
   );
