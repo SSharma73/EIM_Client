@@ -13,14 +13,8 @@ import {
   Grid,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
-const Dashboard = ({ rows, columns, setPage, setRowsPerPage, loading }) => {
+const Dashboard = ({ rows, columns, loading }) => {
   const theme = useTheme();
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(+event.target.value);
-  };
   return (
     <TableContainer
       sx={{
@@ -96,7 +90,7 @@ const Dashboard = ({ rows, columns, setPage, setRowsPerPage, loading }) => {
                     display: "flex",
                     justifyContent: "center",
                     alignItems: "center",
-                    minHeight: 200, // Adjust height as needed
+                    minHeight: 200,
                   }}
                 >
                   <Grid

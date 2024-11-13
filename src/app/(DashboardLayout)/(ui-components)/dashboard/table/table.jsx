@@ -9,7 +9,6 @@ const Table = ({
   heading,
   handleView,
   button,
-  value,
   rowsPerPage,
   setRowsPerPage,
   page,
@@ -18,34 +17,6 @@ const Table = ({
   setSearchQuery,
   loading,
 }) => {
-  const [open, setOpenDialog] = React.useState(false);
-  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState(searchQuery);
-
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      setSearchQuery(debouncedSearchQuery);
-    }, 500);
-    return () => {
-      clearTimeout(handler);
-    };
-  }, [debouncedSearchQuery, setSearchQuery]);
-
-  const handleSearchChange = (event) => {
-    setDebouncedSearchQuery(event.target.value);
-  };
-
-  const handleOpenDialog = () => {
-    setOpenDialog(true);
-  };
-
-  const handleConfirm = () => {
-    handleCancel();
-  };
-
-  const handleCancel = () => {
-    setOpenDialog(false);
-  };
-
   const getFormattedData = (data) => {
     return data?.map((item, index) => ({
       region: item?.region ?? "--",

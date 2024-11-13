@@ -63,7 +63,7 @@ const options = {
       },
     },
     tooltip: {
-      enabled: true, // Hide tooltips
+      enabled: true,
     },
   },
   interaction: {

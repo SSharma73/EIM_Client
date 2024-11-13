@@ -324,6 +324,8 @@ function ShorterGrid() {
             </MainGrid>
           </Grid>
         ))}
+
+
         {activeMarker && activeMarker !== null ? (
           <Grid item xl={9} xs={12} md={8} height={"380px"}>
             <Map
@@ -349,6 +351,7 @@ function ShorterGrid() {
             />
           </Grid>
         )}
+        
         {activeMarker && activeMarker !== null && (
           <Grid item xl={3} xs={12} md={4} height={"380px"}>
             <MapDetails icons={icons} onClose={onClose} />

@@ -202,6 +202,7 @@ const Analysis = ({ state }) => {
   const TotalDistance = graphData?.reduce((acc, data) => {
     return acc + (data?.totalDistanceDifference || 0);
   }, 0);
+  console.log("Check TotalDistance", TotalDistance);
   const TotalDistanceConsumption = consumptionGraphData?.reduce((acc, data) => {
     return acc + (data?.totalConsumption || 0);
   }, 0);
@@ -256,7 +257,7 @@ const Analysis = ({ state }) => {
     datasets: [
       {
         label: "Distance travel",
-        data: graphData.map((item) => item.totalDistanceDifference),
+        data: graphData.map((item) => item.totalDistanceDifference?.toFixed(2)),
         fill: true,
         backgroundColor: function (context) {
           const chart = context.chart;
@@ -277,7 +278,9 @@ const Analysis = ({ state }) => {
     datasets: [
       {
         label: "Average consumption",
-        data: [],
+        data: consumptionGraphData?.map((item) =>
+          item.totalConsumption.toFixed(2)
+        ),
         fill: true,
         backgroundColor: function (context) {
           const chart = context.chart;
@@ -306,7 +309,7 @@ const Analysis = ({ state }) => {
         </Grid>
         <Grid mt={2}>
           <Typography variant="h3">
-            {loading ? "Loading..." : TotalDistance.toFixed(2)}
+            {loading ? "Loading..." : TotalDistance?.toFixed(2)}
           </Typography>
         </Grid>
       </Grid>
