@@ -6,12 +6,12 @@ import {
   Box,
   Tooltip,
   IconButton,
-  Button,
   LinearProgress,
   Badge,
   List,
   ListItem,
   ListItemText,
+  Chip,
 } from "@mui/material";
 import dayjs from "dayjs";
 import styled from "@emotion/styled";
@@ -49,8 +49,6 @@ const Overview = ({
   setRowsPerPage,
   page,
   setPage,
-  searchQuery,
-  setSearchQuery,
   loading,
 }) => {
   const [distance, setDistance] = useState(false);
@@ -58,11 +56,8 @@ const Overview = ({
   const [trips, setTrips] = useState(false);
   const [activeMarker, setActiveMarker] = useState(null);
   const [icons, setIcons] = useState(null);
-  const [totalDocuments, setTotalDocuments] = useState(
-    data?.totalDocuments || 0
-  );
+  const [totalDocuments] = useState(data?.totalDocuments || 0);
   const [graphData, setGraphData] = useState([]);
-  console.log("Check graphData", graphData);
   const days = ["Today", "Weekly", "Monthly", "Yearly"];
   const data1 = [
     {
@@ -140,7 +135,6 @@ const Overview = ({
   };
   const fetchGraphData = () => {
     const { startDate, endDate } = calculateDateRange(selectedTimeFrames[0]);
-
     axiosInstance
       .get("dashboard/getGraphData", {
         params: { startDate, endDate },
@@ -161,33 +155,43 @@ const Overview = ({
     return data?.map((item, index) => ({
       region: item?.region ?? "--",
       fleetId: item.fleetNumber ?? "--",
-      status: (
+      status: <Typography variant="body2"> {item.status || "--"}</Typography>,
+      FleetStatus: (
         <Box>
-          <Typography
+          <Chip
+            size="small"
             sx={{
-              color:
-                item.status === "available"
-                  ? "#BFFC72"
-                  : item.status === "parked"
-                  ? "#FFC700"
-                  : "#fff",
+              backgroundColor: item.isConnected ? "green" : "red",
+              color: "white",
             }}
-          >
-            {item.status || "--"}
+            label={
+              <Typography variant="body2">
+                {item.isConnected ? "Connected" : "Disconnected"}
+              </Typography>
+            }
+          />
+        </Box>
+      ),
+      lastConnectedHeartBeat: (
+        <Box>
+          <Typography variant="body2">
+            {dayjs(item?.lastConnectedHeartBeat).format(
+              "hh:mm:ss A DD/MM/YYYY"
+            ) ?? "--"}
           </Typography>
         </Box>
       ),
-      avgSpeed: item.averageSpeed.toFixed(1) || "--",
-      avgPayload: item.avgPayload || "--",
+      avgSpeed: item?.averageSpeed.toFixed(1) || "--",
+      avgPayload: item?.avgPayload || "--",
       totalDistance: item?.distanceTravelled
-        ? `${item.distanceTravelled?.toFixed(2)} KM`
+        ? `${item?.distanceTravelled?.toFixed(2)} KM`
         : "--",
-      avgConsumption: item.avgConsumption || "--",
-      breakdown: item.breakdown || "--",
-      currentSoc: item.batteryPercentage
-        ? `${item.batteryPercentage?.toFixed(2)}%`
+      avgConsumption: item?.avgConsumption.toFixed(2) || "--",
+      breakdown: item?.breakdown || "--",
+      currentSoc: item?.batteryPercentage
+        ? `${item?.batteryPercentage?.toFixed(2)}%`
         : "--",
-      effectiveRange: item.effectiveRange || "--",
+      effectiveRange: item?.effectiveRange || "--",
       Action: (
         <Grid container justifyContent="center" spacing={2}>
           <Grid item xs={12}>
@@ -210,8 +214,25 @@ const Overview = ({
   const onClose = () => {
     setActiveMarker(null);
   };
+  const getTimeFrameDurationInHours = (timeFrame) => {
+    switch (timeFrame) {
+      case "Today":
+        return 24;
+      case "Weekly":
+        return 7 * 24;
+      case "Monthly":
+        return 30 * 24;
+      case "Yearly":
+        return 365 * 24;
+      default:
+        return 0;
+    }
+  };
+
   const progressValue = graphData?.result?.length
-    ? (graphData?.result?.length / 100) * 100
+    ? (graphData?.result?.length /
+        getTimeFrameDurationInHours(selectedTimeFrames[0])) *
+      100
     : 0;
 
   return (
@@ -347,6 +368,8 @@ const Overview = ({
               "Region",
               "E-tractor ID",
               "Status",
+              "Fleet status",
+              "Last connected",
               "Avg. speed (km/hr)",
               "Avg. payload (Ton)",
               "Total distance travelled(km)",
