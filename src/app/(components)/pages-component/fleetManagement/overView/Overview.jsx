@@ -219,11 +219,11 @@ const Overview = ({
       case "Today":
         return 24;
       case "Weekly":
-        return 7 * 24;
+        return 7;
       case "Monthly":
-        return 30 * 24;
+        return 30;
       case "Yearly":
-        return 365 * 24;
+        return 12;
       default:
         return 0;
     }
