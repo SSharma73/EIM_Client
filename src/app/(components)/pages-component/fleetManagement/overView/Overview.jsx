@@ -161,14 +161,15 @@ const Overview = ({
           <Chip
             size="small"
             sx={{
-              backgroundColor: item.isConnected ? "green" : "red",
+              backgroundColor:
+                item.isConnected === "offline"
+                  ? "orange"
+                  : item.isConnected === "disconnected"
+                  ? "red"
+                  : "green",
               color: "white",
             }}
-            label={
-              <Typography variant="body2">
-                {item.isConnected ? "Connected" : "Disconnected"}
-              </Typography>
-            }
+            label={<Typography variant="body2">{item.isConnected}</Typography>}
           />
         </Box>
       ),
