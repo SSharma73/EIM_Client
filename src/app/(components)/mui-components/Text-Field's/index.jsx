@@ -4,8 +4,6 @@ import { MdOutlineMailOutline } from "react-icons/md";
 import { FaMagnifyingGlass } from "react-icons/fa6";
 import { TextFieldProps } from "@mui/material";
 
-
-
 const CustomTextField = ({
   type,
   label,
@@ -19,41 +17,37 @@ const CustomTextField = ({
   onChange,
   ...props
 }) => {
-
   return (
-
-      <TextField
-        {...props}
-        name={name}
-        label={label}
-        error={error}
-        variant="outlined"
-        defaultValue={defaultValue}
-        placeholder={placeholder}
-        helperText={helperText}
-        onChange={onChange}
-   
-        disabled={disabled}
-        sx={{
-          borderRadius: "8px",
-        }}
-        InputLabelProps={{ shrink: true }}
-        InputProps={
-          type
-            ? {
-                startAdornment: (
-                  <InputAdornment position="start">
-                    {type === "email" && (
-                      <MdOutlineMailOutline fontSize="medium" />
-                    )}
-                    {type === "search" && <FaMagnifyingGlass />}
-                  </InputAdornment>
-                ),
-              }
-            : {}
-        }
-      />
-  
+    <TextField
+      {...props}
+      name={name}
+      label={label}
+      error={error}
+      variant="outlined"
+      defaultValue={defaultValue}
+      placeholder={placeholder}
+      helperText={helperText}
+      onChange={onChange}
+      disabled={disabled}
+      sx={{
+        borderRadius: "8px",
+      }}
+      InputLabelProps={{ shrink: true }}
+      InputProps={
+        type
+          ? {
+              startAdornment: (
+                <InputAdornment position="start">
+                  {type === "email" && (
+                    <MdOutlineMailOutline fontSize="medium" />
+                  )}
+                  {type === "search" && <FaMagnifyingGlass />}
+                </InputAdornment>
+              ),
+            }
+          : {}
+      }
+    />
   );
 };
 

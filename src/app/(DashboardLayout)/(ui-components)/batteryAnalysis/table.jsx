@@ -80,8 +80,6 @@ const Table = ({
   };
 
   const handleExport = (data) => {
-    console.log("Exporting data", data);
-
     if (!Array.isArray(data) || data.length === 0) {
       notifyError("No data available to export");
       return;

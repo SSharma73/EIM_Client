@@ -51,12 +51,12 @@ const Overview = ({
   setPage,
   loading,
 }) => {
+  console.log("check data---------------->", data);
   const [distance, setDistance] = useState(false);
   const [payload, setPayload] = useState(false);
   const [trips, setTrips] = useState(false);
   const [activeMarker, setActiveMarker] = useState(null);
   const [icons, setIcons] = useState(null);
-  const [totalDocuments] = useState(data?.totalDocuments || 0);
   const [graphData, setGraphData] = useState([]);
   const days = ["Today", "Weekly", "Monthly", "Yearly"];
   const data1 = [
@@ -364,7 +364,7 @@ const Overview = ({
           <CustomTable
             page={page}
             rows={getFormattedData(data?.result)}
-            count={totalDocuments}
+            count={data?.totalDocuments}
             columns={[
               "Region",
               "E-tractor ID",
