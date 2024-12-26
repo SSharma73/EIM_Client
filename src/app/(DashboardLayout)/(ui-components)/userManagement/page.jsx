@@ -90,6 +90,9 @@ const UserManagement = () => {
       handleTableData();
     }
   }, [customerId, buttonType]);
+
+  console.log("selectedItems", customerId);
+
   const breadcrumbItems = [
     { label: "Dashboard", link: "/" },
     { label: "User-Management", link: "/userManagement" },
@@ -100,7 +103,7 @@ const UserManagement = () => {
         <AddUser
           open={open}
           setOpen={setOpen}
-          id={customers && customers[0]?.id}
+          id={customerId}
           handleTableData={handleTableData}
         />
       ) : (

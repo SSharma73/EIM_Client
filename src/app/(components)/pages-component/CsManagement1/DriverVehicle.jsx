@@ -93,12 +93,13 @@ const Charging = ({ value, eventLabel }) => {
 
     data.forEach((row) => {
       const rowData = [
-        row?.Id || "--",
+        row?.fleetNumber || "--",
         row?.chargingcycle || "--",
         row?.chargingTime || "--",
+        row?.status || "--",
         row?.startSoC || "--",
         row?.endSoC || "--",
-        row?.currentSoC || "--",
+        row?.batteryPercentage || "--",
         row?.chargedSoC || "--",
         row?.unitsConsumed || "--",
       ];
@@ -187,7 +188,7 @@ const Charging = ({ value, eventLabel }) => {
                   variant="outlined"
                   sx={{ mr: 1 }}
                   onClick={() => {
-                    handleExport(data);
+                    handleExport(data?.result);
                   }}
                   startIcon={<FaRegFileExcel />}
                   size="large"

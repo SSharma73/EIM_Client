@@ -39,7 +39,14 @@ const FieldSection = ({ placeholder, register, name, error }) => (
   </Grid>
 );
 
-const AutoCompleteSection = ({ label, options, register, name, error }) => (
+const AutoCompleteSection = ({
+  label,
+  options = [],
+  register,
+  name,
+  error,
+  setId,
+}) => (
   <Grid
     item
     md={4}
@@ -62,7 +69,8 @@ const AutoCompleteSection = ({ label, options, register, name, error }) => (
         return "";
       }}
       onChange={(event, value) => {
-        register(name).onChange(value ? value._id : "");
+        setId(value?._id);
+        register(name)?.onChange(value ? value?._id : "");
       }}
       renderInput={(params) => (
         <>
@@ -92,12 +100,13 @@ const AddPort = () => {
   } = useForm();
   const router = useRouter();
   const [activeMarker, setActiveMarker] = useState(null);
+  const [customerId, setCustomerId] = useState(null);
+  const [TaridId, setTaridId] = useState(null);
   const [customers, setCustomers] = useState([]);
   const [tariffs, setTariffs] = useState([]);
 
   const handleMapData = (index, point) => {
     setActiveMarker(index);
-    // Set latitude and longitude
     register("location.latitude").onChange(point.latitude);
     register("location.longitude").onChange(point.longitude);
   };
@@ -125,7 +134,6 @@ const AddPort = () => {
   };
 
   const onSubmit = async (data) => {
-    // Constructing the location object correctly
     const { latitude, longitude, ...rest } = data;
 
     const payload = {
@@ -134,6 +142,8 @@ const AddPort = () => {
         latitude: parseFloat(latitude),
         longitude: parseFloat(longitude),
       },
+      customerId: customerId,
+      tariffId: TaridId,
     };
 
     try {
@@ -208,10 +218,9 @@ const AddPort = () => {
           <FieldSection
             placeholder="Country (Auto-fill)"
             register={register}
-            name="country" // Added field for country
+            name="country"
             error={errors.country}
           />
-          {/* Latitude and Longitude Fields */}
           <FieldSection
             placeholder="Latitude (Auto-fill)"
             register={register}
@@ -230,14 +239,16 @@ const AddPort = () => {
             options={customers}
             register={register}
             name="customerId"
-            error={errors.customerId}
+            error={errors?.customerId}
+            setId={setCustomerId}
           />
           <AutoCompleteSection
             label="Select tariff"
             options={tariffs}
             register={register}
             name="tariffId"
-            error={errors.tariffId}
+            error={errors?.tariffId}
+            setId={setTaridId}
           />
         </Grid>
       </CustomGrid>

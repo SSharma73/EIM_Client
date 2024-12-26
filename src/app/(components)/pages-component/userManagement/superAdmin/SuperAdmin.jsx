@@ -54,13 +54,12 @@ const Table = ({ type, fetchAllDetails, handleTableData }) => {
     }
 
     const modifiedData = data?.map((row) => ({
-      employeeId: row?.employeeId,
-      mobileNumber: row?.mobileNumber,
-      emailId: row?.emailId,
-      address: row?.address,
-      role: row?.role,
-      subAdmin: row?.subAdmin?.userName,
-      parent: row?.parent?.userName,
+      name: row?.name,
+      phone: row?.phone,
+      email: row?.email,
+    }));
+    const modifiedData1 = data?.map((row) => ({
+      name: row?.name,
     }));
 
     const csvData = [];
@@ -68,29 +67,17 @@ const Table = ({ type, fetchAllDetails, handleTableData }) => {
     csvData.push([[], [], tableHeading, [], []]);
     csvData.push([]);
 
-    const headerRow = [
-      "Emp Id",
-      "Mob. no.",
-      "Email ID",
-      "Location",
-      "Assign role",
-      "Sub admin",
-      "Reporting manager",
-    ];
-    csvData.push(headerRow);
+    const headerRow = ["Name"];
+    const headerRow1 = ["User name", "Mob. no.", "Email"];
+    csvData.push(type === "User" ? headerRow1 : headerRow);
 
-    modifiedData.forEach((row) => {
-      const rowData = [
-        row?.employeeId,
-        row?.mobileNumber,
-        row?.emailId,
-        row?.address,
-        row?.role,
-        row?.subAdmin,
-        row?.parent,
-      ];
-      csvData.push(rowData);
-    });
+    type === "User"
+      ? modifiedData
+      : modifiedData1.forEach((row) => {
+          const rowData = [row?.name, row?.phone, row?.email];
+          const rowData1 = [row?.name];
+          csvData.push(type === "User" ? rowData : rowData1);
+        });
     const csvString = Papa.unparse(csvData);
     const blob = new Blob([csvString], { type: "text/csv;charset=utf-8" });
     saveAs(blob, `${type}Data.csv`);
@@ -179,7 +166,7 @@ const Table = ({ type, fetchAllDetails, handleTableData }) => {
                 variant="outlined"
                 sx={{ mr: 1 }}
                 onClick={() => {
-                  handleExport(data?.data);
+                  handleExport(fetchAllDetails?.result);
                 }}
                 startIcon={<FaRegFileExcel />}
                 size="large"

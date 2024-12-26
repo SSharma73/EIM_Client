@@ -54,6 +54,7 @@ const Charging = ({
   loading,
 }) => {
   const [coordinates, setCoordinates] = useState([]);
+  console.log("dataaaaaaaaaaaaaa", data);
   useEffect(() => {
     if (data?.result) {
       const newCoordinates = data?.result?.map((item) => ({
@@ -82,10 +83,10 @@ const Charging = ({
     }
 
     const modifiedData = data?.map((row) => ({
-      region: row?.port?.regionName,
-      fleetId: row?.fleetId,
-      currentSoc: row?.currentSoc,
-      currentSoh: row?.currentSoh,
+      region: row?.region,
+      fleetId: row?.fleetNumber,
+      currentSoc: row?.batteryPercentage,
+      currentSoh: row?.batteryHealth,
       currentUnit: row?.currentUnit,
       status: row?.status,
       estimatedCharging: row?.estimatedCharging,
@@ -219,7 +220,7 @@ const Charging = ({
                 <Button
                   variant="outlined"
                   onClick={() => {
-                    handleExport(data?.data);
+                    handleExport(data?.result);
                   }}
                   startIcon={<FaRegFileExcel />}
                   size="large"

@@ -6,7 +6,8 @@ import axiosInstance from "@/app/api/axiosInstanceImg";
 
 Chart.register(...registerables);
 
-const Graph = ({ graphType, type }) => {
+const Graph = ({ graphType, type, selectedItems, selectedCustId }) => {
+  console.log("graphType", selectedItems, selectedCustId);
   const [chartData, setChartData] = useState({
     labels: [],
     datasets: [
@@ -50,7 +51,7 @@ const Graph = ({ graphType, type }) => {
         },
       },
       tooltip: {
-        enabled: true, // Show tooltips
+        enabled: true,
       },
     },
     interaction: {
@@ -63,7 +64,12 @@ const Graph = ({ graphType, type }) => {
     const fetchData = async () => {
       try {
         const { data } = await axiosInstance.get("charger/sessionGraph", {
-          params: { graphType, type },
+          params: {
+            graphType,
+            type,
+            region: selectedItems,
+            customerId: selectedCustId,
+          },
         });
         const labels = data?.data.map((item) => item.interval) || [];
         const sessionData = data?.data.map((item) => item.session) || [];
@@ -87,7 +93,7 @@ const Graph = ({ graphType, type }) => {
     };
 
     fetchData();
-  }, [graphType, type]);
+  }, [graphType, type, selectedItems, selectedCustId]);
 
   return (
     <Grid container mt={2} mb={1}>
