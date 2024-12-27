@@ -104,26 +104,32 @@ const Charging = ({
     setOpenDialog(false);
   };
   const handleExport = (data) => {
-    console.log("Exporting data", data);
-
     if (!Array.isArray(data) || data.length === 0) {
       notifyError("No data available to export");
       return;
     }
 
     const modifiedData = data?.map((row) => ({
-      region: row?.port?.regionName,
-      fleetId: row?.fleetId,
+      fleetId: row?.fleetNumber,
+      status: row?.status,
+      batteryPercentage: row?.batteryPercentage,
+      batteryHealth: row?.batteryHealth,
+      chargingCycle: row?.chargingCycle,
+      swappingCycle: row?.swappingCycle,
       trip: row?.trip,
-      avgSpeed: row?.avgSpeed,
-      avgPayload: row?.avgPayload,
+      distanceTravelled: row?.distanceTravelled,
+      avgCharging: row?.avgCharging,
+      consumed: row?.consumed,
+      averageSpeed: row?.averageSpeed,
+      averagePayload: row?.averagePayload,
       maxPayload: row?.maxPayload,
-      distance: row?.distance,
+      teus: row?.teus,
+      handled: row?.handled,
+      Teushandled: row?.Teushandled,
+      Teuseach: row?.Teuseach,
+      consumption: row?.consumption,
       breakdown: row?.breakdown,
-      totalUnit: row?.totalUnit,
-      totalHandle: row?.totalHandle,
-      mobileNumber8: row?.mobileNumber,
-      jobRole: row?.jobRole,
+      Effective: row?.effectiveRange,
     }));
 
     const csvData = [];
@@ -132,35 +138,51 @@ const Charging = ({
     csvData.push([]);
 
     const headerRow = [
-      "Region",
       "E-tractor ID",
-      "Trips",
+      "Status",
+      "Current SoC(%)",
+      "Current SoH(%)",
+      "Charging cycle",
+      "Swapping cycle",
+      "No. of trips",
+      "Total distance travelled(km)",
+      "Avg. charging time(hr.)",
+      "Total units consumed(kWh)",
       "Avg. speed(km/hr)",
       "Avg. payload(Ton)",
       "Max. payload(Ton)",
-      "Distance travelled(km)",
-      "Avg. breakdown",
-      "Total Teus",
-      "Tues handled(40F)",
-      "Tues handled(20F)",
-      "Tues each trip",
+      "Total teus",
+      "Teus handled(40F)",
+      "Teus handled(20F)",
+      "Teus each trip",
+      "Avg. consumption(kWh/km)",
+      "Breakdown",
+      "Effective range(km)",
     ];
     csvData.push(headerRow);
 
     modifiedData.forEach((row) => {
       const rowData = [
-        row?.port?.regionName,
         row?.fleetId,
+        row?.status,
+        row?.batteryPercentage,
+        row?.batteryHealth,
+        row?.chargingCycle,
+        row?.swappingCycle,
         row?.trip,
-        row?.avgSpeed,
-        row?.avgPayload,
+        row?.distanceTravelled,
+        row?.avgCharging,
+        row?.consumed,
+        row?.averageSpeed,
+        row?.averagePayload,
         row?.maxPayload,
-        row?.distance,
+        row?.teus,
+        row?.handled,
+        row?.Teushandled,
+        row?.Teuseach,
+        row?.consumption,
         row?.breakdown,
-        row?.totalUnit,
-        row?.totalHandle,
-        row?.mobileNumber,
-        row?.jobRole,
+        row?.effectiveRange,
       ];
       csvData.push(rowData);
     });
@@ -259,7 +281,7 @@ const Charging = ({
                 <Button
                   variant="outlined"
                   onClick={() => {
-                    handleExport(data?.data);
+                    handleExport(data?.result);
                   }}
                   startIcon={<FaRegFileExcel />}
                   size="large"

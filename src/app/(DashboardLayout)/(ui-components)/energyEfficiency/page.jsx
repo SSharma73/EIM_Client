@@ -18,6 +18,7 @@ const EnergyEfficiency = () => {
   const [date, setDate] = useState(null);
   const [data, setData] = useState(null);
   const [openGraph, setOpenGraph] = useState(false);
+  
 
   const [efficiency, setEfficiency] = useState(null);
   useEffect(() => {
@@ -35,7 +36,6 @@ const EnergyEfficiency = () => {
     };
     fetchData();
   }, []);
-  console.log("Check efficiency", efficiency);
   const getDataFromChildHandler = (date, dataArr) => {
     setDate(date);
   };

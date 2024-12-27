@@ -4,16 +4,11 @@ import React, { useState, useEffect } from "react";
 import { Doughnut } from "react-chartjs-2";
 import { Chart, registerables } from "chart.js";
 import Table from "./table";
-import AccessTimeFilledIcon from "@mui/icons-material/AccessTimeFilled";
-import Graph1 from "./graph2";
 import { CustomDropdown } from "@/app/(components)/mui-components/DropdownButton/index";
 import ManagementGrid from "@/app/(components)/mui-components/Card";
 import { CustomGrid } from "@/app/(components)/mui-components/CustomGrid";
-import CommonDatePicker from "@/app/(components)/mui-components/Text-Field's/Date-range-Picker/index";
-import axiosInstance from "@/app/api/axiosInstance";
 import AddBattery from "./addBattery";
 import ToastComponent from "@/app/(components)/mui-components/Snackbar/index";
-
 Chart.register(...registerables);
 
 const avg_battery = {

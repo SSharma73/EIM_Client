@@ -89,26 +89,22 @@ const Table = ({
     });
   }, [type, eventLabel]);
 
-  console.log("Check eventLabel", eventLabel, type);
-
+  console.log("data", fetchAllDetails);
   const handleExport = (data) => {
-    console.log("Exporting data", data);
-
     if (!Array.isArray(data) || data.length === 0) {
       notifyError("No data available to export");
       return;
     }
 
     const modifiedData = data?.map((row) => ({
-      batteryId: row?.batteryId,
+      stationCode: row?.stationCode,
+      region: row?.region,
       status: row?.status,
-      swappingcycle: row?.swappingcycle,
-      avgSpeed: row?.avgSpeed,
-      selectedpackage: row?.selectedpackage,
-      maxPayload: row?.maxPayload,
-      distance: row?.distance,
-      value: row?.value,
-      jobRole: row?.jobRole,
+      queue: row?.queue?.length,
+      Maxcapacity: row?.Maxcapacity,
+      Currentload: row?.Currentload,
+      Lastsessionstarted: row?.Lastsessionstarted,
+      Alerts: row?.Alerts,
     }));
 
     const csvData = [];
@@ -117,12 +113,12 @@ const Table = ({
     csvData.push([]);
 
     const headerRow = [
-      "CS/SS Station ID",
+      `${labelStatus} Station ID`,
       "Region",
-      "Charging status",
+      `${labelStatus} status`,
       "Queue",
       "Max. capacity(kW)",
-      "Current charging load(kW)",
+      "Current load(kW)",
       "Last session started",
       "Alerts",
     ];
@@ -130,15 +126,14 @@ const Table = ({
 
     modifiedData.forEach((row) => {
       const rowData = [
-        row?.batteryId,
+        row?.stationCode,
+        row?.region,
         row?.status,
-        row?.swappingcycle,
-        row?.avgSpeed,
-        row?.selectedpackage,
-        row?.maxPayload,
-        row?.distance,
-        row?.value,
-        row?.jobRole,
+        row?.queue?.length,
+        row?.Maxcapacity,
+        row?.Currentload,
+        row?.Lastsessionstarted,
+        row?.Alerts,
       ];
       csvData.push(rowData);
     });
@@ -206,7 +201,7 @@ const Table = ({
               <Button
                 variant="outlined"
                 onClick={() => {
-                  handleExport(data);
+                  handleExport(fetchAllDetails?.result);
                 }}
                 startIcon={<FaRegFileExcel />}
                 size="large"

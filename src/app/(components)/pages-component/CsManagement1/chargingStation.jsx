@@ -92,14 +92,15 @@ const Charging = ({
       return;
     }
     const modifiedData = data?.map((row) => ({
-      region: row?.region,
+      stationCode: row?.stationCode,
       status: row?.status,
-      hubname: row?.trip,
-      avgSpeed: row?.avgSpeed,
-      avgPayload: row?.avgPayload,
-      maxPayload: row?.maxPayload,
-      distance: row?.distance,
-      value: row?.value,
+      name: row?.name,
+      queue: row?.queue.length,
+      currentlyCharging: row?.currentlyCharging,
+      totalCharged: row?.totalCharged,
+      totalSwapped: labelStatus === "Swapping" && row?.totalSwapped,
+      unitConsumed: row?.unitConsumed,
+      averageChargingTime: row?.averageChargingTime,
     }));
 
     const csvData = [];
@@ -108,29 +109,32 @@ const Charging = ({
     csvData.push([]);
 
     const headerRow = [
-      "Charger station ID",
+      `${eventLabel} ID`,
       "Status",
       "Hub Name",
-      "Truck In queue",
-      "Currently charging",
+      "E-Tractor In queue",
+      ...(labelStatus === "Swapping"
+        ? [`Currently ${labelStatus}`]
+        : [`Currently ${labelStatus}`]),
       "Total charged",
-      "Unit consumed(kW/h)",
-      "Avg. charging time",
-      "Peak hours",
-      "Action",
+      labelStatus === "Swapping" && "Total swapped",
+      "Unit consumed (kWh)",
+      `Avg. ${labelStatus} time (hr.)`,
+      labelStatus === "Swapping" && "Battery packs",
     ];
     csvData.push(headerRow);
 
     modifiedData.forEach((row) => {
       const rowData = [
-        row?.region,
+        row?.stationCode,
         row?.status,
-        row?.trip,
-        row?.avgSpeed,
-        row?.avgPayload,
-        row?.maxPayload,
-        row?.distance,
-        row?.value,
+        row?.name,
+        row?.queue,
+        row?.currentlyCharging,
+        row?.totalCharged,
+        labelStatus === "Swapping" && row?.totalSwapped,
+        row?.unitConsumed,
+        row?.averageChargingTime,
       ];
       csvData.push(rowData);
     });
@@ -285,7 +289,7 @@ const Charging = ({
                 <Button
                   variant="outlined"
                   onClick={() => {
-                    handleExport(fetchAllDetails);
+                    handleExport(fetchAllDetails?.result);
                   }}
                   startIcon={<FaRegFileExcel />}
                   size="large"

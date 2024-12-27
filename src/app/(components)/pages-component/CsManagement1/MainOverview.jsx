@@ -16,7 +16,7 @@ const CustomGrid = styled(Grid)(({ theme }) => ({
   borderRadius: "16px",
   color: "#fff",
 }));
-const Overview1 = ({ type }) => {
+const Overview1 = ({ type, selectedItems, selectedCustId }) => {
   const [value, setValue] = useState(0);
   const [fetchAllDetails, setFetchAllDetails] = useState(null);
   const fetchDetails = async ({
@@ -112,7 +112,7 @@ const Overview1 = ({ type }) => {
   const [selectedTimeFrames, setSelectedTimeFrames] = useState(
     data?.map(() => days[0])
   );
-  // Handler for dropdown selection
+
   const handleTimeFrameChange = (index, newTimeFrame) => {
     const updatedTimeFrames = [...selectedTimeFrames];
     updatedTimeFrames[index] = newTimeFrame;
@@ -147,6 +147,8 @@ const Overview1 = ({ type }) => {
               <Graph
                 graphType={selectedTimeFrames[index].toLowerCase()}
                 type={type}
+                selectedCustId={selectedCustId}
+                selectedItems={selectedItems?.Region}
               />
             )}
             {index === 1 && (

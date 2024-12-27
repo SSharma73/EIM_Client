@@ -13,24 +13,49 @@ const CsManagement = () => {
   const [value, setValue] = useState(0);
   const [open, setOpen] = useState(false);
   const [fetchAllDetails, setFetchAllDetails] = useState(null);
+  const [region, setRegion] = useState([]);
+  const [customers, setCustomers] = useState([]);
+  const [selectedCustId, setSelectedCustId] = useState(null);
 
   const breadcrumbItems = [
     { label: "Dashboard", link: "/" },
     { label: "CS/SS-Management", link: "/csManagement" },
   ];
+  useEffect(() => {
+    const regions = async () => {
+      const { data } = await axiosInstance.get("dashboard/regions");
+      setRegion(data?.regions);
+    };
+    const customer = async () => {
+      const { data } = await axiosInstance.get("dashboard/customers");
+      setCustomers(data?.customers);
+    };
+    regions();
+    customer();
+  }, []);
+
   const [selectedItems, setSelectedItems] = useState({
     Region: "",
     Customer: "",
     "Charging Station": "",
   });
+  useEffect(() => {
+    if (selectedItems?.Customer) {
+      const customer = customers?.find(
+        (customer) => customer?.brandName === selectedItems?.Customer
+      );
+      setSelectedCustId(customer?._id);
+    }
+  }, [selectedItems]);
+
   const dropDownButtons = [
     {
       label: "Region",
-      menuItems: ["Mumbai", "Delhi", "Agra", "Punjab", "Kolkata"],
+      menuItems: region,
     },
     {
       label: "Customer",
-      menuItems: ["Customer 1", "Customer 2", "Customer 3"],
+      menuItems: customers?.map((customer) => customer?.brandName),
     },
     {
       label: "Charging Station",
@@ -66,7 +91,6 @@ const CsManagement = () => {
     }));
     setFetchAllDetails(null);
   };
-
   const fetchDetails = async ({
     limit = 10,
     page = 1,
@@ -100,7 +124,14 @@ const CsManagement = () => {
 
   const TabPanelList = [
     {
-      component: <Overview value="1" type={type} />,
+      component: (
+        <Overview
+          value="1"
+          type={type}
+          selectedCustId={selectedCustId}
+          selectedItems={selectedItems}
+        />
+      ),
     },
     {
       component: (
@@ -118,7 +149,6 @@ const CsManagement = () => {
   ];
   return (
     <Grid container xs={12} sm={12} md={12}>
-      {/* <ToastComponent /> */}
       <AddTractor open={open} setOpen={setOpen} />
       <ManagementGrid
         moduleName={"CS/SS Management"}

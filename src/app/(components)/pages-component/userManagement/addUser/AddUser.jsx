@@ -22,6 +22,7 @@ import axiosInstance from "@/app/api/axiosInstance";
 import UserDetails from "./userDetails";
 
 export default function AddUser({ id, open, setOpen, handleTableData }) {
+
   const methods = useForm();
   const { reset } = methods;
   const [file, setFile] = useState(null);

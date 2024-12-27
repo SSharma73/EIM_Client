@@ -109,6 +109,7 @@ const Table = ({
     notifySuccess("Download Excel Successfully");
   };
 
+
   const getFormattedData = (data) => {
     return data?.map((item, index) => {
       const actionComponent = (

@@ -1,6 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
-import axios from "axios";
+import React from "react";
 import {
   Grid,
   Dialog,
@@ -14,55 +13,19 @@ import {
 } from "@mui/material";
 import CloseOutlinedIcon from "@mui/icons-material/CloseOutlined";
 import moment from "moment";
-import axiosInstance from "@/app/api/axiosInstance";
 
 export default function TariffPlan({ open, setOpen, rows }) {
-  const [tariffData, setTariffData] = useState(null);
-
   const handleClose = () => {
     setOpen(false);
-    setTariffData(null);
   };
-  useEffect(() => {
-    if (open && rows && rows._id) {
-      const fetchTariff = async () => {
-        try {
-          const response = await axiosInstance.get(
-            `tariff/fetchTariffById/${rows._id}`
-          );
-          setTariffData(response.data);
-        } catch (error) {
-          console.error("Error fetching tariff data:", error);
-        }
-      };
-      fetchTariff();
-    }
-  }, [open, rows]);
 
   const renderTimeSlots = () => {
-    if (!tariffData || !tariffData.hourlyRate) {
-      return (
-        <Box
-          sx={{
-            textAlign: "center",
-            mt: 4,
-            p: 2,
-            borderRadius: 2,
-          }}
-        >
-          <Typography variant="h6" color="error" sx={{ mb: 1 }}>
-            No Tariff Plan Assigned
-          </Typography>
-        </Box>
-      );
-    }
-
     const timePeriods = ["Morning", "Afternoon", "Evening", "Night"];
     const hourRanges = {
-      Morning: [0, 8],
-      Afternoon: [8, 12],
-      Evening: [12, 16],
-      Night: [16, 24],
+      Morning: [0, 8], // From 12 AM to 8 AM
+      Afternoon: [8, 12], // From 8 AM to 12 PM
+      Evening: [12, 16], // From 12 PM to 4 PM
+      Night: [16, 24], // From 4 PM to 12 AM
     };
 
     return timePeriods.map((period, idx) => {
@@ -81,8 +44,7 @@ export default function TariffPlan({ open, setOpen, rows }) {
                 const startTime = moment({ hour: hourIndex }).format("HH:00");
                 const endTime = moment({ hour: hourIndex + 1 }).format("HH:00");
                 const rate =
-                  (tariffData.hourlyRate && tariffData.hourlyRate[hourIndex]) ||
-                  0;
+                  (rows && rows.hourlyRate && rows.hourlyRate[hourIndex]) || 0;
                 return (
                   <Grid item xs={6} sm={3} key={hourIndex}>
                     <Paper
@@ -137,7 +99,7 @@ export default function TariffPlan({ open, setOpen, rows }) {
           style: {
             position: "fixed",
             backgroundColor: "transparent",
-            transition: "opacity 225ms cubic-bezier(0.4, 0, 0.2, 1)",
+            transition: "opacity 225ms cubic-bezier(0.4, 0, 0.2, 1)", // Apply transition for smooth fade-in and fade-out
             WebkitTapHighlightColor: "transparent",
           },
         }}

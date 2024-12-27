@@ -37,11 +37,27 @@ const VehicleScheduling = () => {
   const [icons, setIcons] = useState(null);
   const [schedules, setSchedules] = useState([]);
   const [locations, setLocations] = useState([]);
+  const [search, setSearch] = useState("");
+
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState(search);
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setSearch(debouncedSearchQuery);
+    }, 500);
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [debouncedSearchQuery, setSearch]);
+
+  const handleSearchChange = (event) => {
+    setDebouncedSearchQuery(event.target.value);
+  };
   useEffect(() => {
     const fetchSchedules = async () => {
       try {
         const { data, status } = await axiosInstance.get(
-          "schedule/getAllSchedules"
+          `schedule/getAllSchedules?search=${search} `
         );
         const fleetLocations = data?.data?.result
           ?.filter(
@@ -60,7 +76,7 @@ const VehicleScheduling = () => {
     };
 
     fetchSchedules();
-  }, []);
+  }, [search]);
 
   const handleMapData = (index, point) => {
     setActiveMarker(index);
@@ -95,7 +111,13 @@ const VehicleScheduling = () => {
           </Typography>
         </Grid>
         <Grid item md={4} xs={12} sx={{ mt: 1 }}>
-          <CustomTextField type={"search"} placeholder={"Search"} fullWidth />
+          <CustomTextField
+            type={"search"}
+            placeholder={"Search"}
+            fullWidth
+            value={debouncedSearchQuery}
+            onChange={handleSearchChange}
+          />
         </Grid>
       </CustomGrid>
       <Grid container spacing={2}>
