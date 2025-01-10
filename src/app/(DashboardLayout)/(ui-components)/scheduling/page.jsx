@@ -23,16 +23,7 @@ const Scheduling = () => {
     { label: "Dashboard", link: "/" },
     { label: "Scheduling", link: "/scheduling" },
   ];
-  const droDownButtons = [
-    {
-      label: "Region",
-      menuItems: ["Mumbai", "Delhi", "Agra", "Punjab", "Kolkata"],
-    },
-    {
-      label: "Customer",
-      menuItems: ["Customer 1", "Customer 2", "Customer 3"],
-    },
-  ];
+
   return (
     <Grid container spacing={2} xs={12}>
       <Grid item xs={12}>

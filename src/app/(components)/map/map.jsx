@@ -19,7 +19,7 @@ import axios from "axios";
 import styled from "@emotion/styled";
 import Box from "@mui/material/Box";
 
-const center = {
+const defaultCenter = {
   lat: 28.51079782059423,
   lng: 77.40362813493975,
 };
@@ -32,6 +32,7 @@ const Page = ({
   setActiveMarker,
   onClose,
   handleMapData,
+  center,
 }) => {
   const containerStyle = {
     width: "100%",
@@ -42,7 +43,38 @@ const Page = ({
     id: "google-map-script",
     googleMapsApiKey: "AIzaSyBrsCdS1KEJ9QDOgnl5gwnemCuLJDKzp9Y",
   });
+
   const [snap, setSnap] = useState([]);
+  const [center1, setCenter1] = useState(defaultCenter);
+
+  useEffect(() => {
+    const fetchCoordinates = async () => {
+      if (center?.region) {
+        try {
+          const response = await axios.get(
+            `https://maps.googleapis.com/maps/api/geocode/json?address=${center?.region}&key=AIzaSyBrsCdS1KEJ9QDOgnl5gwnemCuLJDKzp9Y`
+          );
+
+          if (response.data.results.length > 0) {
+            const { lat, lng } = response.data.results[0].geometry.location;
+            console.log("loca", lat, lng);
+            setCenter1({ lat, lng });
+          } else {
+            console.error("No results found for the specified location.");
+          }
+        } catch (error) {
+          console.error("Error fetching geocoded coordinates:", error);
+        }
+      }
+    };
+
+    fetchCoordinates();
+  }, [center?.region]);
+  useEffect(() => {
+    if (!center?.region) {
+      setCenter1(defaultCenter);
+    }
+  }, [center?.region]);
 
   const fetchData = async () => {
     try {
@@ -63,7 +95,7 @@ const Page = ({
   };
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [center]);
 
   const [activeButton, setActiveButton] = useState(null);
   const [filteredMarkers, setFilteredMarkers] = useState(null);
@@ -82,8 +114,9 @@ const Page = ({
   }, [activeButton, snap]);
 
   const handleButtonClick = (buttonData) => {
+    console.log("buttonm", buttonData);
     setActiveButton(buttonData);
-    setActiveMarker(null);
+    // setActiveMarker(null);
   };
 
   const Badge1 = styled(Badge)(({ color }) => ({
@@ -97,8 +130,8 @@ const Page = ({
       {isLoaded && (
         <GoogleMap
           mapContainerStyle={containerStyle}
-          center={center}
-          zoom={15}
+          center={center1 || defaultCenter}
+          zoom={13}
           onUnmount={() => {
             setActiveMarker(null);
           }}
@@ -129,7 +162,7 @@ const Page = ({
                   sx={{
                     position: "absolute",
                     left: "50%",
-                    top: 322, 
+                    top: 322,
                     display: "flex",
                     transform: "translateX(-50%)",
                     justifyContent: "center",
@@ -143,7 +176,10 @@ const Page = ({
                       {buttonData.map((button, index) => (
                         <Button
                           variant="contained"
-                          key={index} 
+                          key={index}
+                          // onClick={() => {
+                          //   handleButtonClick(button);
+                          // }}
                           sx={{
                             ".MuiButton-outlined": {
                               border: "1px solid #fff",
@@ -160,7 +196,7 @@ const Page = ({
                                 activeButton === index ? "black" : button.color
                               }
                             />
-                          }                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
+                          }
                         >
                           {button.label}
                         </Button>
