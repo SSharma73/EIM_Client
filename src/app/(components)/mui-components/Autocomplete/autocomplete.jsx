@@ -3,7 +3,6 @@ import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
 import { Avatar } from "@mui/material";
 import Image from "next/image";
-import ClearIcon from "@mui/icons-material/Clear"; // Import ClearIcon
 
 function sleep(duration) {
   return new Promise((resolve) => {

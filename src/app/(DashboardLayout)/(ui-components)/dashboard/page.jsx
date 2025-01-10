@@ -36,6 +36,9 @@ const MainGrid = styled(Grid)(({ theme }) => ({
 function ShorterGrid() {
   const [activeMarker, setActiveMarker] = useState(null);
   const [icons, setIcons] = useState(null);
+
+
+  
   const [state, setState] = useState({
     data: null,
     activeMarker: null,
@@ -47,7 +50,13 @@ function ShorterGrid() {
     region: "",
     coordinate: null,
   });
+
+
+
+
   const [fetchFleet, setFetchFleet] = useState(null);
+
+
   const handleBrandChange = (selectedBrand) => {
     if (selectedBrand) {
       setState((prev) => ({
@@ -82,6 +91,8 @@ function ShorterGrid() {
       handleClearRegion();
     }
   };
+
+
   const handleClearFleet = () => {
     setState((prev) => ({
       ...prev,
@@ -230,6 +241,8 @@ function ShorterGrid() {
       console.error("Error fetching consumption data: ", error);
     }
   };
+
+  
   useEffect(() => {
     const fetchFleets = async () => {
       try {
