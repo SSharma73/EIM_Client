@@ -13,6 +13,7 @@ import Image from "next/image"; // Ensure to import Image
 import noData from "../../../../../../public/Img/Nodata.svg";
 
 const Overview = ({ fetchAllDetails }) => {
+  console.log("fetch deta",fetchAllDetails)
   const MapHeight = "630px";
   const iconUrls = ["./available.svg", "charger.svg"];
   const iconMapping = {

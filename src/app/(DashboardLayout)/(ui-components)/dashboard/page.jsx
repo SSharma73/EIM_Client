@@ -4,7 +4,7 @@ import { Grid, Typography, Avatar } from "@mui/material";
 import { styled } from "@mui/system";
 import Image from "next/image";
 import AutoBox from "@/app/(components)/mui-components/Autocomplete/autocomplete";
-import Map from "@/app/(components)/map/map";
+import Map from "@/app/(components)/map/index";
 import MapDetails from "@/app/(components)/map/mapDetails";
 import axiosInstance from "@/app/api/axiosInstanceImg";
 import Analysis from "./analysis/page";
@@ -19,13 +19,12 @@ const iconUrls = [
   "./truck3.svg",
   "./truck4.svg",
 ];
+const iconMapping = {
+  sany: "./truck1.svg",
+  byd: "./truck2.svg",
+  photon: "./truck3.svg",
+};
 const coordinate = [];
-const buttonData = [
-  { label: "Charging : 0", color: "red" },
-  { label: "Swapping : 0", color: "green" },
-  { label: "Scheduled CS : 0", color: "blue" },
-  { label: "Scheduled SS : 0", color: "gray" },
-];
 
 const MainGrid = styled(Grid)(({ theme }) => ({
   backgroundColor: "#6099EB",
@@ -49,6 +48,7 @@ function ShorterGrid() {
     fleetNumber: "",
     fleetId: null,
     region: "",
+    coordinate: null,
   });
 
 
@@ -61,8 +61,8 @@ function ShorterGrid() {
     if (selectedBrand) {
       setState((prev) => ({
         ...prev,
-        brandName: selectedBrand.title,
-        brandId: selectedBrand._id,
+        brandName: selectedBrand?.title,
+        brandId: selectedBrand?._id,
       }));
     } else {
       handleClearBrand();
@@ -73,8 +73,9 @@ function ShorterGrid() {
     if (selectedFleet) {
       setState((prev) => ({
         ...prev,
-        fleetNumber: selectedFleet.title,
-        fleetId: selectedFleet._id,
+        fleetNumber: selectedFleet?.title,
+        fleetId: selectedFleet?._id,
+        coordinate: selectedFleet?.coordinate || [],
       }));
     } else {
       handleClearFleet();
@@ -84,7 +85,7 @@ function ShorterGrid() {
     if (selectedRegion) {
       setState((prev) => ({
         ...prev,
-        region: selectedRegion.title,
+        region: selectedRegion?.title,
       }));
     } else {
       handleClearRegion();
@@ -97,6 +98,7 @@ function ShorterGrid() {
       ...prev,
       fleetNumber: "",
       fleetId: null,
+      coordinate: null,
     }));
   };
 
@@ -121,12 +123,13 @@ function ShorterGrid() {
         await Promise.all([
           axiosInstance.get("dashboard/regions"),
           axiosInstance.get("dashboard/customers"),
-          axiosInstance.get("dashboard/fleets"),
+          axiosInstance.get("fleet/fetchFleets"),
         ]);
 
       const regions = regionsResponse?.data?.regions;
       const customers = customersResponse?.data?.customers;
-      const fleets = fleetsResponse?.data?.fleets;
+      const fleets = fleetsResponse?.data?.data?.result;
+
       const fetchedData = [
         {
           label: "Region",
@@ -147,11 +150,24 @@ function ShorterGrid() {
           label: "Fleet",
           value: fleets?.length,
           icon: "/Img/truck-moving-solid.svg",
-          data1: fleets?.map((fleet) => ({
-            title: fleet?.fleetNumber,
-            _id: fleet?._id,
-          })),
+          data1: fleets?.map((fleet) => {
+            const coordinates = fleet?.location?.coordinates || [];
+            return {
+              title: fleet?.fleetNumber,
+              _id: fleet?._id,
+              coordinate: coordinates?.length
+                ? [
+                    {
+                      lat: coordinates[0],
+                      log: coordinates[1],
+                      icon: iconMapping[fleet?.type],
+                    },
+                  ]
+                : [],
+            };
+          }),
         },
+
         {
           label: "Consumption rate",
           value: 0,
@@ -172,7 +188,7 @@ function ShorterGrid() {
   const fetchMileageData = async () => {
     try {
       const mileageResponse = await axiosInstance.get(
-        `dashboard/mileage?brandName=${state.brandName}&fleetNumber=${state.fleetNumber}&region=${state.region}`
+        `dashboard/mileage?brandName=${state?.brandName}&fleetNumber=${state?.fleetNumber}&region=${state?.region}`
       );
       const totalDistance = mileageResponse?.data?.totalDistance || 0;
       setState((prev) => {
@@ -196,18 +212,19 @@ function ShorterGrid() {
       console.error("Error fetching mileage data: ", error);
     }
   };
+  console.log("fleet ", state);
   const fetchConsumptionData = async () => {
     try {
       const consumptionResponse = await axiosInstance.get(
-        `dashboard/consumption?brandName=${state.brandName}&fleetNumber=${state.fleetNumber}&region=${state.region}`
+        `dashboard/consumption?brandName=${state?.brandName}&fleetNumber=${state?.fleetNumber}&region=${state?.region}`
       );
       const consumptionRate = consumptionResponse?.data?.consumptionRate || 0;
 
       setState((prev) => {
-        if (Array.isArray(prev.data) && prev.data.length > 3) {
+        if (Array.isArray(prev?.data) && prev?.data?.length > 3) {
           return {
             ...prev,
-            data: prev.data.map((item, index) =>
+            data: prev?.data?.map((item, index) =>
               index === 3
                 ? {
                     label: "Consumption rate",
@@ -238,11 +255,11 @@ function ShorterGrid() {
       }
     };
     fetchFleets();
-  }, [state.fleetNumber, state.region]);
+  }, [state?.fleetNumber, state?.region]);
 
   useEffect(() => {
     fetchData();
-    if (state.brandName || state.fleetNumber || state.region) {
+    if (state?.brandName || state?.fleetNumber || state?.region) {
       fetchMileageData();
       fetchConsumptionData();
     } else {
@@ -338,7 +355,6 @@ function ShorterGrid() {
           </Grid>
         ))}
 
-
         {activeMarker && activeMarker !== null ? (
           <Grid item xl={9} xs={12} md={8} height={"380px"}>
             <Map
@@ -346,9 +362,10 @@ function ShorterGrid() {
               iconUrls={iconUrls}
               activeMarker={activeMarker}
               setActiveMarker={setActiveMarker}
-              buttonData={buttonData}
+              // buttonData={buttonData}
               coordinate={coordinate}
               onClose={onClose}
+              center={state}
             />
           </Grid>
         ) : (
@@ -358,13 +375,14 @@ function ShorterGrid() {
               iconUrls={iconUrls}
               activeMarker={activeMarker}
               setActiveMarker={setActiveMarker}
-              buttonData={buttonData}
+              // buttonData={buttonData}
               coordinate={coordinate}
               onClose={onClose}
+              center={state}
             />
           </Grid>
         )}
-        
+
         {activeMarker && activeMarker !== null && (
           <Grid item xl={3} xs={12} md={4} height={"380px"}>
             <MapDetails icons={icons} onClose={onClose} />
