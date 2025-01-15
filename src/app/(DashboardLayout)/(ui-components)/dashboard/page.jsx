@@ -37,8 +37,6 @@ function ShorterGrid() {
   const [activeMarker, setActiveMarker] = useState(null);
   const [icons, setIcons] = useState(null);
 
-
-  
   const [state, setState] = useState({
     data: null,
     activeMarker: null,
@@ -51,11 +49,7 @@ function ShorterGrid() {
     coordinate: null,
   });
 
-
-
-
   const [fetchFleet, setFetchFleet] = useState(null);
-
 
   const handleBrandChange = (selectedBrand) => {
     if (selectedBrand) {
@@ -91,7 +85,6 @@ function ShorterGrid() {
       handleClearRegion();
     }
   };
-
 
   const handleClearFleet = () => {
     setState((prev) => ({
@@ -242,7 +235,6 @@ function ShorterGrid() {
     }
   };
 
-  
   useEffect(() => {
     const fetchFleets = async () => {
       try {

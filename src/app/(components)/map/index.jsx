@@ -6,7 +6,7 @@ import axios from "axios";
 
 const Page = ({
   Height,
-  coordinate,
+  coordinate = [],
   setActiveMarker,
   handleMapData,
   center,
@@ -83,7 +83,7 @@ const Page = ({
         <GoogleMap
           mapContainerStyle={containerStyle}
           center={center1 ? center1 : defaultCenter1 || defaultCenter}
-          zoom={11}
+          zoom={13}
           onUnmount={() => {
             setActiveMarker(null);
           }}

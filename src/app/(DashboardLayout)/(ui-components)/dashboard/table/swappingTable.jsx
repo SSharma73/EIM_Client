@@ -111,15 +111,15 @@ const Table = ({
           <Grid container justifyContent={"center"} key={index}>
             {batteryStates?.map((state) => {
               const batteryInfo = getBatteryStatus(
-                item?.batterySoc[state.index]
+                item?.batterySoc ?? item?.batterySoc[state?.index]
               );
               return (
-                <Grid item key={state.index}>
-                  <Tooltip title={batteryInfo.percent}>
+                <Grid item key={state?.index}>
+                  <Tooltip title={batteryInfo?.percent}>
                     <Button
                       size="small"
-                      sx={{ color: batteryInfo.color }}
-                      startIcon={<PiCarBattery color={batteryInfo.color} />}
+                      sx={{ color: batteryInfo?.color }}
+                      startIcon={<PiCarBattery color={batteryInfo?.color} />}
                     >
                       {batteryInfo?.percent}
                     </Button>
@@ -171,7 +171,7 @@ const Table = ({
         <CustomTable
           page={page}
           rows={getFormattedData(data?.result)}
-          count={data?.length}
+          count={data?.totalDocuments}
           columns={columns}
           setPage={setPage}
           rowsPerPage={rowsPerPage}

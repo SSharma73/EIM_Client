@@ -42,11 +42,11 @@ const Page = ({ state }) => {
               limit: 10,
               page: 1,
               type: "sany",
-              customerId: state.brandId,
+              customerId: state?.brandId,
             },
           }
         );
-        setSwappingData(swappingResponse.data?.data);
+        setSwappingData(swappingResponse?.data?.data);
         const chargingResponse = await axiosInstance.get(
           `charger/fetchChargers`,
           {
