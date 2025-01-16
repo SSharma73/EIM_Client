@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import Table from "./table";
 import { useSearchParams } from "next/navigation";
 import { Fleet } from "@/app/(components)/table/rows";
+import HeaderGrid from "@/app/(components)/mui-components/Card/HeaderGrid";
 
 const vehicleTrip = [
   "Date",
@@ -63,7 +64,24 @@ const Page = ({ params }) => {
     setData(Fleet);
   }, []);
   return (
+    <>
+    <HeaderGrid
+        moduleName={"Fleet Management"}
+        breadcrumbItems={breadcrumbItems}
+        dropDown={customers}
+        button={"Add E-Tractor"}
+        handleClickOpen={handleOpen}
+        tabs={tabs}
+        value={value}
+        handleChange={handleChange}
+        TabPanelList={TabPanelList}
+        handleDropdownSelect={handleDropdownSelect}
+        customerItems={customerItems}
+        setCustomerItems={setCustomerItems}
+      />
+
     <Grid container rowGap={2} sm={12} md={12}>
+      
       {tabValue &&
         (tabValue === "1" ? (
           <Table
@@ -95,7 +113,7 @@ const Page = ({ params }) => {
             loading={loading}
             getDataFromChildHandler={getDataFromChildHandler}
           />
-        ) : tabValue==='3'?(
+        ) : tabValue === "3" ? (
           <Table
             data={data}
             params={params}
@@ -110,7 +128,7 @@ const Page = ({ params }) => {
             loading={loading}
             getDataFromChildHandler={getDataFromChildHandler}
           />
-        ):(
+        ) : (
           <Table
             data={data}
             params={params}
@@ -127,6 +145,7 @@ const Page = ({ params }) => {
           />
         ))}
     </Grid>
+    </>
   );
 };
 export default Page;

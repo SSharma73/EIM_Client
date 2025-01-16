@@ -50,6 +50,7 @@ function ShorterGrid() {
   });
 
   const [fetchFleet, setFetchFleet] = useState(null);
+  const [mileage, setMileage] = useState(0);
 
   const handleBrandChange = (selectedBrand) => {
     if (selectedBrand) {
@@ -140,7 +141,7 @@ function ShorterGrid() {
           })),
         },
         {
-          label: "Fleet",
+          label: "Tractor no.",
           value: fleets?.length,
           icon: "/Img/truck-moving-solid.svg",
           data1: fleets?.map((fleet) => {
@@ -168,7 +169,7 @@ function ShorterGrid() {
         },
         {
           label: "Total mileage accumulated",
-          value: 0,
+          value: mileage || 0,
           icon: "/Img/route-solid.svg",
         },
       ];
@@ -177,13 +178,15 @@ function ShorterGrid() {
       console.error("Error fetching data: ", error);
     }
   };
-
+  console.log("mileage", mileage);
   const fetchMileageData = async () => {
     try {
       const mileageResponse = await axiosInstance.get(
         `dashboard/mileage?brandName=${state?.brandName}&fleetNumber=${state?.fleetNumber}&region=${state?.region}`
       );
+      console.log("mileage respons", mileageResponse?.data?.totalDistance);
       const totalDistance = mileageResponse?.data?.totalDistance || 0;
+      setMileage(mileageResponse?.data?.totalDistance);
       setState((prev) => {
         if (Array.isArray(prev.data) && prev?.data?.length > 4) {
           return {
@@ -258,7 +261,7 @@ function ShorterGrid() {
       fetchMileageData();
       fetchConsumptionData();
     }
-  }, [state.brandName, state.fleetNumber, state.region]);
+  }, [state?.brandName, state?.fleetNumber, state?.region, mileage]);
 
   const handleMapData = (index, point, color) => {
     setActiveMarker(index);

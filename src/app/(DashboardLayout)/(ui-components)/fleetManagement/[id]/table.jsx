@@ -15,15 +15,11 @@ import TableSkeleton from "@/app/(components)/mui-components/Skeleton/tableSkele
 import CloudDownloadIcon from "@mui/icons-material/CloudDownload";
 import CommonDatePicker from "@/app/(components)/mui-components/Text-Field's/Date-range-Picker/index";
 import Link from "next/link";
-import { IoEyeOutline } from "react-icons/io5";
 import { CustomDownloadExcel } from "@/app/(components)/mui-components/DownloadExcel/index";
-import { Fleet } from "@/app/(components)/table/rows";
 
 const Table = ({
   data,
-  deviceData,
   columns,
-  value,
   params,
   rowsPerPage,
   setRowsPerPage,
@@ -32,7 +28,6 @@ const Table = ({
   searchQuery,
   setSearchQuery,
   loading,
-  handleExport,
   getDataFromChildHandler,
 }) => {
   const [open, setOpenDialog] = React.useState(false);
@@ -63,7 +58,6 @@ const Table = ({
     setOpenDialog(false);
   };
   const getFormattedData = (data) => {
-    console.log("data", data);
     return data?.map((item, index) => ({
       employeeId: (
         <Box>
@@ -119,12 +113,6 @@ const Table = ({
                 getDataFromChildHandler={getDataFromChildHandler}
               />
             </Grid>
-            {/* <CustomTextField
-                            type="search"
-                            placeholder="Search empId / Name"
-                            value={debouncedSearchQuery}
-                            onChange={handleSearchChange}
-                        /> */}
           </Grid>
         </Grid>
       </Grid>

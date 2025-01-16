@@ -25,6 +25,7 @@ import Graph3 from "@/app/(components)/pages-component/fleetManagement/vehicle/g
 import CustomTable from "@/app/(components)/mui-components/Table/customTable/index";
 import TableSkeleton from "@/app/(components)/mui-components/Skeleton/tableSkeleton";
 import { CustomDropdownEvent } from "@/app/(components)/mui-components/Card/HeaderGrid/DropdownButton/dropDownEvent";
+import { useRouter } from "next/navigation";
 
 const CustomGrid = styled(Grid)(({ theme }) => ({
   padding: theme.spacing(2),
@@ -51,12 +52,12 @@ const Overview = ({
   setPage,
   loading,
 }) => {
-  console.log("check data---------------->", data);
   const [distance, setDistance] = useState(false);
   const [payload, setPayload] = useState(false);
   const [trips, setTrips] = useState(false);
   const [activeMarker, setActiveMarker] = useState(null);
   const [icons, setIcons] = useState(null);
+  const router = useRouter();
   const [graphData, setGraphData] = useState([]);
   const days = ["Today", "Weekly", "Monthly", "Yearly"];
   const data1 = [
@@ -197,7 +198,12 @@ const Overview = ({
         <Grid container justifyContent="center" spacing={2}>
           <Grid item xs={12}>
             <Tooltip title="View">
-              <IconButton size="small">
+              <IconButton
+                size="small"
+                onClick={() =>
+                  router.push(`/fleetManagement/${item?._id}?tab=1`)
+                }
+              >
                 <IoEyeOutline color="rgba(14, 1, 71, 1)" />
               </IconButton>
             </Tooltip>
