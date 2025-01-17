@@ -35,7 +35,7 @@ const Page = () => {
       }`;
       const res = await axiosInstance.get(url);
       if (res.status === 200 || res.status === 201) {
-        setData(res?.data || []);
+        setData(res?.data?.notifications || []);
       }
     } catch (err) {
       console.error("Error fetching notifications:", err);

@@ -62,7 +62,7 @@ const Page = ({
   }, [center?.region]);
 
   const getAllCoordinates = () => {
-    const fleetData = center?.data?.find((item) => item?.label === "Fleet");
+    const fleetData = center?.data?.find((item) => item?.label === "Tractor");
 
     const fleetCoordinates =
       fleetData?.data1?.flatMap((fleet) => fleet?.coordinate) || [];
@@ -71,8 +71,8 @@ const Page = ({
   };
   const [fleetSelection, setFleetSelection] = useState([]);
 
+  const allCoordinates = getAllCoordinates();
   useEffect(() => {
-    const allCoordinates = getAllCoordinates();
     setFleetSelection(allCoordinates);
   }, [center, coordinate]);
 
@@ -97,7 +97,7 @@ const Page = ({
                     lat: point?.lat,
                     lng: point?.log,
                   }}
-                  onClick={() => handleMapData(index, point?.icon)}
+                  onClick={() => handleMapData(index, point)}
                   icon={{
                     url: point?.icon,
                     anchor: new google.maps.Point(17, 46),

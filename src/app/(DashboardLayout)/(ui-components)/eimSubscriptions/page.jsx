@@ -32,7 +32,8 @@ function MyCards() {
       const response = await axiosInstance.get(
         "subscription/fetchSubscriptions"
       );
-      setSubscriptions(response.data?.data); // Assuming response.data is an array
+      setSubscriptions(response.data?.data);
+      y;
     } catch (err) {
       setError(err.message);
     } finally {
@@ -43,14 +44,6 @@ function MyCards() {
   useEffect(() => {
     fetchSubscriptions();
   }, []);
-
-  // if (loading) {
-  //   return <Typography>Loading...</Typography>;
-  // }
-
-  // if (error) {
-  //   return <Typography>Error: {error}</Typography>;
-  // }
 
   return (
     <Grid container rowGap={2}>

@@ -1,21 +1,18 @@
 import React, { useState } from "react";
 import { Grid, Typography, IconButton, Stack } from "@mui/material";
-import CommonDatePicker from "@/app/(components)/mui-components/Text-Field's/Date-range-Picker/index";
 import styled from "@emotion/styled";
 import { IoMdClose } from "react-icons/io";
 import Image from "next/image";
+import moment from "moment";
 
 const MainGrid = styled(Grid)(({ theme }) => ({
   backgroundColor: "#6099EB",
   color: "#fff",
   borderRadius: "16px",
 }));
-const MapDetails = ({ title, icons, onClose }) => {
+const MapDetails = ({ title, icons, onClose, truckDetails }) => {
   const [date, setDate] = useState(null);
 
-  const getDataFromChildHandler = (date, dataArr) => {
-    setDate(date);
-  };
   return (
     <MainGrid container rowGap={1}>
       <Grid container justifyContent={"space-between"}>
@@ -36,10 +33,15 @@ const MapDetails = ({ title, icons, onClose }) => {
             </IconButton>
           </Grid>
         ) : (
-          <Grid container justifyContent={"space-between"} p={1}>
-            <CommonDatePicker
-              getDataFromChildHandler={getDataFromChildHandler}
-            />{" "}
+          <Grid
+            container
+            justifyContent={"space-between"}
+            p={1}
+            alignItems={"center"}
+          >
+            <Grid item>
+              <Typography variant="h4">{truckDetails?.fleetNumber}</Typography>
+            </Grid>
             <Grid item>
               <IconButton onClick={onClose}>
                 <IoMdClose color="#fff" />
@@ -49,18 +51,23 @@ const MapDetails = ({ title, icons, onClose }) => {
         )}
 
         <Stack rowGap={2} mt={1} p={1}>
-          <Typography>Payload</Typography>
-          <Typography>SoC</Typography>
-          <Typography>SoH</Typography>
+          <Typography>Battery</Typography>
           <Typography>Distance travelled</Typography>
-          <Typography>Trips</Typography>
+          <Typography>Last connected</Typography>
+          <Typography>Type</Typography>
+          <Typography>Average Speed</Typography>
         </Stack>
         <Stack rowGap={2} mt={1} p={1}>
-          <Typography>20 Ton</Typography>
-          <Typography color={"secondary"}>90%</Typography>
-          <Typography color={"error"}>28%</Typography>
-          <Typography>200 km</Typography>
-          <Typography>3</Typography>
+          <Typography>{truckDetails?.batteryPercentage}%</Typography>
+          <Typography color={"secondary"}>
+            {truckDetails?.distanceTravelled} km
+          </Typography>
+          <Typography color={"error"}>
+            {" "}
+            {moment(truckDetails?.lastConnectedHeartBeat).format("ll")}
+          </Typography>
+          <Typography color={"secondary"}>{truckDetails?.type}</Typography>
+          <Typography>{truckDetails?.averageSpeed}</Typography>
         </Stack>
       </Grid>
       <Image src={`${icons}`} height={100} width={500} />

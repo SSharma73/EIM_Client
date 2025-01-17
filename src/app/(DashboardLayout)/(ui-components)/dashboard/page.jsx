@@ -36,6 +36,7 @@ const MainGrid = styled(Grid)(({ theme }) => ({
 function ShorterGrid() {
   const [activeMarker, setActiveMarker] = useState(null);
   const [icons, setIcons] = useState(null);
+  const [truckDetails, setTruckDetails] = useState(null);
 
   const [state, setState] = useState({
     data: null,
@@ -51,6 +52,7 @@ function ShorterGrid() {
 
   const [fetchFleet, setFetchFleet] = useState(null);
   const [mileage, setMileage] = useState(0);
+  const [consumption, setConsumption] = useState(0);
 
   const handleBrandChange = (selectedBrand) => {
     if (selectedBrand) {
@@ -141,11 +143,12 @@ function ShorterGrid() {
           })),
         },
         {
-          label: "Tractor no.",
+          label: "Tractor",
           value: fleets?.length,
           icon: "/Img/truck-moving-solid.svg",
           data1: fleets?.map((fleet) => {
             const coordinates = fleet?.location?.coordinates || [];
+
             return {
               title: fleet?.fleetNumber,
               _id: fleet?._id,
@@ -155,6 +158,13 @@ function ShorterGrid() {
                       lat: coordinates[0],
                       log: coordinates[1],
                       icon: iconMapping[fleet?.type],
+                      _id: fleet?._id,
+                      batteryPercentage: fleet?.batteryPercentage,
+                      distanceTravelled: fleet?.distanceTravelled,
+                      lastConnectedHeartBeat: fleet?.lastConnectedHeartBeat,
+                      averageSpeed: fleet?.averageSpeed,
+                      type: fleet?.type,
+                      fleetNumber: fleet?.fleetNumber,
                     },
                   ]
                 : [],
@@ -164,7 +174,7 @@ function ShorterGrid() {
 
         {
           label: "Consumption rate",
-          value: 0,
+          value: consumption || 0,
           icon: "/Img/road-solid.svg",
         },
         {
@@ -178,13 +188,11 @@ function ShorterGrid() {
       console.error("Error fetching data: ", error);
     }
   };
-  console.log("mileage", mileage);
   const fetchMileageData = async () => {
     try {
       const mileageResponse = await axiosInstance.get(
         `dashboard/mileage?brandName=${state?.brandName}&fleetNumber=${state?.fleetNumber}&region=${state?.region}`
       );
-      console.log("mileage respons", mileageResponse?.data?.totalDistance);
       const totalDistance = mileageResponse?.data?.totalDistance || 0;
       setMileage(mileageResponse?.data?.totalDistance);
       setState((prev) => {
@@ -208,13 +216,13 @@ function ShorterGrid() {
       console.error("Error fetching mileage data: ", error);
     }
   };
-  console.log("fleet ", state);
   const fetchConsumptionData = async () => {
     try {
       const consumptionResponse = await axiosInstance.get(
         `dashboard/consumption?brandName=${state?.brandName}&fleetNumber=${state?.fleetNumber}&region=${state?.region}`
       );
-      const consumptionRate = consumptionResponse?.data?.consumptionRate || 0;
+      const consumptionRate = consumptionResponse?.data?.totalConsumption;
+      setConsumption(consumptionResponse?.data?.totalConsumption);
 
       setState((prev) => {
         if (Array.isArray(prev?.data) && prev?.data?.length > 3) {
@@ -261,16 +269,22 @@ function ShorterGrid() {
       fetchMileageData();
       fetchConsumptionData();
     }
-  }, [state?.brandName, state?.fleetNumber, state?.region, mileage]);
+  }, [
+    state?.brandName,
+    state?.fleetNumber,
+    state?.region,
+    mileage,
+    consumption,
+  ]);
 
-  const handleMapData = (index, point, color) => {
-    setActiveMarker(index);
-    setIcons(point);
+  const handleMapData = (index, point) => {
+    setActiveMarker(index + 1);
+    setIcons(point?.icon);
+    setTruckDetails(point);
   };
   const onClose = () => {
     setActiveMarker(null);
   };
-
   return (
     <>
       <Grid container spacing={2}>
@@ -289,7 +303,7 @@ function ShorterGrid() {
                           ? handleRegionChange
                           : item.label === "Customer"
                           ? handleBrandChange
-                          : item.label === "Fleet"
+                          : item.label === "Tractor"
                           ? handleFleetChange
                           : null
                       }
@@ -298,7 +312,7 @@ function ShorterGrid() {
                           ? handleClearRegion
                           : item.label === "Customer"
                           ? handleClearBrand
-                          : item.label === "Fleet"
+                          : item.label === "Tractor"
                           ? handleClearFleet
                           : null
                       }
@@ -378,9 +392,13 @@ function ShorterGrid() {
           </Grid>
         )}
 
-        {activeMarker && activeMarker !== null && (
+        {activeMarker && activeMarker >= 0 && (
           <Grid item xl={3} xs={12} md={4} height={"380px"}>
-            <MapDetails icons={icons} onClose={onClose} />
+            <MapDetails
+              icons={icons}
+              onClose={onClose}
+              truckDetails={truckDetails}
+            />
           </Grid>
         )}
       </Grid>

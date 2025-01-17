@@ -4,9 +4,6 @@ import {
   Grid,
   Typography,
   Box,
-  Tooltip,
-  IconButton,
-  LinearProgress,
   Badge,
   List,
   ListItem,
@@ -16,7 +13,6 @@ import {
 import dayjs from "dayjs";
 import styled from "@emotion/styled";
 import Map from "@/app/(components)/map/map";
-import { IoEyeOutline } from "react-icons/io5";
 import axiosInstance from "@/app/api/axiosInstance";
 import MapDetails from "@/app/(components)/map/mapDetails";
 import Graph from "@/app/(components)/pages-component/fleetManagement/vehicle/graph";
@@ -194,22 +190,22 @@ const Overview = ({
         ? `${item?.batteryPercentage?.toFixed(2)}%`
         : "--",
       effectiveRange: item?.effectiveRange || "--",
-      Action: (
-        <Grid container justifyContent="center" spacing={2}>
-          <Grid item xs={12}>
-            <Tooltip title="View">
-              <IconButton
-                size="small"
-                onClick={() =>
-                  router.push(`/fleetManagement/${item?._id}?tab=1`)
-                }
-              >
-                <IoEyeOutline color="rgba(14, 1, 71, 1)" />
-              </IconButton>
-            </Tooltip>
-          </Grid>
-        </Grid>
-      ),
+      // Action: (
+      //   <Grid container justifyContent="center" spacing={2}>
+      //     <Grid item xs={12}>
+      //       <Tooltip title="View">
+      //         <IconButton
+      //           size="small"
+      //           onClick={() =>
+      //             router.push(`/fleetManagement/${item?._id}?tab=1`)
+      //           }
+      //         >
+      //           <IoEyeOutline color="rgba(14, 1, 71, 1)" />
+      //         </IconButton>
+      //       </Tooltip>
+      //     </Grid>
+      //   </Grid>
+      // ),
     }));
   };
 
@@ -292,31 +288,31 @@ const Overview = ({
             {index === 0 && (
               <>
                 <Graph graphData={graphData && graphData?.result} />{" "}
-                <LinearProgress
+                {/* <LinearProgress
                   variant="determinate"
                   value={progressValue}
                   sx={{ border: "0.6px" }}
-                />{" "}
+                />{" "} */}
               </>
             )}
             {index === 1 && (
               <>
                 <Graph2 />
-                <LinearProgress
+                {/* <LinearProgress
                   variant="determinate"
                   value={0}
                   sx={{ border: "0.6px" }}
-                />
+                /> */}
               </>
             )}
             {index === 2 && (
               <>
                 <Graph3 />
-                <LinearProgress
+                {/* <LinearProgress
                   variant="determinate"
                   value={0}
                   sx={{ border: "0.6px" }}
-                />
+                /> */}
               </>
             )}
             <List>
@@ -384,7 +380,7 @@ const Overview = ({
               "Breakdown",
               "Current SoC(%)",
               "Effective range(km)",
-              "Action",
+              // "Action",
             ]}
             setPage={setPage}
             rowsPerPage={rowsPerPage}

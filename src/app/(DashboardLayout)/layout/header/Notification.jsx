@@ -91,7 +91,8 @@ const Notification = () => {
         `notification/notifications/?customerId=${customerId}`
       );
       if (res.status === 200 || res.status === 201) {
-        SetDummyData(res?.data);
+        SetDummyData(res?.data?.pendingNotifications);
+        console.log("res", res?.data);
       }
     } catch (err) {
       console.error("Error fetching notifications:", err);
@@ -120,7 +121,7 @@ const Notification = () => {
           //   },
           // }}
           max={999}
-          badgeContent={dummyData && dummyData?.length}
+          badgeContent={dummyData?.count}
         >
           <NotificationsNoneIcon sx={{ fontSize: "22px", color: "#C0FE72" }} />
         </Badge>

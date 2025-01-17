@@ -18,6 +18,7 @@ export default function TariffPlan({ open, setOpen, rows }) {
   const handleClose = () => {
     setOpen(false);
   };
+  console.log("rows", rows);
   const renderTimeSlots = () => {
     const timePeriods = ["Morning", "Afternoon", "Evening", "Night"];
     const hourRanges = {

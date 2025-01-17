@@ -19,8 +19,8 @@ const ChargingId = ({ params }) => {
   const [deviceData, setDeviceData] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [data, setData] = useState(null);
-  const [startDate, setStartDate] = useState(null);
-  const [endDate, setEndDate] = useState(null);
+  const [startDate, setStartDate] = useState(moment());
+  const [endDate, setEndDate] = useState(moment());
 
   // const getDataFromChildHandler = (date, dataArr) => {
   //   setDate(date);
@@ -55,22 +55,17 @@ const ChargingId = ({ params }) => {
     },
   ];
 
-  const fetchChargingHistory = async ({
-    page,
-    rowsPerPage,
-    startDate,
-    endDate,
-  }) => {
+  const fetchChargingHistory = async () => {
     try {
       const { data, status } = await axiosInstance.get(
         "charger/fetchChargingHistory",
         {
           params: {
-            page: page,
+            page: page + 1,
             limit: rowsPerPage,
-            stationId: params.id,
-            startDate,
-            endDate,
+            stationId: params?.id,
+            startDate: startDate,
+            endDate: endDate,
           },
         }
       );
@@ -86,11 +81,10 @@ const ChargingId = ({ params }) => {
     const selectedEndDate = dateRange[0].endDate;
     setStartDate(selectedStartDate);
     setEndDate(selectedEndDate);
-    fetchChargingHistory({ selectedStartDate, selectedEndDate });
+    // fetchChargingHistory({ selectedStartDate, selectedEndDate });
   };
   useEffect(() => {
-    const count = page + 1;
-    fetchChargingHistory({ count, rowsPerPage, startDate, endDate });
+    fetchChargingHistory();
   }, [page, rowsPerPage, startDate, endDate]);
   const getFormattedData = (data) => {
     return data?.map((item) => ({

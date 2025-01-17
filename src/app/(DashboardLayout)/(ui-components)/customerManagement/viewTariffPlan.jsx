@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   Grid,
   Dialog,
@@ -11,13 +11,30 @@ import {
   DialogContent,
   Divider,
 } from "@mui/material";
+import axiosInstance from "@/app/api/axiosInstance";
 import CloseOutlinedIcon from "@mui/icons-material/CloseOutlined";
 import moment from "moment";
 
-export default function TariffPlan({ open, setOpen, rows }) {
+export default function TariffPlan({ open, setOpen, id }) {
+  const [rows, setRows] = useState(null);
   const handleClose = () => {
     setOpen(false);
   };
+
+  const fetchDetails = async () => {
+    try {
+      const { data } = await axiosInstance.get(`tariff/fetchTariffById/${id}`);
+
+      setRows(data?.data);
+    } catch (error) {
+      console.error("Error fetching chargers:", error);
+      throw error;
+    }
+  };
+
+  useEffect(() => {
+    fetchDetails();
+  }, [open]);
 
   const renderTimeSlots = () => {
     const timePeriods = ["Morning", "Afternoon", "Evening", "Night"];

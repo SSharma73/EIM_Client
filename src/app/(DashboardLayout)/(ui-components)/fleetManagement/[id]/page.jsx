@@ -56,6 +56,11 @@ const Page = ({ params }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [date, setDate] = useState(null);
   const [data, setData] = useState(null);
+  const breadcrumbItems = [
+    { label: "Dashboard", link: "/" },
+    { label: "Fleet-Management", link: `/fleetManagement` },
+    { label: `${params?.id}`, link: `/fleetManagement/${params?.id}` },
+  ];
 
   const getDataFromChildHandler = (date, dataArr) => {
     setDate(date);
@@ -65,86 +70,72 @@ const Page = ({ params }) => {
   }, []);
   return (
     <>
-    <HeaderGrid
-        moduleName={"Fleet Management"}
-        breadcrumbItems={breadcrumbItems}
-        dropDown={customers}
-        button={"Add E-Tractor"}
-        handleClickOpen={handleOpen}
-        tabs={tabs}
-        value={value}
-        handleChange={handleChange}
-        TabPanelList={TabPanelList}
-        handleDropdownSelect={handleDropdownSelect}
-        customerItems={customerItems}
-        setCustomerItems={setCustomerItems}
-      />
+      <HeaderGrid moduleName={"Fleet"} breadcrumbItems={breadcrumbItems} />
 
-    <Grid container rowGap={2} sm={12} md={12}>
-      
-      {tabValue &&
-        (tabValue === "1" ? (
-          <Table
-            data={data}
-            params={params}
-            columns={vehicle}
-            deviceData={deviceData}
-            rowsPerPage={rowsPerPage}
-            setRowsPerPage={setRowsPerPage}
-            page={page}
-            setPage={setPage}
-            searchQuery={searchQuery}
-            setSearchQuery={setSearchQuery}
-            loading={loading}
-            getDataFromChildHandler={getDataFromChildHandler}
-          />
-        ) : tabValue === "2" ? (
-          <Table
-            data={data}
-            params={params}
-            columns={vehicleCharging}
-            deviceData={deviceData}
-            rowsPerPage={rowsPerPage}
-            setRowsPerPage={setRowsPerPage}
-            page={page}
-            setPage={setPage}
-            searchQuery={searchQuery}
-            setSearchQuery={setSearchQuery}
-            loading={loading}
-            getDataFromChildHandler={getDataFromChildHandler}
-          />
-        ) : tabValue === "3" ? (
-          <Table
-            data={data}
-            params={params}
-            columns={vehicleTrip}
-            deviceData={deviceData}
-            rowsPerPage={rowsPerPage}
-            setRowsPerPage={setRowsPerPage}
-            page={page}
-            setPage={setPage}
-            searchQuery={searchQuery}
-            setSearchQuery={setSearchQuery}
-            loading={loading}
-            getDataFromChildHandler={getDataFromChildHandler}
-          />
-        ) : (
-          <Table
-            data={data}
-            params={params}
-            columns={vehicleTrip}
-            deviceData={deviceData}
-            rowsPerPage={rowsPerPage}
-            setRowsPerPage={setRowsPerPage}
-            page={page}
-            setPage={setPage}
-            searchQuery={searchQuery}
-            setSearchQuery={setSearchQuery}
-            loading={loading}
-            getDataFromChildHandler={getDataFromChildHandler}
-          />
-        ))}
-    </Grid>
+      <Grid container rowGap={2} sm={12} md={12}>
+        {tabValue &&
+          (tabValue === "1" ? (
+            <Table
+              data={data}
+              params={params}
+              columns={vehicle}
+              deviceData={deviceData}
+              rowsPerPage={rowsPerPage}
+              setRowsPerPage={setRowsPerPage}
+              page={page}
+              setPage={setPage}
+              searchQuery={searchQuery}
+              setSearchQuery={setSearchQuery}
+              loading={loading}
+              getDataFromChildHandler={getDataFromChildHandler}
+            />
+          ) : tabValue === "2" ? (
+            <Table
+              data={data}
+              params={params}
+              columns={vehicleCharging}
+              deviceData={deviceData}
+              rowsPerPage={rowsPerPage}
+              setRowsPerPage={setRowsPerPage}
+              page={page}
+              setPage={setPage}
+              searchQuery={searchQuery}
+              setSearchQuery={setSearchQuery}
+              loading={loading}
+              getDataFromChildHandler={getDataFromChildHandler}
+            />
+          ) : tabValue === "3" ? (
+            <Table
+              data={data}
+              params={params}
+              columns={vehicleTrip}
+              deviceData={deviceData}
+              rowsPerPage={rowsPerPage}
+              setRowsPerPage={setRowsPerPage}
+              page={page}
+              setPage={setPage}
+              searchQuery={searchQuery}
+              setSearchQuery={setSearchQuery}
+              loading={loading}
+              getDataFromChildHandler={getDataFromChildHandler}
+            />
+          ) : (
+            <Table
+              data={data}
+              params={params}
+              columns={vehicleTrip}
+              deviceData={deviceData}
+              rowsPerPage={rowsPerPage}
+              setRowsPerPage={setRowsPerPage}
+              page={page}
+              setPage={setPage}
+              searchQuery={searchQuery}
+              setSearchQuery={setSearchQuery}
+              loading={loading}
+              getDataFromChildHandler={getDataFromChildHandler}
+            />
+          ))}
+      </Grid>
     </>
   );
 };

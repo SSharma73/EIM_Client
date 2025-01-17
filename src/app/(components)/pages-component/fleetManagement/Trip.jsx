@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import Map from "../../map/map";
+import Map from "@/app/(components)/map/index";
 import {
   Grid,
   Typography,
@@ -8,6 +8,7 @@ import {
   Tooltip,
   IconButton,
   Button,
+  Box,
 } from "@mui/material";
 import CustomTable from "@/app/(components)/mui-components/Table/customTable/index";
 import TableSkeleton from "@/app/(components)/mui-components/Skeleton/tableSkeleton";
@@ -28,15 +29,11 @@ const iconUrls = [
   "./truck3.svg",
   "./truck4.svg",
 ];
-const coordinate = [];
-const buttonData = [
-  { label: "All : 0" },
-  { label: "Charging : 0", color: "blue" },
-  { label: "Swapping: 0", color: "green" },
-  { label: "Online : 0", color: "skyblue" },
-  { label: "Offline : 0", color: "red" },
-  { label: "In Trip : 0", color: "#161821" },
-];
+const iconMapping = {
+  sany: "./truck1.svg",
+  byd: "./truck2.svg",
+  photon: "./truck3.svg",
+};
 
 const columns = [
   "Region",
@@ -51,7 +48,7 @@ const columns = [
   "Teus handled(40F)",
   "Teus handled(20F)",
   "Teus each trip",
-  "Action",
+  // "Action",
 ];
 const Charging = ({
   value,
@@ -69,11 +66,13 @@ const Charging = ({
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState(searchQuery);
   const [activeMarker, setActiveMarker] = useState(null);
   const [icons, setIcons] = useState(null);
+  const [coordinate, setCoordinate] = useState([]);
+  const [truckDetails, setTruckDetails] = useState(null);
 
   const handleMapData = (index, point) => {
-    console.log("point", index, point);
-    setActiveMarker(index);
-    setIcons(point);
+    setActiveMarker(index + 1);
+    setIcons(point?.icon);
+    setTruckDetails(point);
   };
   const onClose = () => {
     setActiveMarker(null);
@@ -173,58 +172,85 @@ const Charging = ({
   const getFormattedData = (data) => {
     console.log("data", data);
     return data?.map((item, index) => ({
-      region: item?.port ? item?.port?.regionName : "--",
-      fleetId: item?.fleetId ?? "--",
-      trip: (
-        <Chip
-          key={index}
-          color="primary"
-          sx={{ width: "50px" }}
-          label={item?.trip ?? "NA"}
-        />
+      region: item?.region ?? "--",
+      fleetId: item.fleetNumber ?? "--",
+      FleetStatus: (
+        <Box>
+          <Chip
+            size="small"
+            sx={{
+              backgroundColor:
+                item.isConnected === "offline"
+                  ? "orange"
+                  : item.isConnected === "disconnected"
+                  ? "red"
+                  : "green",
+              color: "white",
+            }}
+            label={<Typography variant="body2">{item.isConnected}</Typography>}
+          />
+        </Box>
       ),
-      avgSpeed: item?.avgSpeed ? item?.avgSpeed : "--",
-      avgPayload: item?.avgPayload ? item?.avgPayload : "--",
+      avgSpeed: item?.averageSpeed.toFixed(1) || "--",
+      avgPayload: item?.avgPayload || "--",
       maxPayload: item?.maxPayload ? item?.maxPayload : "--",
-      distance: item?.distance ? item?.distance : "--",
-      breakdown: item?.breakdown ? item?.breakdown : "--",
+      totalDistance: item?.distanceTravelled
+        ? `${item?.distanceTravelled?.toFixed(2)} KM`
+        : "--",
+      breakdown: item?.breakdown || "--",
       totalUnit: item?.totalUnit ? item?.totalUnit : "--",
       totalHandle: item?.totalHandle ? item?.totalHandle : "--",
       mobileNumber8: item?.mobileNumber ? item?.mobileNumber : "--",
       jobRole: item?.jobRole ? item?.jobRole : "--",
-      Action: [
-        <Grid container justifyContent="center" spacing={2} key={index}>
-          <Grid item xs={6}>
-            <Tooltip title="View">
-              <Link href={`/fleetManagement/123?tab=${value}`}>
-                <IconButton size="small">
-                  <IoEyeOutline color="rgba(14, 1, 71, 1)" />
-                </IconButton>
-              </Link>
-            </Tooltip>
-          </Grid>
-          <Grid item xs={6}>
-            <Tooltip title="Map">
-              <IconButton size="small">
-                <GrMapLocation color="rgba(14, 1, 71, 1)" />
-              </IconButton>
-            </Tooltip>
-          </Grid>
-        </Grid>,
-      ],
+      // Action: [
+      //   <Grid container justifyContent="center" spacing={2} key={index}>
+      //     <Grid item xs={6}>
+      //       <Tooltip title="View">
+      //         <Link href={`/fleetManagement/${item?._id}?tab=${value}`}>
+      //           <IconButton size="small">
+      //             <IoEyeOutline color="rgba(14, 1, 71, 1)" />
+      //           </IconButton>
+      //         </Link>
+      //       </Tooltip>
+      //     </Grid>
+      //     <Grid item xs={6}>
+      //       <Tooltip title="Map">
+      //         <IconButton size="small">
+      //           <GrMapLocation color="rgba(14, 1, 71, 1)" />
+      //         </IconButton>
+      //       </Tooltip>
+      //     </Grid>
+      //   </Grid>,
+      // ],
     }));
   };
   const menuItems = ["Mumbai", "Delhi", "Agra", "Punjab", "Kolkata"];
+  useEffect(() => {
+    const mappedCoordinates = data?.result?.map((fleet) => ({
+      lat: fleet.location.coordinates[0],
+      log: fleet.location.coordinates[1],
+      icon: iconMapping[fleet.type],
+      _id: fleet?._id,
+      batteryPercentage: fleet?.batteryPercentage,
+      distanceTravelled: fleet?.distanceTravelled,
+      lastConnectedHeartBeat: fleet?.lastConnectedHeartBeat,
+      type: fleet?.type,
+      averageSpeed: fleet?.averageSpeed,
+      fleetNumber: fleet?.fleetNumber,
+    }));
+
+    setCoordinate(mappedCoordinates);
+  }, [data]);
   return (
     <Grid container columnGap={2}>
       {activeMarker && activeMarker !== null ? (
-        <Grid item md={8.8} xs={12} height={"380px"}>
+        <Grid item xl={8.8} xs={11.8} md={7.8} height={"380px"}>
           <Map
             handleMapData={handleMapData}
             iconUrls={iconUrls}
             activeMarker={activeMarker}
             setActiveMarker={setActiveMarker}
-            buttonData={buttonData}
+            // buttonData={buttonData}
             coordinate={coordinate}
             onClose={onClose}
           />
@@ -236,18 +262,18 @@ const Charging = ({
             iconUrls={iconUrls}
             activeMarker={activeMarker}
             setActiveMarker={setActiveMarker}
-            buttonData={buttonData}
+            // buttonData={buttonData}
             coordinate={coordinate}
             onClose={onClose}
           />
         </Grid>
       )}
-      {activeMarker && activeMarker !== null && (
-        <Grid item md={3} xs={12} height={"380px"}>
+      {activeMarker && activeMarker >= 0 && (
+        <Grid item xl={3} xs={12} md={4} height={"380px"}>
           <MapDetails
             icons={icons}
             onClose={onClose}
-            title={"E-tractor current status"}
+            truckDetails={truckDetails}
           />
         </Grid>
       )}
@@ -268,7 +294,7 @@ const Charging = ({
           </Grid>
           <Grid item className="customSearch">
             <Grid container>
-              <Grid item>
+              <Grid item mr={1}>
                 <Button
                   variant="outlined"
                   onClick={() => {
@@ -305,7 +331,7 @@ const Charging = ({
         ) : (
           <CustomTable
             page={page}
-            rows={getFormattedData(data?.data?.result)}
+            rows={getFormattedData(data?.result)}
             count={data?.totalDocuments}
             columns={columns}
             setPage={setPage}

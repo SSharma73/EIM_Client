@@ -50,6 +50,7 @@ const Table = ({
   const [open, setOpen] = React.useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState(searchQuery);
+  const [id, setId] = useState(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -109,9 +110,9 @@ const Table = ({
     notifySuccess("Download Excel Successfully");
   };
 
-
   const getFormattedData = (data) => {
     return data?.map((item, index) => {
+      console.log("data", data);
       const actionComponent = (
         <Grid
           container
@@ -130,6 +131,7 @@ const Table = ({
                 onClick={() => {
                   setSelectedRow(item);
                   setOpen(true);
+                  setId(item?.tariffId);
                 }}
               >
                 <IoEyeOutline color="#fff" />
@@ -223,7 +225,7 @@ const Table = ({
           setRowsPerPage={setRowsPerPage}
         />
       )}
-      {open && <TariffPlan rows={selectedRow} open={open} setOpen={setOpen} />}
+      {open && <TariffPlan id={id} open={open} setOpen={setOpen} />}
     </Grid>
   );
 };

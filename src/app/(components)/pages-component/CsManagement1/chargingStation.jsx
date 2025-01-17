@@ -255,6 +255,7 @@ const Charging = ({
       };
     });
   };
+  
 
   return (
     <Grid container>

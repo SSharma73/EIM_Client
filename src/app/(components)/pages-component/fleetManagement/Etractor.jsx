@@ -1,6 +1,5 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import Map from "../../map/map";
 import {
   Grid,
   Typography,
@@ -12,15 +11,12 @@ import {
 } from "@mui/material";
 import CustomTable from "@/app/(components)/mui-components/Table/customTable/index";
 import TableSkeleton from "@/app/(components)/mui-components/Skeleton/tableSkeleton";
-import CommonDatePicker from "@/app/(components)/mui-components/Text-Field's/Date-range-Picker/index";
 import Link from "next/link";
 import { IoEyeOutline } from "react-icons/io5";
-import MapDetails from "@/app/(components)/map/mapDetails";
 import { FaRegFileExcel } from "react-icons/fa";
 import Papa from "papaparse";
 import { saveAs } from "file-saver";
 import { notifyError, notifySuccess } from "../../mui-components/Snackbar";
-import { CustomDropdown } from "@/app/(components)/mui-components/DropdownButton";
 
 const iconUrls = [
   "./truck1.svg",
@@ -63,7 +59,7 @@ const columns = [
   "Avg. consumption(kWh/km)",
   "Breakdown",
   "Effective range(km)",
-  "Action",
+  // "Action",
 ];
 const Charging = ({
   value,
@@ -75,7 +71,6 @@ const Charging = ({
   searchQuery,
   setSearchQuery,
   loading,
-  getDataFromChildHandler,
 }) => {
   const [open, setOpenDialog] = React.useState(false);
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState(searchQuery);
@@ -243,19 +238,19 @@ const Charging = ({
       mobileNumber1: item?.mobileNumber ? item?.mobileNumber : "--",
       mobileNumber12: item?.mobileNumber ? item?.mobileNumber : "--",
       effectiveRange: item.effectiveRange || "--",
-      Action: [
-        <Grid container justifyContent="center" spacing={2} key={index}>
-          <Grid item xs={12}>
-            <Tooltip title="View">
-              <Link href={`/fleetManagement/123?tab=${value}`}>
-                <IconButton size="small">
-                  <IoEyeOutline color="rgba(14, 1, 71, 1)" />
-                </IconButton>
-              </Link>
-            </Tooltip>
-          </Grid>
-        </Grid>,
-      ],
+      // Action: [
+      //   <Grid container justifyContent="center" spacing={2} key={index}>
+      //     <Grid item xs={12}>
+      //       <Tooltip title="View">
+      //         <Link href={`/fleetManagement/${item?._id}?tab=${value}`}>
+      //           <IconButton size="small">
+      //             <IoEyeOutline color="rgba(14, 1, 71, 1)" />
+      //           </IconButton>
+      //         </Link>
+      //       </Tooltip>
+      //     </Grid>
+      //   </Grid>,
+      // ],
     }));
   };
   return (

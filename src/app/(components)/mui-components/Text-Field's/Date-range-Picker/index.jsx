@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import dayjs from "dayjs";
 import { addDays, subDays } from "date-fns";
-import { Dialog } from "@mui/material";
+import { Button, Dialog, DialogActions, DialogContent } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { DateRangePicker } from "react-date-range";
 import "react-date-range/dist/styles.css";
@@ -17,28 +17,43 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     padding: theme.spacing(),
   },
 }));
+
 const defaultDateRange = {
   startDate: subDays(new Date(), 1),
   endDate: addDays(new Date(), 0),
   key: "selection",
 };
+
 const Calendar = ({ getDataFromChildHandler }) => {
   const [open, setOpen] = useState(false);
   const [fullWidth] = useState(true);
   const [maxWidth] = useState("md");
   const [state, setState] = useState([defaultDateRange]);
+  const [selectedRange, setSelectedRange] = useState([defaultDateRange]);
+  const [inputValue, setInputValue] = useState("");
 
   const handleClickOpen = () => {
     setOpen(true);
+    setSelectedRange(state);
   };
 
   const handleClose = () => {
     setOpen(false);
   };
 
+  const handleApply = () => {
+    setState(selectedRange);
+    setInputValue(
+      `${dayjs(selectedRange?.[0].startDate).format("DD/MM/YYYY")} - ${dayjs(
+        selectedRange?.[0].endDate
+      ).format("DD/MM/YYYY")}`
+    );
+    setOpen(false);
+  };
+
   const handleOnChange = (ranges) => {
     const selection = ranges.selection;
-    setState([selection]);
+    setSelectedRange([selection]);
   };
 
   function getDates(startDate, endDate) {
@@ -63,10 +78,7 @@ const Calendar = ({ getDataFromChildHandler }) => {
     let resultArray;
 
     if (dates.length === 1) {
-      resultArray = [
-        0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
-        20, 21, 22, 23,
-      ];
+      resultArray = Array.from({ length: 24 }, (_, i) => i);
     } else if (dates.length > 31) {
       resultArray = [
         "January",
@@ -99,15 +111,7 @@ const Calendar = ({ getDataFromChildHandler }) => {
     <>
       <input
         onClick={handleClickOpen}
-        value={`${
-          state?.[0].startDate
-            ? dayjs(state?.[0].startDate).format("DD/MM/YYYY")
-            : "dd/mm/yyyy"
-        } - ${
-          state?.[0].endDate
-            ? dayjs(state?.[0].endDate).format("DD/MM/YYYY")
-            : "dd/mm/yyyy"
-        }`}
+        value={inputValue || "dd/mm/yyyy - dd/mm/yyyy"}
         style={{
           borderRadius: "4px",
           padding: "9px 10px",
@@ -131,15 +135,51 @@ const Calendar = ({ getDataFromChildHandler }) => {
         PaperProps={{
           className: "SmallDialog",
         }}
+        sx={{ justifyContent: "center", alignItems: "center" }}
       >
-        <DateRangePicker
-          onChange={handleOnChange}
-          moveRangeOnFirstSelection={false}
-          months={2}
-          ranges={state}
-          direction="horizontal"
-          disabledDay={(date) => isFutureDate(date)}
-        />
+        <DialogContent
+          sx={{
+            backgroundColor: "#fff",
+            m: 0,
+            p: 1,
+            overflow: "hidden",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <DateRangePicker
+            onChange={handleOnChange}
+            moveRangeOnFirstSelection={false}
+            months={2}
+            ranges={selectedRange}
+            direction="horizontal"
+            disabledDay={(date) => isFutureDate(date)}
+          />
+        </DialogContent>
+        <DialogActions sx={{ backgroundColor: "#fff", p: 0 }}>
+          <Button
+            variant="outlined"
+            sx={{
+              borderColor: "primary.main",
+              minWidth: "120px",
+              color: "primary.main",
+              "&:hover": {
+                borderColor: "primary.main",
+                backgroundColor: "transparent",
+              },
+            }}
+            onClick={handleClose}
+          >
+            Cancel
+          </Button>
+          <Button
+            variant="contained"
+            sx={{ minWidth: "120px" }}
+            onClick={handleApply}
+          >
+            Apply
+          </Button>
+        </DialogActions>
       </BootstrapDialog>
     </>
   );

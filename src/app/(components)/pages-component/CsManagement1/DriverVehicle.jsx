@@ -10,13 +10,12 @@ import {
 } from "@mui/material";
 import CustomTable from "@/app/(components)/mui-components/Table/customTable/index";
 import TableSkeleton from "@/app/(components)/mui-components/Skeleton/tableSkeleton";
-import CommonDatePicker from "@/app/(components)/mui-components/Text-Field's/Date-range-Picker/index";
 import Link from "next/link";
 import { IoEyeOutline } from "react-icons/io5";
 import Papa from "papaparse";
 import { saveAs } from "file-saver";
 import { FaRegFileExcel } from "react-icons/fa";
-import axiosInstance from "@/app/api/axiosInstance"; // Import your axios instance
+import axiosInstance from "@/app/api/axiosInstance";
 import { notifyError, notifySuccess } from "../../mui-components/Snackbar";
 
 const Charging = ({ value, eventLabel }) => {
@@ -37,7 +36,7 @@ const Charging = ({ value, eventLabel }) => {
     "Current SoC(%)",
     "Charged SoC(%)",
     "Units consumed (kWh)",
-    "Action",
+    // "Action",
   ];
 
   const [openDialog, setOpenDialog] = useState(false);
@@ -146,24 +145,25 @@ const Charging = ({ value, eventLabel }) => {
       ),
       "Charged SoC (%)": item?.chargedSoC || "--",
       "Units Consumed (kWh)": item?.unitsConsumed || "--",
-      Action: [
-        <Grid container justifyContent="center" spacing={2} key={index}>
-          <Grid item xs={12}>
-            <Tooltip title="View">
-              <Link
-                href={`/csManagement/${item._id}?tab=${value}&eventLabel=${eventLabel}`}
-              >
-                <IconButton size="small">
-                  <IoEyeOutline color="rgba(14, 1, 71, 1)" />
-                </IconButton>
-              </Link>
-            </Tooltip>
-          </Grid>
-        </Grid>,
-      ],
+      // Action: [
+      //   <Grid container justifyContent="center" spacing={2} key={index}>
+      //     <Grid item xs={12}>
+      //       <Tooltip title="View">
+      //         <Link
+      //           href={`/csManagement/${item._id}?tab=${value}&eventLabel=${eventLabel}`}
+      //         >
+      //           <IconButton size="small">
+      //             <IoEyeOutline color="rgba(14, 1, 71, 1)" />
+      //           </IconButton>
+      //         </Link>
+      //       </Tooltip>
+      //     </Grid>
+      //   </Grid>,
+      // ],
     }));
   };
 
+  console.log("data", data);
   return (
     <Grid container>
       <Grid container>
@@ -209,7 +209,7 @@ const Charging = ({ value, eventLabel }) => {
           <CustomTable
             page={page}
             rows={getFormattedData(data?.result)}
-            count={data.length}
+            count={data?.totalDocuments}
             columns={columns}
             setPage={setPage}
             rowsPerPage={rowsPerPage}
