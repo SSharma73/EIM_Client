@@ -100,7 +100,7 @@ const Charging = ({
       totalCharged: row?.totalCharged,
       totalSwapped: labelStatus === "Swapping" && row?.totalSwapped,
       unitConsumed: row?.unitConsumed,
-      averageChargingTime: row?.averageChargingTime,
+      averageChargingTime: row?.averageTime,
     }));
 
     const csvData = [];
@@ -134,7 +134,7 @@ const Charging = ({
         row?.totalCharged,
         labelStatus === "Swapping" && row?.totalSwapped,
         row?.unitConsumed,
-        row?.averageChargingTime,
+        row?.averageTime,
       ];
       csvData.push(rowData);
     });
@@ -197,7 +197,7 @@ const Charging = ({
         totalCharged: item?.totalCharged ?? "--",
         totalSwapped: labelStatus === "Swapping" && item?.totalSwapped,
         unitConsumed: item?.unitConsumed?.toFixed(2) ?? "--",
-        avgTime: item?.averageChargingTime ?? "--",
+        avgTime: item?.averageTime?.toFixed(2) ?? "--",
         batteryPacks: labelStatus === "Swapping" && (
           <Grid container key={index} width={270}>
             {batteryStates?.map((state) => {
@@ -255,7 +255,6 @@ const Charging = ({
       };
     });
   };
-  
 
   return (
     <Grid container>
