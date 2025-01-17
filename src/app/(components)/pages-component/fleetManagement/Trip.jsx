@@ -290,7 +290,9 @@ const Charging = ({
           }}
         >
           <Grid item>
-            <Typography variant="h3">FLEET ({data?.totalDocuments})</Typography>
+            <Typography variant="h3">
+              FLEET ({data?.totalDocuments ?? 0})
+            </Typography>
           </Grid>
           <Grid item className="customSearch">
             <Grid container>
@@ -332,7 +334,7 @@ const Charging = ({
           <CustomTable
             page={page}
             rows={getFormattedData(data?.result)}
-            count={data?.totalDocuments}
+            count={data?.totalDocuments ?? 0}
             columns={columns}
             setPage={setPage}
             rowsPerPage={rowsPerPage}

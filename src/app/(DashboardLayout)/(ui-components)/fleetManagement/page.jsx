@@ -86,10 +86,17 @@ const Page = () => {
   };
   const handleTableData = async () => {
     setLoading(true);
+    const status =
+      tabsValue === "Charging"
+        ? "charging"
+        : tabsValue === "Trip"
+        ? "trip"
+        : "";
+
     try {
       const params = new URLSearchParams({
         customerId,
-        status: tabsValue === "Charging" ? "charging" : "",
+        status: status,
       });
 
       const { data } = await axiosInstance.get(
