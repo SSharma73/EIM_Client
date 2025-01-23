@@ -112,7 +112,6 @@ const Table = ({
 
   const getFormattedData = (data) => {
     return data?.map((item, index) => {
-      console.log("data", data);
       const actionComponent = (
         <Grid
           container

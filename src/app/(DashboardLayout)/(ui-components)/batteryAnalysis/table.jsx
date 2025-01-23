@@ -138,7 +138,6 @@ const Table = ({
     notifySuccess("Download Excel Succefully");
   };
   const getFormattedData = (data) => {
-    console.log("data", data);
     return data?.map((item, index) => ({
       batteryId: item?.batteryId ? item?.batteryId : "--",
       status: item?.status ?? "--",

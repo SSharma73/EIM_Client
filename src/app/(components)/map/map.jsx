@@ -57,7 +57,6 @@ const Page = ({
 
           if (response.data.results.length > 0) {
             const { lat, lng } = response.data.results[0].geometry.location;
-            console.log("loca", lat, lng);
             setCenter1({ lat, lng });
           } else {
             console.error("No results found for the specified location.");
@@ -114,9 +113,7 @@ const Page = ({
   }, [activeButton, snap]);
 
   const handleButtonClick = (buttonData) => {
-    console.log("buttonm", buttonData);
     setActiveButton(buttonData);
-    // setActiveMarker(null);
   };
 
   const Badge1 = styled(Badge)(({ color }) => ({

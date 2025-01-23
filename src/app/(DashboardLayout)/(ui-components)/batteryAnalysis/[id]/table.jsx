@@ -66,9 +66,7 @@ const Table = ({
   const handleCancel = () => {
     setOpenDialog(false);
   };
-  console.log("daaat", data);
   const getFormattedData = (data) => {
-    console.log("data1", data);
     return data?.map((item, index) => ({
       date: item.date?item.date:"--",
       temperature: `${item.temperature.toFixed(1)}°C`?`${item.temperature.toFixed(1)}°C`:"--",

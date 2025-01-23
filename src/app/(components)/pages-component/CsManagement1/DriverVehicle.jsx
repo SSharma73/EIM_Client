@@ -163,7 +163,6 @@ const Charging = ({ value, eventLabel }) => {
     }));
   };
 
-  console.log("data", data);
   return (
     <Grid container>
       <Grid container>

@@ -7,11 +7,11 @@ import AutoBox from "@/app/(components)/mui-components/Autocomplete/autocomplete
 import Map from "@/app/(components)/map/index";
 import MapDetails from "@/app/(components)/map/mapDetails";
 import axiosInstance from "@/app/api/axiosInstanceImg";
-import Analysis from "./analysis/page";
-import Balance from "./balance/page";
-import Balance2 from "./balance2/page";
+import Analysis from "./analysis";
+import Balance from "./balance";
+import Balance2 from "./balance2";
 import Team from "./team/page";
-import Table from "./table/page";
+import Table from "./table";
 
 const iconUrls = [
   "./truck1.svg",
@@ -173,7 +173,7 @@ function ShorterGrid() {
         },
 
         {
-          label: "Consumption rate",
+          label: "Total Consumption",
           value: consumption || 0,
           icon: "/Img/road-solid.svg",
         },
@@ -231,7 +231,7 @@ function ShorterGrid() {
             data: prev?.data?.map((item, index) =>
               index === 3
                 ? {
-                    label: "Consumption rate",
+                    label: "Total Consumption",
                     value: consumptionRate,
                     icon: "/Img/road-solid.svg",
                   }
@@ -254,7 +254,7 @@ function ShorterGrid() {
       } catch (error) {
         console.error("Error fetching fleet data:", error);
       } finally {
-        console.log("Fleet fetch attempt completed");
+        // console.log("Fleet fetch attempt completed");
       }
     };
     fetchFleets();
@@ -371,7 +371,6 @@ function ShorterGrid() {
               iconUrls={iconUrls}
               activeMarker={activeMarker}
               setActiveMarker={setActiveMarker}
-              // buttonData={buttonData}
               coordinate={coordinate}
               onClose={onClose}
               center={state}
@@ -384,7 +383,6 @@ function ShorterGrid() {
               iconUrls={iconUrls}
               activeMarker={activeMarker}
               setActiveMarker={setActiveMarker}
-              // buttonData={buttonData}
               coordinate={coordinate}
               onClose={onClose}
               center={state}

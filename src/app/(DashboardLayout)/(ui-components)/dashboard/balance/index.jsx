@@ -12,7 +12,6 @@ import Image from "next/image";
 import Station from "../../../../../../public/on-charging.svg";
 import axiosInstance from "@/app/api/axiosInstanceImg";
 
-// import {CustomGrid} from '@/components/CustomGrid/index'
 const CustomGrid = styled(Grid)(({ theme }) => ({
   padding: theme.spacing(2),
   backgroundColor: "#6099EB",

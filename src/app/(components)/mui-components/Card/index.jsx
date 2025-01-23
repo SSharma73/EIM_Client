@@ -77,7 +77,6 @@ const ManagementGrid = ({
   const [buttonType, setButtonType] = useState(null);
   const visibleButtons =
     CustomButtonGroup?.slice(visibleStart, visibleStart + 6) || [];
-  console.log(buttonType);
   useEffect(() => {
     if (select) {
       setButtonType(select);

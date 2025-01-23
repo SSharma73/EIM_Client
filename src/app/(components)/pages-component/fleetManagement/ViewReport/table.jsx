@@ -61,7 +61,6 @@ const Table = ({
     setOpenDialog(false);
   };
   const getFormattedData = (data) => {
-    console.log("data", data);
     return data?.map((item, index) => ({
       employeeId: item?.employeeId ?? "NA",
       status: (

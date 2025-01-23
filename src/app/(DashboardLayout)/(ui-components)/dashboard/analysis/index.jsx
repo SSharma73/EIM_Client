@@ -193,6 +193,7 @@ const Analysis = ({ state }) => {
   };
   const [graphData, setGraphData] = useState([]);
   const [consumptionGraphData, setConsumptionGraphData] = useState(null);
+  const [consumptionData, setConsumptionData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [dateRange, setDateRange] = useState([defaultDateRange]);
   const getDataFromChildHandler = (dateRange) => {
@@ -202,10 +203,9 @@ const Analysis = ({ state }) => {
   const TotalDistance = graphData?.reduce((acc, data) => {
     return acc + (data?.totalDistanceDifference || 0);
   }, 0);
-  console.log("Check TotalDistance", TotalDistance);
-  const TotalDistanceConsumption = consumptionGraphData?.reduce((acc, data) => {
-    return acc + (data?.totalConsumption || 0);
-  }, 0);
+  // const TotalDistanceConsumption = consumptionGraphData?.reduce((acc, data) => {
+  //   return acc + (data?.totalConsumption || 0);
+  // }, 0);
 
   const fetchGraphData = (startDate, endDate) => {
     setLoading(true);
@@ -230,6 +230,7 @@ const Analysis = ({ state }) => {
       .then(([graphDataResponse, consumptionDataResponse]) => {
         setGraphData(graphDataResponse?.data?.result);
         setConsumptionGraphData(consumptionDataResponse?.data?.result);
+        setConsumptionData(consumptionDataResponse?.data?.averageConsumption);
         setLoading(false);
       })
       .catch((error) => {
@@ -297,6 +298,7 @@ const Analysis = ({ state }) => {
     ],
   };
 
+  console.log("data", consumptionData);
   return (
     <CustomGrid mt={2} xs={12}>
       <Grid container>
@@ -324,7 +326,7 @@ const Analysis = ({ state }) => {
           </Grid>
           <Grid mt={2}>
             <Typography variant="h3">
-              {loading ? "Loading..." : TotalDistanceConsumption?.toFixed(2)}
+              {loading ? "Loading..." : consumptionData?.toFixed(2)}
             </Typography>{" "}
           </Grid>
         </Grid>

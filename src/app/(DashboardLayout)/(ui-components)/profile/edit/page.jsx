@@ -35,12 +35,10 @@ const Edit = () => {
     }
   };
   const onsubmit = async (formData) => {
-    console.log("sdljgjakjh", formData);
     try {
       const res = await axiosInstance.put("/auth/changePassword", formData);
       if (res.status === 200 || res.status === 201) {
         notifySuccess(res?.data?.message);
-        console.log(res);
       }
     } catch (error) {
       console.log(error);

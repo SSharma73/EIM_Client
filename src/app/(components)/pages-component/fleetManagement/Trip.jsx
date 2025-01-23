@@ -13,10 +13,7 @@ import {
 import CustomTable from "@/app/(components)/mui-components/Table/customTable/index";
 import TableSkeleton from "@/app/(components)/mui-components/Skeleton/tableSkeleton";
 import CommonDatePicker from "@/app/(components)/mui-components/Text-Field's/Date-range-Picker/index";
-import Link from "next/link";
-import { IoEyeOutline } from "react-icons/io5";
 import MapDetails from "@/app/(components)/map/mapDetails";
-import { GrMapLocation } from "react-icons/gr";
 import { FaRegFileExcel } from "react-icons/fa";
 import Papa from "papaparse";
 import { saveAs } from "file-saver";
@@ -103,7 +100,6 @@ const Charging = ({
     setOpenDialog(false);
   };
   const handleExport = (data) => {
-    console.log("Exporting data", data);
 
     if (!Array.isArray(data) || data.length === 0) {
       notifyError("No data available to export");
@@ -170,7 +166,6 @@ const Charging = ({
   };
 
   const getFormattedData = (data) => {
-    console.log("data", data);
     return data?.map((item, index) => ({
       region: item?.region ?? "--",
       fleetId: item.fleetNumber ?? "--",

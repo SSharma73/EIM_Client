@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { Grid } from "@mui/material";
 import { GoogleMap, useJsApiLoader, Marker } from "@react-google-maps/api";
 import axios from "axios";
+import { constructNow } from "date-fns";
 
 const Page = ({
   Height,
@@ -38,11 +39,9 @@ const Page = ({
           const response = await axios.get(
             `https://maps.googleapis.com/maps/api/geocode/json?address=${center?.region}&key=AIzaSyBrsCdS1KEJ9QDOgnl5gwnemCuLJDKzp9Y`
           );
-          console.log("resposne", response);
 
           if (response.data.results.length > 0) {
             const { lat, lng } = response.data.results[0].geometry.location;
-            console.log("loca", lat, lng);
             setCenter1({ lat, lng });
           } else {
             console.error("No results found for the specified location.");
@@ -77,6 +76,7 @@ const Page = ({
   }, [center, coordinate]);
 
   const coordinateSet = center?.coordinate ?? fleetSelection;
+
   return (
     <Grid container rowGap={2} xs={12} sx={{ borderRadius: "16px" }}>
       {isLoaded && (

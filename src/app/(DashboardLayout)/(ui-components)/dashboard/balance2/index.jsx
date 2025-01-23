@@ -12,7 +12,6 @@ import Image from "next/image";
 import Station from "../../../../../../public/not-charging.svg";
 import axiosInstance from "@/app/api/axiosInstanceImg";
 
-// import {CustomGrid} from '@/components/CustomGrid/index'
 const CustomGrid = styled(Grid)(({ theme }) => ({
   padding: theme.spacing(2),
   backgroundColor: "#6099EB",
@@ -26,7 +25,7 @@ const options = {
   animations: {
     animateScale: true,
   },
-  maintainAspectRatio: false, // Allow the chart to fill the container
+  maintainAspectRatio: false, 
   responsive: true,
   plugins: {
     legend: {

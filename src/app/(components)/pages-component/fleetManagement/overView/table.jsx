@@ -137,7 +137,6 @@ const Table = ({
     notifySuccess("Download Excel Successfully");
   };
   const getFormattedData = (data) => {
-    console.log("data", data);
     return data?.map((item, index) => ({
       region: item?.port ? item?.port?.regionName : "--",
       fleetId: item?.fleetId ? item?.fleetId : "--",

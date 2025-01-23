@@ -13,7 +13,6 @@ const Page = ({ params }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [date, setDate] = useState(null);
   const [data, setData] = useState(null);
-  console.log("params", params);
   const getDataFromChildHandler = (date, dataArr) => {
     setDate(date);
   };

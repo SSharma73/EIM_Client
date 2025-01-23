@@ -78,7 +78,6 @@ const Charging = ({
   const [icons, setIcons] = useState(null);
 
   const handleMapData = (index, point) => {
-    console.log("point", index, point);
     setActiveMarker(index);
     setIcons(point);
   };
@@ -187,7 +186,6 @@ const Charging = ({
     notifySuccess("Download Excel Successfully");
   };
   const getFormattedData = (data) => {
-    console.log("data", data);
     return data?.map((item, index) => ({
       fleetId: item.fleetNumber ?? "--",
       status: (

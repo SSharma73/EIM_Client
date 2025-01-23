@@ -92,7 +92,6 @@ const Notification = () => {
       );
       if (res.status === 200 || res.status === 201) {
         SetDummyData(res?.data?.pendingNotifications);
-        console.log("res", res?.data);
       }
     } catch (err) {
       console.error("Error fetching notifications:", err);

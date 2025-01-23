@@ -7,7 +7,6 @@ import axiosInstance from "@/app/api/axiosInstanceImg";
 Chart.register(...registerables);
 
 const Graph = ({ graphType, type, selectedItems, selectedCustId }) => {
-  console.log("graphType", selectedItems, selectedCustId);
   const [chartData, setChartData] = useState({
     labels: [],
     datasets: [

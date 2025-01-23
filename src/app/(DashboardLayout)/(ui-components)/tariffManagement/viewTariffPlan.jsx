@@ -18,14 +18,14 @@ export default function TariffPlan({ open, setOpen, rows }) {
   const handleClose = () => {
     setOpen(false);
   };
-  console.log("rows", rows);
+
   const renderTimeSlots = () => {
     const timePeriods = ["Morning", "Afternoon", "Evening", "Night"];
     const hourRanges = {
-      Morning: [0, 8], // From 12 AM to 8 AM
-      Afternoon: [8, 12], // From 8 AM to 12 PM
-      Evening: [12, 16], // From 12 PM to 4 PM
-      Night: [16, 24], // From 4 PM to 12 AM
+      Morning: [0, 8],
+      Afternoon: [8, 12],
+      Evening: [12, 16],
+      Night: [16, 24],
     };
 
     return timePeriods.map((period, idx) => {

@@ -28,7 +28,6 @@ export default function AddUser({ open, setOpen, handleTableData }) {
   const [openComman, setOpenComman] = useState(false);
   const [customers, setCustomers] = useState([]);
   const [ports, setPorts] = useState([]);
-  const [batteries, setBatteries] = useState([]);
   const { register, handleSubmit, control, formState, reset } = useForm();
   const { errors } = formState;
 
@@ -74,13 +73,13 @@ export default function AddUser({ open, setOpen, handleTableData }) {
 
   const submitDetails = async (data) => {
     const payload = {
-      fleetNumber: data.licencePlate,
-      itv: data.itv,
-      vin: data.vin,
-      type: data.eTractorType,
-      customerId: data.customer,
-      portId: data.port,
-      description: data.description,
+      fleetNumber: data?.licencePlate,
+      itv: data?.itv,
+      vin: data?.vin,
+      type: data?.eTractorType,
+      customerId: data?.customer,
+      portId: data?.port,
+      description: data?.description,
     };
 
     try {

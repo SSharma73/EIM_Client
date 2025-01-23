@@ -19,7 +19,6 @@ const Table = ({
   getFormattedData,
   handleTableData,
 }) => {
-  console.log("fd", data);
   return (
     <Grid container mt={3}>
       <Grid

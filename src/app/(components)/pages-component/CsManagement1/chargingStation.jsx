@@ -197,7 +197,7 @@ const Charging = ({
         totalCharged: item?.totalCharged ?? "--",
         totalSwapped: labelStatus === "Swapping" && item?.totalSwapped,
         unitConsumed: item?.unitConsumed?.toFixed(2) ?? "--",
-        avgTime: item?.averageChargingTime ?? "--",
+        averageTime: item?.averageTime ?? "--",
         batteryPacks: labelStatus === "Swapping" && (
           <Grid container key={index} width={270}>
             {batteryStates?.map((state) => {
@@ -255,7 +255,6 @@ const Charging = ({
       };
     });
   };
-  
 
   return (
     <Grid container>
