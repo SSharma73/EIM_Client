@@ -14,9 +14,8 @@ import ToastComponent from "@/app/(components)/mui-components/Snackbar";
 
 const CustomGrid = styled(Grid)(({ theme }) => ({
   padding: theme.spacing(3),
-  backgroundColor: "#6099EB",
+  backgroundColor: theme.palette.background.paper,
   borderRadius: "16px",
-  color: "#fff",
 }));
 
 const TimeSlot = ({

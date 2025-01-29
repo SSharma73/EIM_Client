@@ -171,11 +171,7 @@ const Charging = ({ value }) => {
           justifyContent="space-between"
           alignItems="center"
           p={2}
-          sx={{
-            backgroundColor: "#669BE9",
-            color: "#fff",
-            borderRadius: "16px 16px 0px 0px",
-          }}
+          className="customGrid"
         >
           <Grid item>
             <Typography variant="h3">Revenue Management Report</Typography>

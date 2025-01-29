@@ -17,9 +17,8 @@ import { useRouter } from "next/navigation";
 
 const CustomGrid = styled(Grid)(({ theme }) => ({
   padding: theme.spacing(2),
-  backgroundColor: "#6099EB",
+  backgroundColor: theme.palette.background.paper,
   borderRadius: "16px",
-  color: "#fff",
 }));
 
 const FieldSection = ({ placeholder, register, name, error }) => (

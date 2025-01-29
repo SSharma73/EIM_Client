@@ -12,7 +12,7 @@ const Graph = ({ graphType, type, selectedItems, selectedCustId }) => {
     datasets: [
       {
         data: [],
-        borderColor: "#C0FE72",
+        borderColor: "#38E0CF",
         borderWidth: 2,
         pointHoverRadius: 10,
       },
@@ -25,14 +25,14 @@ const Graph = ({ graphType, type, selectedItems, selectedCustId }) => {
       y: {
         beginAtZero: true,
         ticks: {
-          color: "white",
+          color: "#000",
         },
       },
       x: {
         beginAtZero: true,
         display: true,
         ticks: {
-          color: "white",
+          color: "#000",
         },
       },
     },
@@ -79,7 +79,7 @@ const Graph = ({ graphType, type, selectedItems, selectedCustId }) => {
           datasets: [
             {
               data: sessionData,
-              borderColor: "#C0FE72",
+              borderColor: "#38E0CF",
               borderWidth: 2,
               pointHoverRadius: 10,
             },

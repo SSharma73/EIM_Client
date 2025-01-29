@@ -3,7 +3,6 @@ import React, { useState, useEffect } from "react";
 import { Grid } from "@mui/material";
 import { GoogleMap, useJsApiLoader, Marker } from "@react-google-maps/api";
 import axios from "axios";
-import { constructNow } from "date-fns";
 
 const Page = ({
   Height,
@@ -76,6 +75,17 @@ const Page = ({
   }, [center, coordinate]);
 
   const coordinateSet = center?.coordinate ?? fleetSelection;
+  useEffect(() => {
+    if (coordinateSet?.length === 1) {
+      setCenter1({
+        lat: coordinateSet[0].lat,
+        lng: coordinateSet[0].log,
+      });
+    }
+    if (coordinateSet?.length > 1) {
+      setCenter1(defaultCenter);
+    }
+  }, [coordinateSet]);
 
   return (
     <Grid container rowGap={2} xs={12} sx={{ borderRadius: "16px" }}>
@@ -101,7 +111,7 @@ const Page = ({
                   icon={{
                     url: point?.icon,
                     anchor: new google.maps.Point(17, 46),
-                    scaledSize: new google.maps.Size(80, 80),
+                    scaledSize: new google.maps.Size(180, 100),
                   }}
                 ></Marker>
               ))}

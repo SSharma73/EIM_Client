@@ -7,6 +7,7 @@ import {
   TextField,
   Divider,
   IconButton,
+  DialogTitle,
 } from "@mui/material";
 import CloseOutlinedIcon from "@mui/icons-material/CloseOutlined";
 import Graph from "./graph";
@@ -19,32 +20,21 @@ export default function AlertDialog({ open, setOpen }) {
   return (
     <React.Fragment>
       <Dialog open={open} maxWidth={"sm"} fullWidth onClose={handleClose}>
-        <DialogContent
-          sx={{
-            background:
-              "linear-gradient(112.37deg, #589CFF 0%, #013376 116.12%)",
-          }}
-        >
-          <Grid container rowGap={3}>
+        <DialogTitle>
+          <Grid
+            container
+            justifyContent={"space-between"}
+            alignItems={"center"}
+          >
+            <Typography variant="h5">Live CS/SS Load</Typography>
+            <IconButton onClick={handleClose}>
+              <CloseOutlinedIcon />
+            </IconButton>
+          </Grid>
+        </DialogTitle>
+        <DialogContent>
+          <Grid container rowGap={3} mt={2}>
             <Grid container direction={"column"} rowGap={2}>
-              <Grid
-                container
-                justifyContent={"space-between"}
-                alignItems={"center"}
-              >
-                <Typography
-                  variant="h4"
-                  sx={{
-                    fontWeight: "700",
-                  }}
-                  color="primary"
-                >
-                  Live CS/SS Load
-                </Typography>
-                <IconButton onClick={handleClose} sx={{ color: "#fff" }}>
-                  <CloseOutlinedIcon />
-                </IconButton>
-              </Grid>
               <Grid container>
                 <Grid item xs={6}>
                   <Typography

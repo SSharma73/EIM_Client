@@ -1,7 +1,7 @@
 import React from "react";
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
-import { Avatar } from "@mui/material";
+import { Avatar, useTheme } from "@mui/material";
 import Image from "next/image";
 
 function sleep(duration) {
@@ -16,6 +16,7 @@ export default function Asynchronous({ icon, place, data, onChange }) {
   const [open, setOpen] = React.useState(false);
   const [options, setOptions] = React.useState([]);
   const loading = open && options.length === 0;
+  const theme = useTheme();
 
   React.useEffect(() => {
     let active = true;
@@ -68,17 +69,17 @@ export default function Asynchronous({ icon, place, data, onChange }) {
                 borderColor: "transparent",
               },
               "&.Mui-focused fieldset": {
-                borderColor: "#fff",
+                borderColor: "#000",
               },
             },
             "& input::placeholder": {
-              color: "white",
+              color: "#000",
               fontWeight: 500,
               opacity: 1,
               fontSize: 16,
             },
             "& input": {
-              color: "white",
+              color: "#000",
             },
           }}
           variant="outlined"
@@ -92,7 +93,7 @@ export default function Asynchronous({ icon, place, data, onChange }) {
                   sx={{
                     width: 40,
                     height: 40,
-                    backgroundColor: "rgba(193, 255, 114, 0.13)",
+                    backgroundColor: theme.palette.primary.main,
                   }}
                 >
                   {icon && (

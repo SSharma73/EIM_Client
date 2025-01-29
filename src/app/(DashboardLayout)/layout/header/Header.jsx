@@ -4,8 +4,9 @@ import PropTypes from "prop-types";
 import Profile from "./Profile";
 import { LuMenu } from "react-icons/lu";
 import Image from "next/image";
-import Logo from "../../../../../public/Img/logo.png";
+import Logo from "../../../../../public/Img/logoEIM.svg";
 import Notification from "./Notification";
+import { useRouter } from "next/navigation";
 
 const AppBarStyled = styled(AppBar)(({ theme }) => ({
   boxShadow: "none",
@@ -20,6 +21,7 @@ const AppBarStyled = styled(AppBar)(({ theme }) => ({
 }));
 
 const Header = ({ toggleMobileSidebar }) => {
+  const router = useRouter();
   return (
     <AppBarStyled position="sticky" color="default">
       <Grid container justifyContent="space-between" alignItems="center">
@@ -47,7 +49,13 @@ const Header = ({ toggleMobileSidebar }) => {
               },
             }}
           >
-            <Image src={Logo} height={55} width={200} />
+            <Image
+              src={Logo}
+              height={55}
+              width={200}
+              onClick={() => router.push("/dashboard")} 
+              style={{ cursor: "pointer" }}
+            />
           </Grid>
         </Grid>
         <Grid item>

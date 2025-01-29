@@ -62,7 +62,7 @@ const options = {
       labels: {
         pointStyle: "circle",
         padding: 15,
-        color: "#fff",
+        color: "#000",
         usePointStyle: true,
         textAlign: "left",
       },
@@ -198,15 +198,11 @@ const Page = () => {
               {isLargeCard && (
                 <Grid container columnGap={3} justifyContent={"center"}>
                   <Typography variant="h2" color={"#14165F"} fontWeight={600}>
-                    <span style={{ fontSize: "15px", color: "#fff" }}>
-                      {item?.trip}:
-                    </span>{" "}
+                    <span style={{ fontSize: "15px" }}>{item?.trip}:</span>{" "}
                     {item.Tripvalue}
                   </Typography>
                   <Typography variant="h2" color={"#14165F"} fontWeight={600}>
-                    <span style={{ fontSize: "15px", color: "#fff" }}>
-                      {item?.charging}:
-                    </span>{" "}
+                    <span style={{ fontSize: "15px" }}>{item?.charging}:</span>{" "}
                     {item.chargingValue}
                   </Typography>
                 </Grid>

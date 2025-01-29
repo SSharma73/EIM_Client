@@ -97,7 +97,7 @@ const Table = ({
         }}
       >
         <Grid item>
-          <Typography variant="h3">Fleet ({params.id})</Typography>
+          <Typography variant="h3">Fleet ({params?.id})</Typography>
         </Grid>
         <Grid item className="customSearch">
           <Grid container>

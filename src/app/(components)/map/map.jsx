@@ -112,10 +112,6 @@ const Page = ({
     }
   }, [activeButton, snap]);
 
-  const handleButtonClick = (buttonData) => {
-    setActiveButton(buttonData);
-  };
-
   const Badge1 = styled(Badge)(({ color }) => ({
     marginRight: "16px",
     "& .MuiBadge-badge": {

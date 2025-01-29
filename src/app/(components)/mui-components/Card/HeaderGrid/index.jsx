@@ -32,7 +32,7 @@ function a11yProps(index) {
 const ChildBarStyled = styled(AppBar)(({ theme }) => ({
   boxShadow: "none",
   transition: "none",
-  backgroundColor: "#6099EB",
+  backgroundColor: "#fff",
   borderRadius: "8px",
 }));
 const getBorderRadius = (index, tabLength) => {
@@ -127,7 +127,7 @@ const HeaderGrid = ({
                   ? button && (
                       <Button
                         onClick={handleClickOpen}
-                        endIcon={<IoMdAddCircleOutline color="#C0FE72" />}
+                        endIcon={<IoMdAddCircleOutline />}
                         variant="contained"
                         size="large"
                         type={type}
@@ -188,10 +188,10 @@ const HeaderGrid = ({
                       label={tab?.label}
                       {...a11yProps(index)}
                       sx={{
-                        border: "1px solid #fff",
+                        border: "1px solid #000",
                         ...getBorderRadius(index, tabLength),
                         "&.Mui-selected": {
-                          border: "1px solid #fff",
+                          border: "1px solid #000",
                           ...getBorderRadius(index, tabLength),
                         },
                       }}
@@ -201,7 +201,7 @@ const HeaderGrid = ({
                 {button && (
                   <Button
                     onClick={handleClickOpen}
-                    endIcon={<IoMdAddCircleOutline color="#C0FE72" />}
+                    endIcon={<IoMdAddCircleOutline />}
                     variant="contained"
                     size="large"
                     type={type}
@@ -224,7 +224,7 @@ const HeaderGrid = ({
                   item
                   display={"flex"}
                   alignItems="center"
-                  sx={{ border: "1px solid #fff", borderRadius: "10px" }}
+                  sx={{ border: "1px solid #000", borderRadius: "10px" }}
                 >
                   {visibleButtons?.map((item, index) => {
                     const isLastVisibleButton =
@@ -236,7 +236,7 @@ const HeaderGrid = ({
                         sx={{
                           borderRadius: "0px",
                           borderRight: !isLastVisibleButton
-                            ? "1px solid #fff"
+                            ? "1px solid #000"
                             : "",
                         }}
                       >
@@ -259,9 +259,8 @@ const HeaderGrid = ({
                                   ? "0 10px 10px 0"
                                   : "0",
                               borderRight: !isLastVisibleButton
-                                ? "1px solid #fff"
+                                ? "1px solid #000"
                                 : "",
-                              color: "#fff",
                             }}
                             onClick={(e) => {
                               handleClick(item?.name);

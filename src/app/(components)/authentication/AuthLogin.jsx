@@ -9,6 +9,8 @@ import {
   TextField,
   InputAdornment,
   IconButton,
+  Divider,
+  Grid,
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import axiosInstance from "@/app/api/axiosInstance";
@@ -25,23 +27,20 @@ const CustomTextField = styled(TextField)(({ theme }) => ({
       borderColor: "#fff",
     },
     "&:hover fieldset": {
-      borderColor: "#C0FE72",
+      borderColor: "#38E0CF",
     },
     "&.Mui-focused fieldset": {
-      borderColor: "#C0FE72",
-      fontSize: "20px",
+      borderColor: "#38E0CF",
     },
   },
   "& .MuiInputLabel-root": {
     color: "#fff",
   },
   "& .MuiInputLabel-root.MuiInputLabel-shrink": {
-    color: "#C0FE72",
-    fontSize: "20px",
+    color: "#38E0CF",
   },
   "&.Mui-focused .MuiInputLabel-root": {
     color: "#fff",
-    fontSize: "20px",
   },
   "& .MuiOutlinedInput-input": {
     color: "#fff",
@@ -95,9 +94,10 @@ const AuthLogin = ({ title, subtitle }) => {
       ) : null}
       <form onSubmit={handleSubmit(handleLogin)}>
         <Stack>
-          <Box>
+          <Box width={"380px"}>
             <CustomTextField
               type="text"
+              label="Email"
               placeholder="Email"
               variant="outlined"
               fullWidth
@@ -119,6 +119,7 @@ const AuthLogin = ({ title, subtitle }) => {
               placeholder="Password"
               type={showPassword ? "text" : "password"}
               variant="outlined"
+              label="Password"
               fullWidth
               name="password"
               {...register("password", { required: "password is required!" })}
@@ -149,17 +150,11 @@ const AuthLogin = ({ title, subtitle }) => {
             alignItems="center"
             justifyContent="space-between"
           >
-            <Typography>Forgot Password</Typography>
+            <Typography color={"#fff"}>Forgot Password</Typography>
           </Stack>
         </Stack>
         <Box>
-          <Button
-            fullWidth
-            size="large"
-            type="submit"
-            color="secondary"
-            variant="contained"
-          >
+          <Button fullWidth size="large" type="submit" variant="contained">
             Sign In
           </Button>
         </Box>
@@ -170,9 +165,16 @@ const AuthLogin = ({ title, subtitle }) => {
         display={"flex"}
         mt={2}
       >
-        <Typography>
-          To Know more <span style={{ color: "#C0FE72" }}>T&C</span>
-        </Typography>
+        <Grid container justifyContent={"center"}>
+          <Grid item xs={12}>
+            <Divider sx={{ borderColor: "red", color: "#fff" }}>or</Divider>
+          </Grid>
+          <Grid item xs={12} alignItems={"center"} mt={2}>
+            <Typography color={"#fff"} variant="body1" textAlign={"center"}>
+              To Know more <span style={{ color: "#38E0CF" }}>T&C</span>
+            </Typography>
+          </Grid>
+        </Grid>
       </Box>
       {subtitle}
     </>

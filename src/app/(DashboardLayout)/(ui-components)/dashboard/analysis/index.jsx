@@ -12,9 +12,9 @@ import { addDays, subDays } from "date-fns";
 
 const CustomGrid = styled(Grid)(({ theme }) => ({
   padding: theme.spacing(2),
-  backgroundColor: "#6099EB",
+  backgroundColor: "#fff",
   borderRadius: "16px",
-  color: "#fff",
+  color: "#000",
 }));
 
 Chart.register(...registerables);
@@ -27,8 +27,8 @@ function getGradient(ctx, chartArea) {
     width = chartWidth;
     height = chartHeight;
     gradient = ctx.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
-    gradient.addColorStop(0, "rgba(0, 36, 166, 0.8)");
-    gradient.addColorStop(1, "rgba(0, 36, 166, 0.2)");
+    gradient.addColorStop(0, "#38E0CF");
+    gradient.addColorStop(1, "rgba(206, 218, 219, 0.2)");
   }
   return gradient;
 }
@@ -41,8 +41,8 @@ function getGradient1(ctx, chartArea) {
     width1 = chartWidth;
     height1 = chartHeight;
     gradient1 = ctx.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
-    gradient1.addColorStop(0, "rgba(193, 254, 114, 0.8)");
-    gradient1.addColorStop(1, "rgba(193, 254, 114, 0.04)");
+    gradient1.addColorStop(0, "#001B1E");
+    gradient1.addColorStop(1, "rgba(119, 121, 116, 0.04)");
   }
   return gradient1;
 }
@@ -52,14 +52,14 @@ const options = {
     y: {
       beginAtZero: true,
       title: {
-        color: "white",
+        color: "#000",
         font: {
           family: "Arial",
           weight: "bold",
         },
       },
       ticks: {
-        color: "white",
+        color: "#000",
         callback: function (value) {
           return value + " km";
         },
@@ -69,7 +69,7 @@ const options = {
       beginAtZero: true,
       display: true,
       title: {
-        color: "white",
+        color: "#000",
         font: {
           size: 16,
           family: "Arial",
@@ -77,7 +77,7 @@ const options = {
         },
       },
       ticks: {
-        color: "white",
+        color: "#000",
       },
     },
   },
@@ -91,7 +91,7 @@ const options = {
         pointStyle: "circle",
         usePointStyle: true,
         textAlign: "left",
-        color: "#fff",
+        color: "#000",
       },
     },
     tooltip: {
@@ -121,14 +121,14 @@ const options2 = {
     y: {
       beginAtZero: true,
       title: {
-        color: "white",
+        color: "#000",
         font: {
           family: "Arial",
           weight: "bold",
         },
       },
       ticks: {
-        color: "white",
+        color: "#000",
         callback: function (value) {
           return value + " kWh";
         },
@@ -138,7 +138,7 @@ const options2 = {
       beginAtZero: true,
       display: true,
       title: {
-        color: "white",
+        color: "#000",
         font: {
           size: 16,
           family: "Arial",
@@ -146,7 +146,7 @@ const options2 = {
         },
       },
       ticks: {
-        color: "white",
+        color: "#000",
       },
     },
   },
@@ -160,7 +160,7 @@ const options2 = {
         pointStyle: "circle",
         usePointStyle: true,
         textAlign: "left",
-        color: "#fff",
+        color: "#000",
       },
     },
     tooltip: {
@@ -207,6 +207,7 @@ const Analysis = ({ state }) => {
   //   return acc + (data?.totalConsumption || 0);
   // }, 0);
 
+  console.log("state", state);
   const fetchGraphData = (startDate, endDate) => {
     setLoading(true);
     Promise.all([
@@ -216,6 +217,7 @@ const Analysis = ({ state }) => {
           endDate: endDate,
           customerId: state?.brandId,
           fleetNumber: state?.fleetNumber,
+          region: state?.region,
         },
       }),
       axiosInstance.get("dashboard/getConsumptionGraphData", {
@@ -224,6 +226,7 @@ const Analysis = ({ state }) => {
           endDate: endDate,
           customerId: state?.brandId,
           fleetNumber: state?.fleetNumber,
+          region: state?.region,
         },
       }),
     ])
@@ -251,7 +254,7 @@ const Analysis = ({ state }) => {
       const endDate = dayjs(dateRange[0]?.endDate).format("YYYY-MM-DD");
       fetchGraphData(startDate, endDate);
     }
-  }, [dateRange, state?.brandId, state?.fleetNumber]);
+  }, [dateRange, state?.brandId, state?.fleetNumber, state?.region]);
 
   const data = {
     labels: graphData?.map((item) => item.dateTime),
@@ -268,7 +271,7 @@ const Analysis = ({ state }) => {
           }
           return getGradient(ctx, chartArea);
         },
-        borderColor: "rgba(0, 36, 166, 1)",
+        borderColor: "#38E0CF",
         borderWidth: 2,
         responsive: true,
       },
@@ -291,14 +294,13 @@ const Analysis = ({ state }) => {
           }
           return getGradient(ctx, chartArea);
         },
-        borderColor: "rgba(0, 36, 166, 1)",
+        borderColor: "#38E0CF",
         borderWidth: 2,
         responsive: true,
       },
     ],
   };
 
-  console.log("data", consumptionData);
   return (
     <CustomGrid mt={2} xs={12}>
       <Grid container>

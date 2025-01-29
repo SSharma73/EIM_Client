@@ -18,7 +18,7 @@ import { FaRegFileExcel } from "react-icons/fa";
 import axiosInstance from "@/app/api/axiosInstance";
 import { notifyError, notifySuccess } from "../../mui-components/Snackbar";
 
-const Charging = ({ value, eventLabel }) => {
+const Charging = ({ value, eventLabel, selectedItems, selectedCustId }) => {
   const [page, setPage] = useState(0);
   const [loading, setLoading] = useState(false);
   const [rowsPerPage, setRowsPerPage] = useState(25);
@@ -67,8 +67,8 @@ const Charging = ({ value, eventLabel }) => {
     setOpenDialog(false);
   };
 
-  const handleExport = (data) => {
-    if (!Array.isArray(data) || data.length === 0) {
+  const handleExport = (formattedData) => {
+    if (!Array.isArray(formattedData) || formattedData.length === 0) {
       notifyError("No data available to export");
       return;
     }
@@ -90,17 +90,18 @@ const Charging = ({ value, eventLabel }) => {
     ];
     csvData.push(headerRow);
 
-    data.forEach((row) => {
+    formattedData.forEach((row) => {
       const rowData = [
-        row?.fleetNumber || "--",
-        row?.chargingcycle || "--",
-        row?.chargingTime || "--",
-        row?.status || "--",
-        row?.startSoC || "--",
-        row?.endSoC || "--",
-        row?.batteryPercentage || "--",
-        row?.chargedSoC || "--",
-        row?.unitsConsumed || "--",
+        row?.["E-Tractor ID"] || "--",
+        row?.["Charging Cycle"] || "--",
+        row?.["Charging Time (hr.)"] || "--",
+        row?.Status || "--",
+        row?.["Start SoC (%)"] || "--",
+        row?.["End SoC (%)"] || "--",
+        // Extract the text from the Chip component for "Current SoC (%)"
+        row?.["Current SoC (%)"]?.props?.label || "--",
+        row?.["Charged SoC (%)"] || "--",
+        row?.["Units Consumed (kWh)"] || "--",
       ];
       csvData.push(rowData);
     });
@@ -110,23 +111,28 @@ const Charging = ({ value, eventLabel }) => {
     saveAs(blob, "CS-EtractorData.csv");
     notifySuccess("Download Excel Successfully");
   };
-
   // Fetch fleet data on component mount
-  useEffect(() => {
-    const fetchFleets = async () => {
-      setLoading(true);
-      try {
-        const { data } = await axiosInstance.get("fleet/fetchFleets");
-        setData(data.data);
-      } catch (error) {
-        notifyError(error?.response?.data?.message || "Failed to fetch data");
-      } finally {
-        setLoading(false);
-      }
-    };
+  const fetchFleets = async () => {
+    setLoading(true);
+    try {
+      const params = new URLSearchParams({
+        customerId: selectedCustId,
+        region: selectedItems?.Region,
+      });
+      const { data } = await axiosInstance.get(
+        `fleet/fetchFleets?${params.toString()}`
+      );
+      setData(data.data);
+    } catch (error) {
+      notifyError(error?.response?.data?.message || "Failed to fetch data");
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchFleets();
-  }, []);
+  }, [selectedCustId, selectedItems?.Region]);
   const getFormattedData = (data) => {
     return data?.map((item, index) => ({
       "E-Tractor ID": item?.fleetNumber || "--",
@@ -171,11 +177,7 @@ const Charging = ({ value, eventLabel }) => {
           justifyContent="space-between"
           alignItems="center"
           p={2}
-          sx={{
-            backgroundColor: "#669BE9",
-            color: "#fff",
-            borderRadius: "16px 16px 0px 0px",
-          }}
+          className="customGrid"
         >
           <Grid item>
             <Typography variant="h3">E-Tractor</Typography>

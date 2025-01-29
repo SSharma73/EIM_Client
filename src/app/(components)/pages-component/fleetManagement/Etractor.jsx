@@ -103,27 +103,28 @@ const Charging = ({
       return;
     }
 
-    const modifiedData = data?.map((row) => ({
-      fleetId: row?.fleetNumber,
-      status: row?.status,
-      batteryPercentage: row?.batteryPercentage,
-      batteryHealth: row?.batteryHealth,
-      chargingCycle: row?.chargingCycle,
-      swappingCycle: row?.swappingCycle,
-      trip: row?.trip,
-      distanceTravelled: row?.distanceTravelled,
-      avgCharging: row?.avgCharging,
-      consumed: row?.consumed,
-      averageSpeed: row?.averageSpeed,
-      averagePayload: row?.averagePayload,
-      maxPayload: row?.maxPayload,
-      teus: row?.teus,
-      handled: row?.handled,
-      Teushandled: row?.Teushandled,
-      Teuseach: row?.Teuseach,
-      consumption: row?.consumption,
-      breakdown: row?.breakdown,
-      Effective: row?.effectiveRange,
+    const modifiedData = data?.map((item) => ({
+      fleetId: item.fleetNumber ?? "--",
+      status: item.status ?? "--",
+      currentSoc: item.batteryPercentage
+        ? `${item.batteryPercentage.toFixed(1)}%`
+        : "--",
+      currentSoh: item.batteryHealth
+        ? `${item.batteryHealth.toFixed(1)}%`
+        : "--",
+      chargingCycle: item.chargingCycle ?? "0",
+      swappingCycle: item.swappingCycle ?? "0",
+      trip: item.trip ?? "NA",
+      totalDistance: item.distanceTravelled
+        ? `${item.distanceTravelled.toFixed(2)} KM`
+        : "--",
+      breakdown: item.breakdown ?? "--",
+      totalConsumption: item.totalConsumption
+        ? item.totalConsumption.toFixed(3)
+        : "--",
+      avgSpeed: item.averageSpeed?.toFixed(1) ?? "--",
+      avgConsumption: item.avgConsumption?.toFixed(3) ?? "--",
+      effectiveRange: item.effectiveRange ?? "--",
     }));
 
     const csvData = [];
@@ -136,55 +137,43 @@ const Charging = ({
       "Status",
       "Current SoC(%)",
       "Current SoH(%)",
-      "Charging cycle",
-      "Swapping cycle",
-      "No. of trips",
-      "Total distance travelled(km)",
-      "Avg. charging time(hr.)",
-      "Total units consumed(kWh)",
-      "Avg. speed(km/hr)",
-      "Avg. payload(Ton)",
-      "Max. payload(Ton)",
-      "Total teus",
-      "Teus handled(40F)",
-      "Teus handled(20F)",
-      "Teus each trip",
-      "Avg. consumption(kWh/km)",
+      "Charging Cycle",
+      "Swapping Cycle",
+      "No. of Trips",
+      "Total Distance Travelled (KM)",
       "Breakdown",
-      "Effective range(km)",
+      "Total Consumption (kWh)",
+      "Avg. Speed (km/hr)",
+      "Avg. Consumption (kWh/km)",
+      "Effective Range (km)",
     ];
     csvData.push(headerRow);
 
     modifiedData.forEach((row) => {
       const rowData = [
-        row?.fleetId,
-        row?.status,
-        row?.batteryPercentage,
-        row?.batteryHealth,
-        row?.chargingCycle,
-        row?.swappingCycle,
-        row?.trip,
-        row?.distanceTravelled,
-        row?.avgCharging,
-        row?.consumed,
-        row?.averageSpeed,
-        row?.averagePayload,
-        row?.maxPayload,
-        row?.teus,
-        row?.handled,
-        row?.Teushandled,
-        row?.Teuseach,
-        row?.consumption,
-        row?.breakdown,
-        row?.effectiveRange,
+        row.fleetId,
+        row.status,
+        row.currentSoc,
+        row.currentSoh,
+        row.chargingCycle,
+        row.swappingCycle,
+        row.trip,
+        row.totalDistance,
+        row.breakdown,
+        row.totalConsumption,
+        row.avgSpeed,
+        row.avgConsumption,
+        row.effectiveRange,
       ];
       csvData.push(rowData);
     });
+
     const csvString = Papa.unparse(csvData);
     const blob = new Blob([csvString], { type: "text/csv;charset=utf-8" });
     saveAs(blob, "FleetEtractorData.csv");
     notifySuccess("Download Excel Successfully");
   };
+
   const getFormattedData = (data) => {
     return data?.map((item, index) => ({
       fleetId: item.fleetNumber ?? "--",
@@ -194,10 +183,10 @@ const Charging = ({
             sx={{
               color:
                 item.status === "available"
-                  ? "#BFFC72"
+                  ? "#C5E662"
                   : item.status === "parked"
                   ? "#FFC700"
-                  : "#fff",
+                  : "#FF0000",
             }}
           >
             {item.status || "--"}
@@ -225,15 +214,19 @@ const Charging = ({
         ? `${item.distanceTravelled?.toFixed(2)} KM`
         : "--",
       breakdown: item?.breakdown ? item?.breakdown : "--",
-      totalUnit: item?.totalUnit ? item?.totalUnit : "--",
+      totalConsumption: item?.totalConsumption
+        ? item?.totalConsumption.toFixed(3)
+        : "--",
       avgSpeed: item.averageSpeed.toFixed(1) || "--",
       mobileNumber8: item?.mobileNumber ? item?.mobileNumber : "--",
       mobileNumber9: item?.mobileNumber ? item?.mobileNumber : "--",
       mobileNumber6: item?.mobileNumber ? item?.mobileNumber : "--",
       mobileNumber4: item?.mobileNumber ? item?.mobileNumber : "--",
       mobileNumber3: item?.mobileNumber ? item?.mobileNumber : "--",
-      mobileNumber11: item?.mobileNumber ? item?.mobileNumber : "--",
       mobileNumber1: item?.mobileNumber ? item?.mobileNumber : "--",
+      avgConsumption: item?.avgConsumption
+        ? item?.avgConsumption.toFixed(3)
+        : "--",
       mobileNumber12: item?.mobileNumber ? item?.mobileNumber : "--",
       effectiveRange: item.effectiveRange || "--",
       // Action: [
@@ -259,11 +252,7 @@ const Charging = ({
           justifyContent="space-between"
           alignItems="center"
           p={2}
-          sx={{
-            backgroundColor: "#669BE9",
-            color: "#fff",
-            borderRadius: "16px 16px 0px 0px",
-          }}
+          className="customGrid"
         >
           <Grid item>
             <Typography variant="h3">FLEET ({data?.totalDocuments})</Typography>

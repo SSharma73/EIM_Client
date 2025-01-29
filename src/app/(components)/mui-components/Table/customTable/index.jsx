@@ -39,7 +39,7 @@ const CustomTable = ({
   return (
     <TableContainer
       sx={{
-        backgroundColor: "#669BE9",
+        backgroundColor: "#fff",
         borderRadius: "0px 0px 16px 16px",
         overflowX: "auto",
       }}
@@ -132,7 +132,6 @@ const CustomTable = ({
           )}
           <TableRow>
             <TablePagination
-              sx={{ color: "#fff" }}
               page={page}
               count={count}
               rowsPerPageOptions={[

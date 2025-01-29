@@ -16,6 +16,7 @@ const Page = () => {
     { label: "Pending" },
     { label: "Approved" },
     { label: "Rejected" },
+    { label: "Fleet Status" },
   ];
   const [value, setValue] = useState(0);
   const [tabsValue, setTabsValue] = useState("All");

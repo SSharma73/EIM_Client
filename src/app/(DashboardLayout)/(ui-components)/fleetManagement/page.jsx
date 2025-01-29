@@ -87,11 +87,7 @@ const Page = () => {
   const handleTableData = async () => {
     setLoading(true);
     const status =
-      tabsValue === "Charging"
-        ? "charging"
-        : tabsValue === "Trip"
-        ? "trip"
-        : "";
+      tabsValue === "Charging" ? "charging" : tabsValue === "Trip" ? "" : "";
 
     try {
       const params = new URLSearchParams({

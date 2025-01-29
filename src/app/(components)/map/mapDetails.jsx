@@ -3,15 +3,16 @@ import { Grid, Typography, IconButton, Stack } from "@mui/material";
 import styled from "@emotion/styled";
 import { IoMdClose } from "react-icons/io";
 import Image from "next/image";
-import moment from "moment";
+import SANY from "../../../../public/SANY.png";
 
 const MainGrid = styled(Grid)(({ theme }) => ({
-  backgroundColor: "#6099EB",
-  color: "#fff",
+  backgroundColor: theme.palette.background.paper,
+
   borderRadius: "16px",
 }));
 const MapDetails = ({ title, icons, onClose, truckDetails }) => {
   const [date, setDate] = useState(null);
+  console.log("truckDetails", `"${icons}"`);
 
   return (
     <MainGrid container rowGap={1}>
@@ -44,33 +45,33 @@ const MapDetails = ({ title, icons, onClose, truckDetails }) => {
             </Grid>
             <Grid item>
               <IconButton onClick={onClose}>
-                <IoMdClose color="#fff" />
+                <IoMdClose />
               </IconButton>
             </Grid>
           </Grid>
         )}
 
         <Stack rowGap={2} mt={1} p={1}>
-          <Typography>Battery</Typography>
-          <Typography>Distance travelled</Typography>
-          <Typography>Last connected</Typography>
+          <Typography>Effective Range</Typography>
+          <Typography>Nearest Charger</Typography>
+          <Typography>Station Code</Typography>
           <Typography>Type</Typography>
           <Typography>Average Speed</Typography>
         </Stack>
         <Stack rowGap={2} mt={1} p={1}>
-          <Typography>{truckDetails?.batteryPercentage}%</Typography>
+          <Typography>{truckDetails?.effectiveRange}</Typography>
           <Typography color={"secondary"}>
-            {truckDetails?.distanceTravelled} km
+            {truckDetails?.nearestCharger?.name}
           </Typography>
           <Typography color={"error"}>
             {" "}
-            {moment(truckDetails?.lastConnectedHeartBeat).format("ll")}
+            {truckDetails?.nearestCharger?.stationCode}
           </Typography>
           <Typography color={"secondary"}>{truckDetails?.type}</Typography>
           <Typography>{truckDetails?.averageSpeed}</Typography>
         </Stack>
       </Grid>
-      <Image src={`${icons}`} height={100} width={500} />
+      <Image src={`${icons}`} height={100} width={280} />
     </MainGrid>
   );
 };

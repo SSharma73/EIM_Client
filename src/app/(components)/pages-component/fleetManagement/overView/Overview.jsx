@@ -9,6 +9,8 @@ import {
   ListItem,
   ListItemText,
   Chip,
+  Tooltip,
+  IconButton,
 } from "@mui/material";
 import dayjs from "dayjs";
 import styled from "@emotion/styled";
@@ -22,12 +24,13 @@ import CustomTable from "@/app/(components)/mui-components/Table/customTable/ind
 import TableSkeleton from "@/app/(components)/mui-components/Skeleton/tableSkeleton";
 import { CustomDropdownEvent } from "@/app/(components)/mui-components/Card/HeaderGrid/DropdownButton/dropDownEvent";
 import { useRouter } from "next/navigation";
+import { IoMdDownload } from "react-icons/io";
+import DownloadData from "@/app/(components)/pages-component/fleetManagement/overView/download";
 
 const CustomGrid = styled(Grid)(({ theme }) => ({
   padding: theme.spacing(2),
-  backgroundColor: "#6099EB",
+  backgroundColor: theme.palette.primary.light,
   borderRadius: "16px",
-  color: "#fff",
 }));
 
 const Badge1 = styled(Badge)(({ color }) => ({
@@ -54,7 +57,9 @@ const Overview = ({
   const [activeMarker, setActiveMarker] = useState(null);
   const [icons, setIcons] = useState(null);
   const router = useRouter();
+  const [openDownload, setOpenDownload] = useState(false);
   const [graphData, setGraphData] = useState([]);
+  const [fleetNumber, setFleetNumber] = useState(null);
   const days = ["Today", "Weekly", "Monthly", "Yearly"];
   const data1 = [
     {
@@ -103,6 +108,10 @@ const Overview = ({
   const [selectedTimeFrames, setSelectedTimeFrames] = useState(
     data1?.map(() => days[0])
   );
+  const handleOpenDownload = (fleetNumber) => {
+    setOpenDownload(true);
+    setFleetNumber(fleetNumber);
+  };
   const calculateDateRange = (timeFrame) => {
     const endDate = dayjs().format("YYYY-MM-DD");
     let startDate;
@@ -190,22 +199,20 @@ const Overview = ({
         ? `${item?.batteryPercentage?.toFixed(2)}%`
         : "--",
       effectiveRange: item?.effectiveRange || "--",
-      // Action: (
-      //   <Grid container justifyContent="center" spacing={2}>
-      //     <Grid item xs={12}>
-      //       <Tooltip title="View">
-      //         <IconButton
-      //           size="small"
-      //           onClick={() =>
-      //             router.push(`/fleetManagement/${item?._id}?tab=1`)
-      //           }
-      //         >
-      //           <IoEyeOutline color="rgba(14, 1, 71, 1)" />
-      //         </IconButton>
-      //       </Tooltip>
-      //     </Grid>
-      //   </Grid>
-      // ),
+      Action: (
+        <Grid container justifyContent="center" spacing={2}>
+          <Grid item xs={12}>
+            <Tooltip title="Download rawData">
+              <IconButton
+                size="small"
+                onClick={() => handleOpenDownload(item.fleetNumber)}
+              >
+                <IoMdDownload color="rgba(14, 1, 71, 1)" />
+              </IconButton>
+            </Tooltip>
+          </Grid>
+        </Grid>
+      ),
     }));
   };
 
@@ -270,18 +277,14 @@ const Overview = ({
               style={{ fontSize: "15px", fontWeight: 600 }}
             >
               E-Tractor :{" "}
-              <span style={{ fontWeight: 700, color: "#fff" }}>
-                {item.content}
-              </span>
+              <span style={{ fontWeight: 700 }}>{item.content}</span>
             </Typography>
             <Typography
               color={"primary"}
               style={{ fontSize: "15px", fontWeight: 600 }}
             >
               Avg :{" "}
-              <span
-                style={{ fontSize: "11px", fontWeight: 700, color: "#fff" }}
-              >
+              <span style={{ fontSize: "11px", fontWeight: 700 }}>
                 {item.avg}
               </span>
             </Typography>
@@ -380,7 +383,7 @@ const Overview = ({
               "Breakdown",
               "Current SoC(%)",
               "Effective range(km)",
-              // "Action",
+              "Action",
             ]}
             setPage={setPage}
             rowsPerPage={rowsPerPage}
@@ -388,6 +391,13 @@ const Overview = ({
           />
         )}
       </Grid>
+      {openDownload && (
+        <DownloadData
+          open={openDownload}
+          setOpen={setOpenDownload}
+          fleetNumber={fleetNumber}
+        />
+      )}
     </Grid>
   );
 };

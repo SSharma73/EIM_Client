@@ -12,18 +12,21 @@ import ManagementGrid from "../../mui-components/Card";
 
 const CustomGrid = styled(Grid)(({ theme }) => ({
   padding: theme.spacing(2),
-  backgroundColor: "#6099EB",
+  backgroundColor: theme.palette.background.paper,
   borderRadius: "16px",
-  color: "#fff",
 }));
 const Overview1 = ({ type, selectedItems, selectedCustId }) => {
   const [value, setValue] = useState(0);
   const [fetchAllDetails, setFetchAllDetails] = useState(null);
+
+  console.log("selectedItems", selectedItems, selectedCustId);
   const fetchDetails = async ({
     limit = 10,
     page = 1,
     status = "",
     type = "",
+    customerId = selectedCustId ?? "",
+    region = selectedItems?.Region ?? "",
   } = {}) => {
     try {
       const params = new URLSearchParams({
@@ -31,6 +34,8 @@ const Overview1 = ({ type, selectedItems, selectedCustId }) => {
         page,
         status,
         type,
+        customerId,
+        region,
       });
       const { data } = await axiosInstance.get(
         `charger/fetchChargers?${params.toString()}`
@@ -53,6 +58,7 @@ const Overview1 = ({ type, selectedItems, selectedCustId }) => {
       case 1:
         status = "";
         type = "delta";
+
         break;
       case 2:
         status = "";
@@ -78,6 +84,8 @@ const Overview1 = ({ type, selectedItems, selectedCustId }) => {
       page: 1,
       status: status,
       type: type,
+      customerId: selectedCustId ?? "",
+      region: selectedItems?.Region ?? "",
     });
   };
   useEffect(() => {
@@ -86,8 +94,10 @@ const Overview1 = ({ type, selectedItems, selectedCustId }) => {
       limit: 10,
       page: 1,
       type: "",
+      customerId: selectedCustId ?? "",
+      region: selectedItems?.Region ?? "",
     });
-  }, []);
+  }, [selectedCustId, selectedItems?.Region]);
 
   const tabs = [
     { label: "Overview" },
@@ -155,6 +165,8 @@ const Overview1 = ({ type, selectedItems, selectedCustId }) => {
               <Graph2
                 graphType={selectedTimeFrames[index].toLowerCase()}
                 type={type}
+                selectedCustId={selectedCustId}
+                selectedItems={selectedItems?.Region}
               />
             )}
             {index === 2 && (

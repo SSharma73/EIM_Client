@@ -18,7 +18,6 @@ const EnergyEfficiency = () => {
   const [date, setDate] = useState(null);
   const [data, setData] = useState(null);
   const [openGraph, setOpenGraph] = useState(false);
-  
 
   const [efficiency, setEfficiency] = useState(null);
   useEffect(() => {

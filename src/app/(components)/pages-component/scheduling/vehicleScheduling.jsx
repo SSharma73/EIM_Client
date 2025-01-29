@@ -13,12 +13,12 @@ import { PiCarBattery } from "react-icons/pi";
 import axiosInstance from "@/app/api/axiosInstance";
 import moment from "moment";
 
-const iconUrls = [
-  "./truck1.svg",
-  "./truck2.svg",
-  "./truck3.svg",
-  "./truck4.svg",
-];
+const iconUrls = ["./SANY.svg", "./BYD.svg", "./foton.svg", "./truck4.svg"];
+const iconMapping = {
+  sany: "./SANY.svg",
+  byd: "./BYD.svg",
+  photon: "./foton.svg",
+};
 const buttonData = [
   { label: "All" },
   { label: "Charging : 3", color: "red" },
@@ -27,11 +27,6 @@ const buttonData = [
   { label: "Scheduled Charging : 6", color: "gray" },
 ];
 
-const iconMapping = {
-  sany: "./truck1.svg",
-  byd: "./truck2.svg",
-  photon: "./truck3.svg",
-};
 const VehicleScheduling = () => {
   const [activeMarker, setActiveMarker] = useState(null);
   const [icons, setIcons] = useState(null);
@@ -130,7 +125,7 @@ const VehicleScheduling = () => {
               <Card
                 sx={{
                   maxWidth: "auto",
-                  backgroundColor: "#6099EB",
+
                   paddingTop: 3,
                   borderRadius: "10px",
                   position: "relative",

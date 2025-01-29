@@ -5,13 +5,19 @@ import { Chart, registerables } from "chart.js";
 
 Chart.register(...registerables);
 const data = {
-  labels: ["DD MM YYYY", "DD MM YYYY", "DD MM YYYY"],
+  labels: [
+    "01 Jan 2025",
+    "02 Jan 2025",
+    "03 Jan 2025",
+    "04 Jan 2025",
+    "05 Jan 2025",
+  ],
   datasets: [
     {
       label: "My First Dataset",
-      data: [],
-      backgroundColor: "rgba(247, 187, 187, .2)", // Fill color for the area chart
-      borderColor: "#C0FE72",
+      data: [12, 9, 22, 25, 88],
+      backgroundColor: "rgba(247, 187, 187, .2)",
+      borderColor: "#38E0CF",
       borderWidth: 2,
     },
   ],
@@ -21,14 +27,14 @@ const options = {
     y: {
       beginAtZero: true,
       title: {
-        color: "white",
+        color: "#000",
         font: {
           family: "Arial",
           weight: "bold",
         },
       },
       ticks: {
-        color: "white",
+        color: "#000",
         callback: function (value) {
           return value + " kWh";
         },
@@ -38,7 +44,7 @@ const options = {
       beginAtZero: true,
       display: true,
       title: {
-        color: "white",
+        color: "#000",
         font: {
           size: 16,
           family: "Arial",
@@ -46,7 +52,7 @@ const options = {
         },
       },
       ticks: {
-        color: "white",
+        color: "#000",
       },
     },
   },

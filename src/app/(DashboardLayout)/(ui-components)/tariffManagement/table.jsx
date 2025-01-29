@@ -83,7 +83,7 @@ const Table = ({
             setOpen(true);
           }}
         >
-          <IoEyeOutline color="#fff" />
+          <IoEyeOutline />
         </IconButton>
       );
 
@@ -104,11 +104,7 @@ const Table = ({
         justifyContent="space-between"
         alignItems="center"
         p={2}
-        sx={{
-          backgroundColor: "#669BE9",
-          color: "#fff",
-          borderRadius: "16px 16px 0px 0px",
-        }}
+        className="customGrid"
       >
         <Grid item>
           <Typography variant="h3">Tariff Sheet</Typography>

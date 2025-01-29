@@ -14,9 +14,9 @@ import axiosInstance from "@/app/api/axiosInstanceImg";
 
 const CustomGrid = styled(Grid)(({ theme }) => ({
   padding: theme.spacing(2),
-  backgroundColor: "#6099EB",
+  backgroundColor: "#fff",
   borderRadius: "16px",
-  color: "#fff",
+  height: "100%",
 }));
 
 Chart.register(...registerables);
@@ -25,7 +25,7 @@ const options = {
   animations: {
     animateScale: true,
   },
-  maintainAspectRatio: false, 
+  maintainAspectRatio: false,
   responsive: true,
   plugins: {
     legend: {
@@ -122,7 +122,7 @@ const BalancePage = ({ state }) => {
       {
         label: "",
         data: data2?.map((item) => item.value),
-        backgroundColor: ["#326EC3", "#C8DFFF", "#D7FFA6", "#A5D964"],
+        backgroundColor: ["#F6D6BD", "#A8DEE0", "#D9E3E5", "#F7F4EA"],
         hoverOffset: 15,
         borderColor: "transparent",
       },
@@ -136,10 +136,10 @@ const BalancePage = ({ state }) => {
     },
   };
   const data = [
-    { labels: "Offline SS ", value: swapping?.Offline, color: "#326EC3" },
-    { labels: "Online SS ", value: swapping?.Online, color: "#C8DFFF" },
-    { labels: "Occupied SS", value: swapping?.Occupied, color: "#D7FFA6" },
-    { labels: "Available SS ", value: swapping?.Available, color: "#A5D964" },
+    { labels: "Offline SS ", value: swapping?.Offline, color: "#F6D6BD" },
+    { labels: "Online SS ", value: swapping?.Online, color: "#A8DEE0" },
+    { labels: "Occupied SS", value: swapping?.Occupied, color: "#D9E3E5" },
+    { labels: "Available SS ", value: swapping?.Available, color: "#F7F4EA" },
   ];
 
   return (
@@ -147,24 +147,41 @@ const BalancePage = ({ state }) => {
       <CustomGrid>
         <Grid
           container
-          sx={{ height: "205px" }}
+          sx={{
+            height:
+              data1 &&
+              data1.datasets &&
+              data1.datasets[0] &&
+              data1.datasets[0].data.every((value) => value === 0)
+                ? ""
+                : "205px",
+          }}
           justifyContent={"center"}
           alignItems={"center"}
         >
-          <Doughnut data={data1} options={config.options} />
-          <Box
-            sx={{
-              borderRadius: "16px",
-              padding: "10px 40px",
-            }}
-          >
-            <Image
-              src={Station}
-              height={140}
-              width={230}
-              alt="Charging Station"
-            />
-          </Box>
+          {data1 &&
+          data1.datasets &&
+          data1.datasets[0] &&
+          data1.datasets[0].data.every((value) => value === 0) ? (
+            <div>No data available</div>
+          ) : (
+            <>
+              <Doughnut data={data1} options={options} />
+              <Box
+                sx={{
+                  borderRadius: "16px",
+                  padding: "10px 40px",
+                }}
+              >
+                <Image
+                  src={Station}
+                  height={140}
+                  width={230}
+                  alt="Charging Station"
+                />
+              </Box>
+            </>
+          )}
         </Grid>
         <Grid container mt={20} mb={2}>
           <Grid container justifyContent={"space-between"}>

@@ -1,4 +1,3 @@
-
 import { LiaTruckMovingSolid } from "react-icons/lia";
 import { uniqueId } from "lodash";
 import { PiUser } from "react-icons/pi";
@@ -22,67 +21,66 @@ const Menuitems = [
   {
     id: uniqueId(),
     title: "Fleet Management",
-    icon:LiaTruckMovingSolid,
+    icon: LiaTruckMovingSolid,
     href: "/fleetManagement",
     role: ["Admin", "Agent"],
   },
   {
     id: uniqueId(),
     title: "CS/SS Management",
-    icon:  PiCarBatteryBold ,
+    icon: PiCarBatteryBold,
     href: "/csManagement",
     role: ["Admin", "Agent"],
   },
-  {
-    id: uniqueId(),
-    title: "CS/SS Efficiency",
-    icon:MdOutlineEnergySavingsLeaf ,
-    href: "/energyEfficiency",
-    role: ["Admin", "Agent"],
-  },
+  // {
+  //   id: uniqueId(),
+  //   title: "CS/SS Efficiency",
+  //   icon:MdOutlineEnergySavingsLeaf ,
+  //   href: "/energyEfficiency",
+  //   role: ["Admin", "Agent"],
+  // },
   {
     id: uniqueId(),
     title: "Battery Analysis",
-    icon:  LiaKeyboardSolid  ,
+    icon: LiaKeyboardSolid,
     href: "/batteryAnalysis",
     role: ["Admin", "Agent"],
   },
   {
     id: uniqueId(),
     title: "Scheduling",
-    icon: LiaListAltSolid  ,
+    icon: LiaListAltSolid,
     href: "/scheduling",
     role: ["Admin", "Agent"],
   },
   {
     id: uniqueId(),
     title: "Tariff Management",
-    icon: MdOutlineCurrencyRupee ,
+    icon: MdOutlineCurrencyRupee,
     href: "/tariffManagement",
     role: ["Admin", "Agent"],
   },
   {
     id: uniqueId(),
     title: "Customer Management",
-    icon:  RiContactsBook3Line ,
+    icon: RiContactsBook3Line,
     href: "/customerManagement",
     role: ["Admin", "Agent"],
   },
   {
     id: uniqueId(),
     title: "EIM Subscriptions",
-    icon: IoMdNotifications ,
+    icon: IoMdNotifications,
     href: "/eimSubscriptions",
     role: ["Admin", "Agent"],
   },
   {
     id: uniqueId(),
     title: "User Management",
-    icon: PiUser ,
+    icon: PiUser,
     href: "/userManagement",
     role: ["Admin", "Agent"],
   },
-
 ];
 
 export default Menuitems;

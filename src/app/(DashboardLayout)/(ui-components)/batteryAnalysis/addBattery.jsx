@@ -183,7 +183,7 @@ export default function AddUser({ open, setOpen, handleEfficiencyData }) {
                   justifyContent={"center"}
                   alignItems={"center"}
                   sx={{
-                    border: `3px dotted #C0FE72`,
+                    border: `3px dotted #000`,
                     padding: 2,
                     borderRadius: "8px",
                   }}
@@ -198,11 +198,7 @@ export default function AddUser({ open, setOpen, handleEfficiencyData }) {
                   <Typography> csv file size no more than 10MB</Typography>
                   <input {...getInputProps()} accept=".csv" />
                   <label htmlFor="raised-button-file">
-                    <Button
-                      variant="contained"
-                      component="span"
-                      sx={{ color: "#C0FE72" }}
-                    >
+                    <Button variant="contained" component="span">
                       Select File
                     </Button>
                   </label>

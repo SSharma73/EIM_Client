@@ -110,7 +110,7 @@ export default function AccountMenu() {
             fullWidth
           >
             <ListItemIcon>
-              <IoMdLogOut fontSize="medium" color="#fff" />
+              <IoMdLogOut fontSize="medium" />
             </ListItemIcon>
             Logout
           </Button>

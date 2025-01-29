@@ -55,7 +55,7 @@ const Charging = ({
     } else if (batterySoc > 50 && batterySoc < 90) {
       return { color: "#FFC300", percent: `${batterySoc}%` };
     } else {
-      return { color: "#C0FE72", percent: "100%" };
+      return { color: "#347D00", percent: "100%" };
     }
   };
   const [page, setPage] = React.useState(0);
@@ -193,7 +193,14 @@ const Charging = ({
         ),
         hubName: item?.name ?? "--",
         eTractorInQueue: item?.queue?.length ?? "--",
-        currentlyStatus: item?.currentlyCharging ?? "--",
+        currentlyStatus:
+          labelStatus === "Swapping"
+            ? item?.currentlySwapping === 0
+              ? "Available"
+              : "Occupied" ?? "--"
+            : item?.currentlyCharging === 0
+            ? "Available"
+            : "Occupied" ?? "--",
         totalCharged: item?.totalCharged ?? "--",
         totalSwapped: labelStatus === "Swapping" && item?.totalSwapped,
         unitConsumed: item?.unitConsumed?.toFixed(2) ?? "--",
@@ -274,11 +281,7 @@ const Charging = ({
           justifyContent="space-between"
           alignItems="center"
           p={2}
-          sx={{
-            backgroundColor: "#669BE9",
-            color: "#fff",
-            borderRadius: "16px 16px 0px 0px",
-          }}
+          className="customGrid"
         >
           <Grid item>
             <Typography variant="h3">{eventLabel}</Typography>

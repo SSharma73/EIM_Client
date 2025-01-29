@@ -79,3 +79,6 @@
   top: 5% !important;
   left: 6% !important;
 }
+.datePicker .MuiPaper-root.MuiPickersPopper-paper {
+  background-color: #639AEA !important;
+}

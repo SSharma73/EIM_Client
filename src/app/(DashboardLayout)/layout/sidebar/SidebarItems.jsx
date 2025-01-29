@@ -1,14 +1,15 @@
 import React from "react";
 import Menuitems from "./MenuItems";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Box, List, Grid, useMediaQuery } from "@mui/material";
 import NavItem from "./NavItem/index";
 import { uniqueId } from "lodash";
 import { AiOutlineLogout } from "react-icons/ai";
 import { signOut } from "next-auth/react";
 import Image from "next/image";
-import Logo from "../../../../../public/Img/logo.png";
+import Logo from "../../../../../public/Img/logoEIM.svg";
 import { CgProfile } from "react-icons/cg";
+// import Logo from "../../../../../public/Img/logoEIM.svg";
 
 const Menuitems1 = [
   {
@@ -26,6 +27,7 @@ const Menuitems1 = [
   },
 ];
 const SidebarItems = ({ toggleMobileSidebar }) => {
+  const router = useRouter();
   const handleLogOut = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("userRole");
@@ -43,7 +45,17 @@ const SidebarItems = ({ toggleMobileSidebar }) => {
         }}
       >
         <List sx={{ pt: 0 }} className="sidebarNav" component="div">
-          {lgUp ? "" : <Image src={Logo} height={55} width={200} />}
+          {lgUp ? (
+            ""
+          ) : (
+            <Image
+              src={Logo}
+              height={55}
+              width={200}
+              onClick={() => router.push("/dashboard")}
+              style={{ cursor: "pointer" }}
+            />
+          )}
           {Menuitems.map((item) => {
             return (
               <NavItem

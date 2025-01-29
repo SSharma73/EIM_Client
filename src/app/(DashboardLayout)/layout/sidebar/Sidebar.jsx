@@ -31,7 +31,7 @@ const Sidebar = ({ isMobileSidebarOpen, onSidebarClose, isSidebarOpen }) => {
           sx={{
             height: "100vh",
             overflowY: lgUp ? "auto" : mdUp ? "auto" : "auto",
-            backgroundColor: "#6099EB",
+            backgroundColor: "#ffffff",
             padding: "14px",
           }}
         >

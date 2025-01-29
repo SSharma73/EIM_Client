@@ -1,7 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { Grid } from "@mui/material";
-
 import Table from "./table";
 import SwappingTable from "./swappingTable";
 import ChargingTable from "./chargingTable";
@@ -29,8 +28,8 @@ const Page = ({ state }) => {
       try {
         const fleetResponse = await axiosInstance.get(`fleet/fetchFleets`, {
           params: {
-            customerId: state.brandId,
-            region: state.region,
+            customerId: state?.brandId,
+            region: state?.region,
             sort: "avgConsumption",
           },
         });
@@ -43,6 +42,7 @@ const Page = ({ state }) => {
               page: 1,
               type: "sany",
               customerId: state?.brandId,
+              region: state?.region,
             },
           }
         );
@@ -55,6 +55,7 @@ const Page = ({ state }) => {
               page: 1,
               type: "delta",
               customerId: state.brandId,
+              region: state?.region,
             },
           }
         );

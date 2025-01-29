@@ -25,28 +25,28 @@ const NavItem = ({ item, level, pathDirect, onClick }) => {
       padding: "8px 1px",
       borderRadius: "14px",
       backgroundColor: level > 1 ? "transparent !important" : "inherit",
-      color: "white",
+      color: "#000",
       paddingLeft: "10px",
       "&:hover": {
-        backgroundColor: "#ffffff",
+        backgroundColor: "#38E0CF",
         color: "#000",
       },
       "&:hover .MuiListItemIcon-root": {
         color: "#000",
       },
       "&.Mui-selected": {
-        color: theme.palette.secondary.main,
+        color: "#000",
         backgroundColor: theme.palette.primary.main,
         "&:hover": {
           backgroundColor: theme.palette.primary.main,
-          color: "#fff",
+          color: "#000",
         },
         "&:hover .MuiListItemIcon-root": {
-        color: "#fff",
-      },
-      "& .MuiListItemIcon-root":{
-        color:theme.palette.secondary.main
-      }
+          color: "#000000",
+        },
+        "& .MuiListItemIcon-root": {
+          color: "#000",
+        },
       },
     },
     [theme.breakpoints.down("sm")]: {
@@ -75,17 +75,14 @@ const NavItem = ({ item, level, pathDirect, onClick }) => {
             sx={{
               minWidth: isMobile ? "auto" : "36px",
               p: "3px 0",
-              color: isNavLinkActive() ? "#fff" : "#fff",
+              color: isNavLinkActive() ? "#000" : "#000",
               transition: "margin .25s ease-in-out",
               fontSize: "24px",
-             
             }}
           >
             {itemIcon}
           </ListItemIcon>
-          <ListItemText sx={{ px: 2 }}>
-            {item.title}
-          </ListItemText>
+          <ListItemText sx={{ px: 2 }}>{item.title}</ListItemText>
         </ListItemButton>
       </ListItemStyled>
     </List>

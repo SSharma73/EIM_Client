@@ -11,10 +11,9 @@ const options = {
     y: {
       beginAtZero: true,
       ticks: {
-        color: "white",
+        color: "#000",
         font: {
           family: "Arial",
-          weight: "bold",
         },
         callback: function (value) {
           return value + " kWh";
@@ -25,7 +24,7 @@ const options = {
       beginAtZero: true,
       display: true,
       ticks: {
-        color: "white",
+        color: "#000",
       },
     },
   },
@@ -52,7 +51,7 @@ const options = {
   },
 };
 
-const Graph = ({ graphType, type }) => {
+const Graph = ({ graphType, type, selectedItems, selectedCustId }) => {
   const [chartData, setChartData] = useState({
     labels: [],
     datasets: [
@@ -60,7 +59,7 @@ const Graph = ({ graphType, type }) => {
         label: "E Tractor",
         data: [],
         backgroundColor: "rgba(247, 187, 187, .2)",
-        borderColor: "#C0FE72",
+        borderColor: "#38E0CF",
         borderWidth: 2,
         pointHoverRadius: 10,
       },
@@ -72,7 +71,12 @@ const Graph = ({ graphType, type }) => {
     const fetchData = async () => {
       try {
         const { data } = await axiosInstance.get("charger/usageGraph", {
-          params: { graphType, type },
+          params: {
+            graphType,
+            type,
+            region: selectedItems,
+            customerId: selectedCustId,
+          },
         });
         const labels = data?.data?.map((item) => item.interval) || [];
         const usageData = data?.data?.map((item) => item.usage) || [];
@@ -95,7 +99,7 @@ const Graph = ({ graphType, type }) => {
     };
 
     fetchData();
-  }, [graphType, type]);
+  }, [graphType, type, selectedItems, selectedCustId]);
 
   return (
     <Grid container mt={2} mb={1}>

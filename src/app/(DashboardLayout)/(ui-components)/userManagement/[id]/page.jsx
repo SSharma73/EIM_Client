@@ -10,12 +10,11 @@ import TabPanel from "@mui/lab/TabPanel";
 import View from "@/app/(components)/pages-component/userManagement/AddAccess/view";
 import styled from "@emotion/styled";
 import ManagementGrid from "@/app/(components)/mui-components/Card";
-import axiosInstance from "@/app/api/axiosInstance";
+
 const CustomGrid = styled(Grid)(({ theme }) => ({
   padding: theme.spacing(2),
-  backgroundColor: "#6099EB",
+  backgroundColor: theme.palette.background.paper,
   borderRadius: "16px",
-  color: "#fff",
 }));
 const AddAccess = ({ params }) => {
   const [value, setValue] = React.useState(0);

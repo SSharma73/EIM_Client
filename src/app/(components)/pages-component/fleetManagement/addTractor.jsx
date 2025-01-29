@@ -182,7 +182,7 @@ export default function AddUser({ open, setOpen, handleTableData }) {
                       control={control}
                       rules={{ required: "E-Tractor type is required!" }}
                       render={({ field }) => (
-                        <Select {...field}>
+                        <Select {...field} label="Select E-Tractor Type">
                           <MenuItem value="sany">Sany</MenuItem>
                           <MenuItem value="foton">Foton</MenuItem>
                           <MenuItem value="byd">Byd</MenuItem>
@@ -204,7 +204,7 @@ export default function AddUser({ open, setOpen, handleTableData }) {
                       control={control}
                       rules={{ required: "Customer is required!" }}
                       render={({ field }) => (
-                        <Select {...field}>
+                        <Select {...field} label="Select Customer">
                           {customers?.length > 0 &&
                             customers.map((customer) => (
                               <MenuItem key={customer._id} value={customer._id}>
@@ -229,7 +229,7 @@ export default function AddUser({ open, setOpen, handleTableData }) {
                       control={control}
                       rules={{ required: "Port is required!" }}
                       render={({ field }) => (
-                        <Select {...field}>
+                        <Select {...field} label="Select Port">
                           {ports?.length > 0 &&
                             ports.map((port) => (
                               <MenuItem key={port._id} value={port._id}>

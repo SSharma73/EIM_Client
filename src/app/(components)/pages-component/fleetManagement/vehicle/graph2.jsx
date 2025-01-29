@@ -4,31 +4,39 @@ import { Line } from "react-chartjs-2";
 import { Chart, registerables } from "chart.js";
 
 Chart.register(...registerables);
+
 const data = {
-  labels: ["DD MM YYYY", "DD MM YYYY", "DD MM YYYY"],
-  datasets: [ 
+  labels: [
+    "01 Jan 2025",
+    "02 Jan 2025",
+    "03 Jan 2025",
+    "04 Jan 2025",
+    "05 Jan 2025",
+  ],
+  datasets: [
     {
       label: "My First Dataset",
-      data: [],
+      data: [12, 19, 10, 25, 30], // Example dummy data
       backgroundColor: "rgba(247, 187, 187, .2)",
-      borderColor: "#C0FE72",
+      borderColor: "#38E0CF",
       borderWidth: 2,
     },
   ],
 };
+
 const options = {
   scales: {
     y: {
       beginAtZero: true,
       title: {
-        color: "white",
+        color: "#000",
         font: {
           family: "Arial",
           weight: "bold",
         },
       },
       ticks: {
-        color: "white",
+        color: "#000",
         callback: function (value) {
           return value + " Ton";
         },
@@ -38,7 +46,7 @@ const options = {
       beginAtZero: true,
       display: true,
       title: {
-        color: "white",
+        color: "#000",
         font: {
           size: 16,
           family: "Arial",
@@ -46,7 +54,7 @@ const options = {
         },
       },
       ticks: {
-        color: "white",
+        color: "#000",
       },
     },
   },
@@ -72,6 +80,7 @@ const options = {
     intersect: false,
   },
 };
+
 const config = {
   type: "line",
   data: data,
@@ -79,6 +88,7 @@ const config = {
     ...options,
   },
 };
+
 const Graph = () => {
   return (
     <Grid container>

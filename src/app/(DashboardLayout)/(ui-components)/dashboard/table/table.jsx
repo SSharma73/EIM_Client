@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { Grid, Typography, Box, Button } from "@mui/material";
+import { Grid, Typography, Box, Button, useTheme, Chip } from "@mui/material";
 import CustomTable from "../index";
 import TableSkeleton from "@/app/(components)/mui-components/Skeleton/tableSkeleton";
 
@@ -23,18 +23,26 @@ const Table = ({
       fleetId: item.fleetNumber ?? "--",
       status: (
         <Box>
-          <Typography
+          <Chip
+            size="small"
+            label={<Typography variant="body2">{item?.status}</Typography>}
+            color={
+              item?.status === "available"
+                ? "success"
+                : item?.status === "offline"
+                ? "error"
+                : "warning"
+            }
             sx={{
-              color:
-                item.status === "available"
-                  ? "#BFFC72"
-                  : item.status === "parked"
-                  ? "#FFC700"
-                  : "#fff",
+              backgroundColor:
+                item?.status === "available"
+                  ? "success"
+                  : item?.status === "offline"
+                  ? "error"
+                  : "warning",
+              color: "white",
             }}
-          >
-            {item.status || "--"}
-          </Typography>
+          />
         </Box>
       ),
       avgSpeed: item.averageSpeed.toFixed(1) || "--",
@@ -50,7 +58,6 @@ const Table = ({
       effectiveRange: item.effectiveRange || "--",
     }));
   };
-
   return (
     <Grid container>
       <Grid
@@ -59,8 +66,7 @@ const Table = ({
         alignItems="center"
         p={2}
         sx={{
-          backgroundColor: "#669BE9",
-          color: "#fff",
+          backgroundColor: "#fff",
           borderRadius: "16px 16px 0px 0px",
         }}
       >

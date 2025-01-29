@@ -14,7 +14,7 @@ const Graph = ({ graphData }) => {
         label: "Distance Travelled",
         data: graphData?.map((item) => item?.totalDistanceDifference),
         backgroundColor: "rgba(247, 187, 187, .2)",
-        borderColor: "#C0FE72",
+        borderColor: "#38E0CF",
         borderWidth: 2,
       },
     ],
@@ -25,14 +25,14 @@ const Graph = ({ graphData }) => {
       y: {
         beginAtZero: true,
         title: {
-          color: "white",
+          color: "#000",
           font: {
             family: "Arial",
             weight: "bold",
           },
         },
         ticks: {
-          color: "white",
+          color: "#000",
           callback: function (value) {
             return value + " km";
           },
@@ -42,7 +42,7 @@ const Graph = ({ graphData }) => {
         beginAtZero: true,
         display: true,
         title: {
-          color: "white",
+          color: "#000",
           font: {
             size: 16,
             family: "Arial",
@@ -50,7 +50,7 @@ const Graph = ({ graphData }) => {
           },
         },
         ticks: {
-          color: "white",
+          color: "#000",
         },
       },
     },

@@ -13,7 +13,6 @@ import Image from "next/image"; // Ensure to import Image
 import noData from "../../../../../../public/Img/Nodata.svg";
 
 const Overview = ({ fetchAllDetails }) => {
-  console.log("fetch deta", fetchAllDetails);
   const MapHeight = "630px";
   const iconUrls = ["./available.svg", "charger.svg"];
   const iconMapping = {
@@ -46,7 +45,7 @@ const Overview = ({ fetchAllDetails }) => {
     } else if (batterySoc > 50 && batterySoc < 90) {
       return { color: "#FFC300", percent: `${batterySoc}%` };
     } else {
-      return { color: "#C0FE72", percent: "100%" };
+      return { color: "#347D00", percent: "100%" };
     }
   };
   return (

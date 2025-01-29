@@ -1,12 +1,11 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { Box, Typography, Divider, Grid, Avatar, Button } from "@mui/material";
 import axiosInstance from "@/app/api/axiosInstance";
 import moment from "moment";
 import Image from "next/image";
 import notificationImg from "../../../../../public/Img/bell.gif";
 import ToastComponent, {
-  notifyError,
   notifySuccess,
 } from "@/app/(components)/mui-components/Snackbar";
 const Read = ({ data, getData, tabsValue }) => {
@@ -32,7 +31,7 @@ const Read = ({ data, getData, tabsValue }) => {
         <Box
           mt={2}
           sx={{
-            backgroundColor: "#6099EB",
+            backgroundColor: "#fff",
             padding: 2,
             borderRadius: "16px",
           }}
@@ -47,8 +46,7 @@ const Read = ({ data, getData, tabsValue }) => {
                         height: 45,
                         width: 45,
                         mr: 2,
-                        backgroundColor: "#fff",
-                        color: "gray",
+                        backgroundColor: "#38E0CF",
                       }}
                     >
                       {notification?.requestType[0]}

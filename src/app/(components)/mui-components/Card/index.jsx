@@ -2,11 +2,12 @@
 import React, { useState, useEffect } from "react";
 import { Grid, Typography, AppBar, styled } from "@mui/material";
 import Breadcrumbs from "@/app/(components)/mui-components/Breadcrumbs/index";
-import { Tabs, Tab, Button, IconButton } from "@mui/material";
+import { Tabs, Tab, Button, IconButton, useTheme } from "@mui/material";
 import { IoMdAddCircleOutline } from "react-icons/io";
 import { CustomDropdown } from "../DropdownButton";
 import { CustomDropdownEvent } from "../DropdownButton/dropDownEvent";
 import ButtonGroup from "@mui/material/ButtonGroup";
+import { FiDownload } from "react-icons/fi";
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
   return (
@@ -32,7 +33,7 @@ function a11yProps(index) {
 const ChildBarStyled = styled(AppBar)(({ theme }) => ({
   boxShadow: "none",
   transition: "none",
-  backgroundColor: "#6099EB",
+  backgroundColor: theme.palette.background.paper,
   borderRadius: "8px",
 }));
 const getBorderRadius = (index, tabLength) => {
@@ -69,9 +70,12 @@ const ManagementGrid = ({
   dropDownEvent,
   selectedItems,
   handleDropdownSelect,
+  handleClickDownload,
+  download,
 }) => {
   const tabLength = tabs ? tabs.length : 0;
   const buttonLength = CustomButtonGroup ? CustomButtonGroup.length : 0;
+  const theme = useTheme();
 
   const [visibleStart, setVisibleStart] = React.useState(0);
   const [buttonType, setButtonType] = useState(null);
@@ -124,7 +128,9 @@ const ManagementGrid = ({
                 ? button && (
                     <Button
                       onClick={handleClickOpen}
-                      endIcon={<IoMdAddCircleOutline color="#C0FE72" />}
+                      endIcon={
+                        <IoMdAddCircleOutline color={theme.palette.secondary} />
+                      }
                       variant="contained"
                       size="large"
                       type={type}
@@ -186,27 +192,40 @@ const ManagementGrid = ({
                       label={tab.label}
                       {...a11yProps(index)}
                       sx={{
-                        border: "1px solid #fff",
+                        border: "1px solid #000",
                         ...getBorderRadius(index, tabLength),
                         "&.Mui-selected": {
-                          border: "1px solid #fff",
+                          border: "1px solid #000",
                           ...getBorderRadius(index, tabLength),
                         },
                       }}
                     />
                   ))}
                 </Tabs>
-                {button && (
-                  <Button
-                    onClick={handleClickOpen}
-                    endIcon={<IoMdAddCircleOutline color="#C0FE72" />}
-                    variant="contained"
-                    size="large"
-                    type={type}
-                  >
-                    {button}
-                  </Button>
-                )}
+                <Grid>
+                  {download && (
+                    <Button
+                      onClick={handleClickDownload}
+                      startIcon={<FiDownload />}
+                      variant="contained"
+                      size="large"
+                      sx={{ mr: 2 }}
+                    >
+                      {download}
+                    </Button>
+                  )}
+                  {button && (
+                    <Button
+                      onClick={handleClickOpen}
+                      endIcon={<IoMdAddCircleOutline />}
+                      variant="contained"
+                      size="large"
+                      type={type}
+                    >
+                      {button}
+                    </Button>
+                  )}
+                </Grid>
               </Grid>
             )}
             {CustomButtonGroup && (
@@ -222,7 +241,7 @@ const ManagementGrid = ({
                   item
                   display={"flex"}
                   alignItems="center"
-                  sx={{ border: "1px solid #fff", borderRadius: "10px" }}
+                  sx={{ border: "1px solid #000", borderRadius: "10px" }}
                 >
                   {visibleButtons?.map((item, index) => {
                     const isLastVisibleButton =
@@ -234,7 +253,7 @@ const ManagementGrid = ({
                         sx={{
                           borderRadius: "0px",
                           borderRight: !isLastVisibleButton
-                            ? "1px solid #fff"
+                            ? "1px solid #000"
                             : "",
                         }}
                       >
@@ -257,9 +276,8 @@ const ManagementGrid = ({
                                   ? "0 10px 10px 0"
                                   : "0",
                               borderRight: !isLastVisibleButton
-                                ? "1px solid #fff"
+                                ? "1px solid #000"
                                 : "",
-                              color: "#fff",
                             }}
                             onClick={(e) => {
                               handleClick(item?.name);

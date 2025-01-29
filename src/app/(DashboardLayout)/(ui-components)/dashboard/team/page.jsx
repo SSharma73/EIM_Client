@@ -12,9 +12,9 @@ import axiosInstance from "@/app/api/axiosInstanceImg";
 
 const CustomGrid = styled(Grid)(({ theme }) => ({
   padding: theme.spacing(2),
-  backgroundColor: "#6099EB",
+  backgroundColor: "#fff",
   borderRadius: "16px",
-  color: "#fff",
+  height: "100%",
 }));
 
 Chart.register(...registerables);
@@ -83,7 +83,8 @@ const Badge1 = styled(Badge)(({ color }) => ({
 }));
 
 const BalancePage = ({ state }) => {
-  const [allStation, setAllStation] = useState(null);
+  const [allStation, setAllStation] = useState();
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -96,68 +97,88 @@ const BalancePage = ({ state }) => {
         setAllStation(chargingResponse?.data);
       } catch (error) {
         console.error("Error fetching data:", error);
-      } finally {
-        console.error("Error fetching finally:");
       }
     };
     fetchData();
   }, [state]);
+
   const data = [
-    { labels: "Queue in CS", value: allStation?.QueueCs, color: "#D7FFA6" },
-    { labels: "Queue in SS", value: allStation?.QueueSs, color: "#A5D964" },
+    { labels: "Queue in CS", value: allStation?.QueueCs, color: "#B8DBD9" },
+    { labels: "Queue in SS", value: allStation?.QueueSs, color: "#8CC0BF" },
     {
-      labels: "E-tractor Charged",
-      value: allStation?.Charged,
-      color: "#83B4F9",
+      labels: "E-tractor Charged Delta",
+      value: allStation?.Charged?.delta,
+      color: "#B2F7EC",
+    },
+    {
+      labels: "E-tractor Charged Sany",
+      value: allStation?.Charged?.sany,
+      color: "#B2d7EC",
     },
     {
       labels: "E-tractor Swapped",
       value: allStation?.swapped,
-      color: "#326EC3",
+      color: "#FFEAC9",
     },
   ];
-  const data2 = (
-    allStation && typeof allStation === "object" ? Object.keys(allStation) : []
-  )
-    .filter((key) => key !== "All")
-    .map((key) => ({
-      value: allStation[key] !== undefined ? allStation[key] : 0,
-    }));
+
   const data1 = {
     labels: [
       "Queue in CS",
       "Queue in SS",
-      "E-tractor Charged",
+      "E-tractor Charged Delta",
+      "E-tractor Charged Sany",
       "E-tractor Swapped",
     ],
     datasets: [
       {
-        data: data2,
-        backgroundColor: ["#D7FFA6", "#A5D964", "#83B4F9", "#326EC3"],
+        data: data.map((item) => item.value), // Map the values to the data array
+        backgroundColor: data.map((item) => item.color), // Map the colors to the background
         hoverOffset: 15,
         borderColor: "transparent",
       },
     ],
   };
-  const config = {
-    type: "line",
-    data: data1,
-    options: {
-      ...options,
-    },
-  };
+  console.log("data1", data1);
+
   return (
     <Grid item md={4} xs={12}>
       <CustomGrid>
         <Grid
           container
-          sx={{ height: "303px" }}
+          sx={{
+            height:
+              data1 &&
+              data1.datasets &&
+              data1.datasets[0] &&
+              data1.datasets[0].data.every((value) => value === 0)
+                ? ""
+                : "303px",
+          }}
           justifyContent={"center"}
           alignItems={"center"}
         >
-          <Doughnut data={data1} options={config.options} />
+          {data1 &&
+          data1.datasets &&
+          data1.datasets[0] &&
+          data1.datasets[0].data.every((value) => value === 0) ? (
+            <div>No data available</div>
+          ) : (
+            <Doughnut data={data1} options={options} />
+          )}
         </Grid>
-        <Grid container mt={7} mb={2}>
+        <Grid
+          container
+          mt={
+            data1 &&
+            data1.datasets &&
+            data1.datasets[0] &&
+            data1.datasets[0].data.every((value) => value === 0)
+              ? 20
+              : 7
+          }
+          mb={2}
+        >
           <Grid container justifyContent={"space-between"}>
             <Typography variant="h6">All CS/SS</Typography>
             <Typography variant="h6">{allStation?.All}</Typography>
@@ -182,4 +203,5 @@ const BalancePage = ({ state }) => {
     </Grid>
   );
 };
+
 export default BalancePage;

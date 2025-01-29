@@ -189,8 +189,8 @@ const Table = ({
         alignItems="center"
         p={2}
         sx={{
-          backgroundColor: "#669BE9",
-          color: "#fff",
+          backgroundColor: "#fff",
+
           borderRadius: "16px 16px 0px 0px",
         }}
       >

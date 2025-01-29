@@ -2,7 +2,6 @@ import React from "react";
 import { Grid, Breadcrumbs, Typography, useMediaQuery } from "@mui/material";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import HomeIcon from "@mui/icons-material/Home";
 import { emphasize, styled } from "@mui/material/styles";
 import Chip from "@mui/material/Chip";
 const StyledBreadcrumb = styled(Chip)(({ theme }) => {
@@ -85,7 +84,7 @@ const CustomBreadcrumbs = ({ breadcrumbItems }) => {
             // </Link>
             <Link href={item.link} key={index}>
               <Typography
-                color={pathname === item.link ? "#C1FF72" : "#fff"}
+                color={pathname === item.link ? "#4A515C" : "#fff"}
                 variant="h6"
                 sx={{
                   cursor: pathname !== item.link ? "pointer" : "initial",

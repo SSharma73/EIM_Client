@@ -11,7 +11,7 @@ const data1 = {
       label: "E Tractor",
       data: [0, 0, 0, 0, 0],
       backgroundColor: "rgba(247, 187, 187, .2)",
-      borderColor: "#C0FE72",
+      borderColor: "#38E0CF",
       borderWidth: 2,
       pointHoverRadius: 10,
     },
@@ -22,10 +22,10 @@ const options = {
     y: {
       beginAtZero: true,
       ticks: {
-        color: "white", // Color of y-axis labels
+        color: "#000", // Color of y-axis labels
       },
       ticks: {
-        color: "white",
+        color: "#000",
         callback: function (value) {
           return value + " hr.";
         },
@@ -35,7 +35,7 @@ const options = {
       beginAtZero: true,
       display: true,
       ticks: {
-        color: "white", // Color of x-axis labels
+        color: "#000", // Color of x-axis labels
       },
     },
   },

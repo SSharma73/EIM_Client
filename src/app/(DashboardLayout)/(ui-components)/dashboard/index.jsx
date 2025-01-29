@@ -18,7 +18,7 @@ const Dashboard = ({ rows, columns, loading }) => {
   return (
     <TableContainer
       sx={{
-        backgroundColor: "#6099eb",
+        backgroundColor: "#FFF",
         borderRadius: "0px 0px 16px 16px",
         overflowX: "auto",
       }}

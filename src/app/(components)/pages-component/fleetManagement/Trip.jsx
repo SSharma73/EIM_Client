@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import Map from "@/app/(components)/map/index";
+import Map from "@/app/(components)/map/directionMap";
 import {
   Grid,
   Typography,
@@ -18,18 +18,12 @@ import { FaRegFileExcel } from "react-icons/fa";
 import Papa from "papaparse";
 import { saveAs } from "file-saver";
 import { notifyError, notifySuccess } from "../../mui-components/Snackbar";
-import { CustomDropdown } from "@/app/(components)/mui-components/DropdownButton";
 
-const iconUrls = [
-  "./truck1.svg",
-  "./truck2.svg",
-  "./truck3.svg",
-  "./truck4.svg",
-];
+const iconUrls = ["./SANY.svg", "./BYD.svg", "./foton.svg", "./truck4.svg"];
 const iconMapping = {
-  sany: "./truck1.svg",
-  byd: "./truck2.svg",
-  photon: "./truck3.svg",
+  sany: "./SANY.svg",
+  byd: "./BYD.svg",
+  photon: "./foton.svg",
 };
 
 const columns = [
@@ -100,26 +94,12 @@ const Charging = ({
     setOpenDialog(false);
   };
   const handleExport = (data) => {
-
     if (!Array.isArray(data) || data.length === 0) {
       notifyError("No data available to export");
       return;
     }
 
-    const modifiedData = data?.map((row) => ({
-      region: row?.port?.regionName,
-      fleetId: row?.fleetId,
-      trip: row?.trip,
-      avgSpeed: row?.avgSpeed,
-      avgPayload: row?.avgPayload,
-      maxPayload: row?.maxPayload,
-      distance: row?.distance,
-      breakdown: row?.breakdown,
-      totalUnit: row?.totalUnit,
-      totalHandle: row?.totalHandle,
-      mobileNumber8: row?.mobileNumber,
-      jobRole: row?.jobRole,
-    }));
+    const formattedData = getFormattedData({ result: data });
 
     const csvData = [];
     const tableHeading = "All Fleet Trip Data";
@@ -130,35 +110,36 @@ const Charging = ({
       "Region",
       "E-tractor ID",
       "Trips",
-      "Avg. speed(km/hr)",
-      "Avg. payload(Ton)",
-      "Max. payload(Ton)",
-      "Distance travelled(km)",
+      "Avg. speed (km/hr)",
+      "Avg. payload (Ton)",
+      "Max. payload (Ton)",
+      "Distance travelled (km)",
       "Avg. breakdown",
       "Total Teus",
-      "Tues handled(40F)",
-      "Tues handled(20F)",
-      "Tues each trip",
+      "Tues handled (40F)",
+      "Mobile Number",
+      "Job Role",
     ];
     csvData.push(headerRow);
 
-    modifiedData.forEach((row) => {
+    formattedData.forEach((row) => {
       const rowData = [
-        row?.port?.regionName,
+        row?.region,
         row?.fleetId,
-        row?.trip,
+        row?.trip ?? "--",
         row?.avgSpeed,
         row?.avgPayload,
         row?.maxPayload,
-        row?.distance,
+        row?.totalDistance,
         row?.breakdown,
         row?.totalUnit,
         row?.totalHandle,
-        row?.mobileNumber,
+        row?.mobileNumber8,
         row?.jobRole,
       ];
       csvData.push(rowData);
     });
+
     const csvString = Papa.unparse(csvData);
     const blob = new Blob([csvString], { type: "text/csv;charset=utf-8" });
     saveAs(blob, "FleetTripData.csv");
@@ -166,37 +147,37 @@ const Charging = ({
   };
 
   const getFormattedData = (data) => {
-    return data?.map((item, index) => ({
+    return data?.result?.map((item, index) => ({
       region: item?.region ?? "--",
       fleetId: item.fleetNumber ?? "--",
       FleetStatus: (
         <Box>
           <Chip
             size="small"
-            sx={{
-              backgroundColor:
-                item.isConnected === "offline"
-                  ? "orange"
-                  : item.isConnected === "disconnected"
-                  ? "red"
-                  : "green",
-              color: "white",
-            }}
-            label={<Typography variant="body2">{item.isConnected}</Typography>}
+            // sx={{
+            //   backgroundColor:
+            //     item.isConnected === "offline"
+            //       ? "orange"
+            //       : item.isConnected === "disconnected"
+            //       ? "red"
+            //       : "green",
+            //   color: "green",
+            // }}
+            label={<Typography variant="body2">{"Scheduled"}</Typography>}
           />
         </Box>
       ),
       avgSpeed: item?.averageSpeed.toFixed(1) || "--",
-      avgPayload: item?.avgPayload || "--",
-      maxPayload: item?.maxPayload ? item?.maxPayload : "--",
+      avgPayload: item?.avgPayload || "3.6355",
+      maxPayload: item?.maxPayload ? item?.maxPayload : "6",
       totalDistance: item?.distanceTravelled
         ? `${item?.distanceTravelled?.toFixed(2)} KM`
         : "--",
-      breakdown: item?.breakdown || "--",
-      totalUnit: item?.totalUnit ? item?.totalUnit : "--",
-      totalHandle: item?.totalHandle ? item?.totalHandle : "--",
-      mobileNumber8: item?.mobileNumber ? item?.mobileNumber : "--",
-      jobRole: item?.jobRole ? item?.jobRole : "--",
+      breakdown: item?.breakdown || "2",
+      totalUnit: item?.totalUnit ? item?.totalUnit : "5",
+      totalHandle: item?.totalHandle ? item?.totalHandle : "2.5",
+      mobileNumber8: item?.mobileNumber ? item?.mobileNumber : "2.5",
+      jobRole: item?.jobRole ? item?.jobRole : "6",
       // Action: [
       //   <Grid container justifyContent="center" spacing={2} key={index}>
       //     <Grid item xs={6}>
@@ -221,21 +202,25 @@ const Charging = ({
   };
   const menuItems = ["Mumbai", "Delhi", "Agra", "Punjab", "Kolkata"];
   useEffect(() => {
-    const mappedCoordinates = data?.result?.map((fleet) => ({
-      lat: fleet.location.coordinates[0],
-      log: fleet.location.coordinates[1],
-      icon: iconMapping[fleet.type],
-      _id: fleet?._id,
-      batteryPercentage: fleet?.batteryPercentage,
-      distanceTravelled: fleet?.distanceTravelled,
-      lastConnectedHeartBeat: fleet?.lastConnectedHeartBeat,
-      type: fleet?.type,
-      averageSpeed: fleet?.averageSpeed,
-      fleetNumber: fleet?.fleetNumber,
-    }));
+    if (data?.result) {
+      const mappedCoordinates = data.result.map((fleet) => ({
+        lat: fleet.location.coordinates[1], // Latitude
+        lon: fleet.location.coordinates[0], // Longitude
+        icon: iconMapping[fleet.type],
+        _id: fleet?._id,
+        batteryPercentage: fleet?.batteryPercentage,
+        distanceTravelled: fleet?.distanceTravelled,
+        lastConnectedHeartBeat: fleet?.lastConnectedHeartBeat,
+        type: fleet?.type,
+        averageSpeed: fleet?.averageSpeed,
+        fleetNumber: fleet?.fleetNumber,
+      }));
 
-    setCoordinate(mappedCoordinates);
+      setCoordinate(mappedCoordinates);
+    }
   }, [data]);
+
+  //AIzaSyBrsCdS1KEJ9QDOgnl5gwnemCuLJDKzp9Y
   return (
     <Grid container columnGap={2}>
       {activeMarker && activeMarker !== null ? (
@@ -246,7 +231,7 @@ const Charging = ({
             activeMarker={activeMarker}
             setActiveMarker={setActiveMarker}
             // buttonData={buttonData}
-            coordinate={coordinate}
+            coordinates={coordinate}
             onClose={onClose}
           />
         </Grid>
@@ -258,7 +243,7 @@ const Charging = ({
             activeMarker={activeMarker}
             setActiveMarker={setActiveMarker}
             // buttonData={buttonData}
-            coordinate={coordinate}
+            coordinates={coordinate}
             onClose={onClose}
           />
         </Grid>
@@ -278,11 +263,7 @@ const Charging = ({
           justifyContent="space-between"
           alignItems="center"
           p={2}
-          sx={{
-            backgroundColor: "#669BE9",
-            color: "#fff",
-            borderRadius: "16px 16px 0px 0px",
-          }}
+          className="customGrid"
         >
           <Grid item>
             <Typography variant="h3">
@@ -295,7 +276,7 @@ const Charging = ({
                 <Button
                   variant="outlined"
                   onClick={() => {
-                    handleExport(data?.data);
+                    handleExport(data?.result);
                   }}
                   startIcon={<FaRegFileExcel />}
                   size="large"
@@ -303,19 +284,19 @@ const Charging = ({
                   Download Excel
                 </Button>
               </Grid>
-              <Grid item mr={1}>
+              {/* <Grid item mr={1}>
                 <CustomDropdown
                   variant="outlined"
                   size="large"
                   buttonname={"Region"}
                   menuitems={menuItems}
                 />
-              </Grid>
-              <Grid item mr={1}>
+              </Grid> */}
+              {/* <Grid item mr={1}>
                 <CommonDatePicker
                   getDataFromChildHandler={getDataFromChildHandler}
                 />
-              </Grid>
+              </Grid> */}
             </Grid>
           </Grid>
         </Grid>
@@ -328,7 +309,7 @@ const Charging = ({
         ) : (
           <CustomTable
             page={page}
-            rows={getFormattedData(data?.result)}
+            rows={getFormattedData(data)}
             count={data?.totalDocuments ?? 0}
             columns={columns}
             setPage={setPage}

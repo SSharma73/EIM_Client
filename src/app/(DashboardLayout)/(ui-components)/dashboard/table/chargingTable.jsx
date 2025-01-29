@@ -22,7 +22,7 @@ const Table = ({
     "Charging queue",
     "Unit consumed(kWh)",
   ];
-  const [open, setOpenDialog] = React.useState(false);
+
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState(searchQuery);
 
   useEffect(() => {
@@ -36,13 +36,9 @@ const Table = ({
 
   const getFormattedData = (data) => {
     return data?.map((item) => {
-      const color =
-        item?.status === "available"
-          ? "success"
-          : item?.status === "offline"
-          ? "error"
-          : "warning";
-      const label = item?.status ? item?.status : "--";
+      const color = item?.currentlyCharging === 0 ? "success" : "error";
+
+      const label = item?.currentlyCharging === 0 ? "Available" : "Occupied";
       return {
         id: item?.stationCode ?? "--",
         status: (
@@ -72,8 +68,8 @@ const Table = ({
         alignItems="center"
         p={2}
         sx={{
-          backgroundColor: "#669BE9",
-          color: "#fff",
+          backgroundColor: "#fff",
+
           borderRadius: "16px 16px 0px 0px",
         }}
       >

@@ -16,18 +16,12 @@ import {
   notifySuccess,
 } from "@/app/(components)/mui-components/Snackbar";
 
-const iconUrls = [
-  "./truck1.svg",
-  "./truck2.svg",
-  "./truck3.svg",
-  "./truck4.svg",
-];
+const iconUrls = ["./SANY.svg", "./BYD.svg", "./foton.svg", "./truck4.svg"];
 const iconMapping = {
-  sany: "./truck1.svg",
-  byd: "./truck2.svg",
-  photon: "./truck3.svg",
+  sany: "./SANY.svg",
+  byd: "./BYD.svg",
+  photon: "./foton.svg",
 };
-
 const columns = [
   "Region",
   "E-tractor ID",
@@ -75,32 +69,16 @@ const Charging = ({
   const onClose = () => {
     setActiveMarker(null);
   };
-
   const handleExport = (data) => {
     if (!Array.isArray(data) || data.length === 0) {
       notifyError("No data available to export");
       return;
     }
 
-    const modifiedData = data?.map((row) => ({
-      region: row?.region,
-      fleetId: row?.fleetNumber,
-      currentSoc: row?.batteryPercentage,
-      currentSoh: row?.batteryHealth,
-      currentUnit: row?.currentUnit,
-      status: row?.status,
-      estimatedCharging: row?.estimatedCharging,
-      chargingCycle: row?.chargingCycle,
-      swappingCycle: row?.swappingCycle,
-      totalUnits: row?.totalUnits,
-      avgCharging: row?.avgCharging,
-    }));
+    // Get formatted data
+    const formattedData = getFormattedData(data);
 
-    const csvData = [];
-    const tableHeading = "All Fleet Charging Data";
-    csvData.push([[], [], tableHeading, [], []]);
-    csvData.push([]);
-
+    // Define headers
     const headerRow = [
       "Region",
       "E-tractor ID",
@@ -108,36 +86,39 @@ const Charging = ({
       "Current SoH (%)",
       "Current units charged (kWh)",
       "Current status",
-      "Estimated charging time(hr)",
+      "Estimated charging time (hr)",
       "Charging cycle",
       "Swapping cycle",
-      "Total units charged(kWh)",
+      "Total units charged (kWh)",
       "Avg. charging Time",
     ];
-    csvData.push(headerRow);
 
-    modifiedData.forEach((row) => {
-      const rowData = [
-        row?.port?.regionName,
-        row?.fleetId,
-        row?.currentSoc,
-        row?.currentSoh,
-        row?.currentUnit,
-        row?.status,
-        row?.estimatedCharging,
-        row?.chargingCycle,
-        row?.swappingCycle,
-        row?.totalUnits,
-        row?.avgCharging,
-      ];
-      csvData.push(rowData);
-    });
+    // Convert formattedData to CSV format
+    const csvData = [
+      ["", "", "All Fleet Charging Data", "", ""], // Title row
+      [],
+      headerRow,
+      ...formattedData.map((row) => [
+        row.region,
+        row.fleetId,
+        row.currentSoc,
+        row.currentSoh,
+        row.currentUnit,
+        row.status,
+        row.estimatedCharging,
+        row.chargingCycle,
+        row.swappingCycle,
+        row.totalUnits,
+        row.avgCharging,
+      ]),
+    ];
+
+    // Convert to CSV string and trigger download
     const csvString = Papa.unparse(csvData);
     const blob = new Blob([csvString], { type: "text/csv;charset=utf-8" });
     saveAs(blob, "FleetChargingData.csv");
     notifySuccess("Download Excel Successfully");
   };
-
   const getFormattedData = (data) => {
     return data?.map((item, index) => ({
       region: item?.region ?? "--",
@@ -195,6 +176,8 @@ const Charging = ({
       averageSpeed: fleet?.averageSpeed,
       type: fleet?.type,
       fleetNumber: fleet?.fleetNumber,
+      effectiveRange: fleet?.effectiveRange,
+      nearestCharger: fleet?.nearestCharger,
     }));
 
     setCoordinate(mappedCoordinates);
@@ -241,11 +224,7 @@ const Charging = ({
           alignItems="center"
           p={2}
           mt={2}
-          sx={{
-            backgroundColor: "#669BE9",
-            color: "#fff",
-            borderRadius: "16px 16px 0px 0px",
-          }}
+          className="customGrid"
         >
           <Grid item>
             <Typography variant="h3">FLEET ({data?.totalDocuments})</Typography>

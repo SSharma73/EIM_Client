@@ -65,7 +65,6 @@ function MyCards() {
               <Card
                 sx={{
                   height: "100%",
-                  backgroundColor: "#6099EB",
                   borderRadius: "12px",
                   mb: 2,
                   p: 2,
@@ -78,15 +77,6 @@ function MyCards() {
                     alignItems="center"
                   >
                     <Typography variant="h3">{subscription.name}</Typography>
-                    {/* Optional chip if needed */}
-                    {/* <Chip
-                      sx={{
-                        minWidth: 100,
-                        color: "#C0FE72",
-                      }}
-                      color="primary"
-                      label={"Some Chip"}
-                    /> */}
                   </Grid>
                   <Grid container spacing={1} mt={2}>
                     <Grid item xs={12}>
@@ -103,7 +93,7 @@ function MyCards() {
                                     sx={{
                                       width: 30,
                                       height: 30,
-                                      backgroundColor: "#171963",
+                                      backgroundColor: "#38E0CF",
                                     }}
                                   >
                                     <Image src={Tick} alt="tick" />

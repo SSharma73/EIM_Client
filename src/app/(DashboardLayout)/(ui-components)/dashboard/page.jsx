@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { Grid, Typography, Avatar } from "@mui/material";
+import { Grid, Typography, Avatar, useTheme } from "@mui/material";
 import { styled } from "@mui/system";
 import Image from "next/image";
 import AutoBox from "@/app/(components)/mui-components/Autocomplete/autocomplete";
@@ -13,30 +13,27 @@ import Balance2 from "./balance2";
 import Team from "./team/page";
 import Table from "./table";
 
-const iconUrls = [
-  "./truck1.svg",
-  "./truck2.svg",
-  "./truck3.svg",
-  "./truck4.svg",
-];
+const iconUrls = ["./SANY.svg", "./BYD.svg", "./foton.svg", "./truck4.svg"];
 const iconMapping = {
-  sany: "./truck1.svg",
-  byd: "./truck2.svg",
-  photon: "./truck3.svg",
+  sany: "./SANY.svg",
+  byd: "./BYD.svg",
+  photon: "./foton.svg",
 };
 const coordinate = [];
 
 const MainGrid = styled(Grid)(({ theme }) => ({
-  backgroundColor: "#6099EB",
-  color: "#fff",
+  backgroundColor: "#fff",
+  color: "#000",
   borderRadius: "16px",
   padding: theme.spacing(1),
+  height: "100px",
 }));
 
 function ShorterGrid() {
   const [activeMarker, setActiveMarker] = useState(null);
   const [icons, setIcons] = useState(null);
   const [truckDetails, setTruckDetails] = useState(null);
+  const theme = useTheme();
 
   const [state, setState] = useState({
     data: null,
@@ -50,7 +47,6 @@ function ShorterGrid() {
     coordinate: null,
   });
 
-  const [fetchFleet, setFetchFleet] = useState(null);
   const [mileage, setMileage] = useState(0);
   const [consumption, setConsumption] = useState(0);
 
@@ -118,8 +114,14 @@ function ShorterGrid() {
       const [regionsResponse, customersResponse, fleetsResponse] =
         await Promise.all([
           axiosInstance.get("dashboard/regions"),
-          axiosInstance.get("dashboard/customers"),
-          axiosInstance.get("fleet/fetchFleets"),
+          axiosInstance.get(
+            `dashboard/customers?region=${state?.region ?? ""}`
+          ),
+          axiosInstance.get(
+            `fleet/fetchFleets?region=${state?.region ?? ""}&customerId=${
+              state?.brandId ?? ""
+            }`
+          ),
         ]);
 
       const regions = regionsResponse?.data?.regions;
@@ -129,13 +131,13 @@ function ShorterGrid() {
       const fetchedData = [
         {
           label: "Region",
-          value: regions?.length,
+          value: state?.region ? "" : regions?.length,
           icon: "/Img/map.svg",
           data1: regions?.map((region) => ({ title: region })),
         },
         {
           label: "Customer",
-          value: customers?.length,
+          value: state?.brandName ? "" : customers?.length,
           icon: "/Img/id-card-solid.svg",
           data1: customers?.map((customer) => ({
             title: customer?.brandName,
@@ -144,7 +146,7 @@ function ShorterGrid() {
         },
         {
           label: "Tractor",
-          value: fleets?.length,
+          value: state?.fleetNumber ? "" : fleets?.length,
           icon: "/Img/truck-moving-solid.svg",
           data1: fleets?.map((fleet) => {
             const coordinates = fleet?.location?.coordinates || [];
@@ -165,6 +167,8 @@ function ShorterGrid() {
                       averageSpeed: fleet?.averageSpeed,
                       type: fleet?.type,
                       fleetNumber: fleet?.fleetNumber,
+                      effectiveRange: fleet?.effectiveRange,
+                      nearestCharger: fleet?.nearestCharger,
                     },
                   ]
                 : [],
@@ -247,20 +251,6 @@ function ShorterGrid() {
   };
 
   useEffect(() => {
-    const fetchFleets = async () => {
-      try {
-        const fleetResponse = await axiosInstance.get("dashboard/fleet-data");
-        setFetchFleet(fleetResponse?.data?.data);
-      } catch (error) {
-        console.error("Error fetching fleet data:", error);
-      } finally {
-        // console.log("Fleet fetch attempt completed");
-      }
-    };
-    fetchFleets();
-  }, [state?.fleetNumber, state?.region]);
-
-  useEffect(() => {
     fetchData();
     if (state?.brandName || state?.fleetNumber || state?.region) {
       fetchMileageData();
@@ -329,7 +319,7 @@ function ShorterGrid() {
                           sx={{
                             width: 40,
                             height: 40,
-                            backgroundColor: "rgba(193, 255, 114, 0.13)",
+                            backgroundColor: theme.palette.primary.main,
                           }}
                         >
                           {item.icon && (

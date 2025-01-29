@@ -68,12 +68,16 @@ const Table = ({
   };
   const getFormattedData = (data) => {
     return data?.map((item, index) => ({
-      date: item.date?item.date:"--",
-      temperature: `${item.temperature.toFixed(1)}°C`?`${item.temperature.toFixed(1)}°C`:"--",
-      voltage: `${item.voltage.toFixed(1)}V`?`${item.voltage.toFixed(1)}V`:"--",
-      soc: `${item.soc}%`?`${item.soc}%`:'--',
-      soh: `${item.soh}%`? `${item.soh}%`:'--',
-      error: item.error?item.error:'--',
+      date: item.date ? item.date : "--",
+      temperature: `${item.temperature.toFixed(1)}°C`
+        ? `${item.temperature.toFixed(1)}°C`
+        : "--",
+      voltage: `${item.voltage.toFixed(1)}V`
+        ? `${item.voltage.toFixed(1)}V`
+        : "--",
+      soc: `${item.soc}%` ? `${item.soc}%` : "--",
+      soh: `${item.soh}%` ? `${item.soh}%` : "--",
+      error: item.error ? item.error : "--",
     }));
   };
 
@@ -84,11 +88,7 @@ const Table = ({
         justifyContent="space-between"
         alignItems="center"
         p={2}
-        sx={{
-          backgroundColor: "#669BE9",
-          color: "#fff",
-          borderRadius: "16px 16px 0px 0px",
-        }}
+        className="customGrid"
       >
         <Grid item>
           <Typography variant="h3">Battery ({params.id})</Typography>

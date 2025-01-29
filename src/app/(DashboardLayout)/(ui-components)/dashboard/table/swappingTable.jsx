@@ -71,19 +71,15 @@ const Table = ({
     } else if (batterySoc > 50 && batterySoc < 90) {
       return { color: "#FFC300", percent: `${batterySoc}%` };
     } else {
-      return { color: "#C0FE72", percent: "100%" };
+      return { color: "#347D00", percent: "100%" };
     }
   };
 
   const getFormattedData = (data) => {
     return data?.map((item, index) => {
-      const color =
-        item?.status === "available"
-          ? "success"
-          : item?.status === "offline"
-          ? "error"
-          : "warning";
-      const label = item?.status ? item?.status : "--";
+      const color = item?.currentlySwapping === 0 ? "success" : "error";
+
+      const label = item?.currentlySwapping === 0 ? "Available" : "Occupied";
       const batteryStates = [
         { index: 1 },
         { index: 2 },
@@ -141,8 +137,7 @@ const Table = ({
         alignItems="center"
         p={2}
         sx={{
-          backgroundColor: "#669BE9",
-          color: "#fff",
+          backgroundColor: "#fff",
           borderRadius: "16px 16px 0px 0px",
         }}
       >

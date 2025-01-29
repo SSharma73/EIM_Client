@@ -7,7 +7,6 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Map from "@/app/(components)/map/map";
 import { CustomGrid } from "../../../mui-components/CustomGrid";
-import { PiCarBatteryBold } from "react-icons/pi";
 import CustomTextField from "@/app/(components)/mui-components/Text-Field's/index";
 
 const coordinate = [

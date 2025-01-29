@@ -11,7 +11,7 @@ const data1 = {
       label: "Max power (kW)",
       data: [0],
       backgroundColor: "rgba(247, 187, 187, .2)", // Fill color for the area chart
-      borderColor: "#C0FE72",
+      borderColor: "#38E0CF",
       borderWidth: 2,
       pointHoverRadius: 10,
     },
@@ -19,7 +19,7 @@ const data1 = {
       label: "Optimization limit (kW)",
       data: [0],
       backgroundColor: "rgba(247, 187, 187, .2)", // Fill color for the area chart
-      borderColor: "#ffff",
+      borderColor: "#0000",
       borderWidth: 2,
       pointHoverRadius: 10,
     },
@@ -47,14 +47,14 @@ const options = {
     y: {
       beginAtZero: true,
       ticks: {
-        color: "white", // Color of y-axis labels
+        color: "#000", // Color of y-axis labels
       },
     },
     x: {
       beginAtZero: true,
       display: true,
       ticks: {
-        color: "white", // Color of x-axis labels
+        color: "#000", // Color of x-axis labels
       },
     },
   },
@@ -67,7 +67,7 @@ const options = {
       labels: {
         pointStyle: "circle",
         usePointStyle: true,
-        color: "#fff",
+        color: "#000",
         textAlign: "left",
       },
     },

@@ -122,7 +122,7 @@ const Notification = () => {
           max={999}
           badgeContent={dummyData?.count}
         >
-          <NotificationsNoneIcon sx={{ fontSize: "22px", color: "#C0FE72" }} />
+          <NotificationsNoneIcon sx={{ fontSize: "22px", color: "#000" }} />
         </Badge>
       </IconButton>
       <Menu
@@ -199,7 +199,8 @@ const Notification = () => {
               <Typography
                 align="center"
                 className="fs16px"
-                sx={{ color: "#C0FE72", width: "90%" }}
+                sx={{ width: "90%" }}
+                color={"secondary"}
               >
                 You’ll see useful information here soon. Stay tuned!
               </Typography>

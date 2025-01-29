@@ -12,7 +12,7 @@ const data = {
       label: "Units consumption",
       data: Array.from({ length: 0 }, () => Math.floor(Math.random() * 0)), // Adjusted length to match labels
       backgroundColor: "rgba(247, 187, 187, .2)", // Fill color
-      borderColor: "#C0FE72",
+      borderColor: "#38E0CF",
       borderWidth: 2,
     },
     {

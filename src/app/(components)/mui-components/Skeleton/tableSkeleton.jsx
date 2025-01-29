@@ -10,13 +10,7 @@ import {
 } from "@mui/material";
 import Skeleton from "@mui/material/Skeleton";
 
-
-
-const TableSkeleton = ({
-  rowNumber,
-  tableCell,
-  actions,
-}) => {
+const TableSkeleton = ({ rowNumber, tableCell, actions }) => {
   return (
     <Stack width={"100%"}>
       <TableContainer

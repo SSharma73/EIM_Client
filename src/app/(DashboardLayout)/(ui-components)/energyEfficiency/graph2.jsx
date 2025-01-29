@@ -11,7 +11,7 @@ const data = {
       label: "Active session",
       data: Array.from({ length: 0 }, () => Math.floor(Math.random() * 20)), // 50 random data points
       backgroundColor: "rgba(247, 187, 187, .2)", // Fill color for the area chart
-      borderColor: "#C0FE72",
+      borderColor: "#38E0CF",
 
       borderWidth: 2,
     },
@@ -30,14 +30,14 @@ const options = {
     y: {
       beginAtZero: true,
       ticks: {
-        color: "white", // Color of y-axis labels
+        color: "#000", // Color of y-axis labels
       },
     },
     x: {
       beginAtZero: true,
       display: true,
       ticks: {
-        color: "white", // Color of x-axis labels
+        color: "#000", // Color of x-axis labels
       },
     },
   },
@@ -50,7 +50,7 @@ const options = {
         pointStyle: "circle",
         usePointStyle: true,
         textAlign: "left",
-        color: "#fff",
+        color: "#000",
       },
     },
     tooltip: {
@@ -61,15 +61,6 @@ const options = {
     mode: "index",
     intersect: false,
   },
-  // animations: {
-  //     tension: {
-  //         duration: 1000,
-  //         easing: 'linear',
-  //         from: 0.4,
-  //         to: 0.2,
-  //         loop: true
-  //     }
-  // }
 };
 
 const Graph = () => {
