@@ -267,93 +267,95 @@ export default function AddUser({ open, setOpen, type }) {
                         />
                       </Grid>
                     ))
-                  : logLists?.map((item, index) => (
-                      <>
-                        <Grid
-                          key={index}
-                          item
-                          sm={3.9}
-                          sx={{
-                            backgroundColor: "##F7F8F9",
-                            border: "1px solid #ddd",
-                            padding: "10px",
-                            borderRadius: "8px",
-                            marginBottom: "15px",
-                          }}
-                          className="mt-20 assign-radio-grid"
-                        >
-                          <MyFormControlLabel
-                            className="assign-formlable"
-                            value={select}
-                            label={
-                              <Grid display={"flex"}>
-                                <Tooltip describeChild title={item} arrow>
-                                  <Typography
-                                    variant="subtitle1"
+                  : logLists
+                      ?.filter((item) => !(item === "reqPlcSignalEvt"))
+                      .map((item, index) => (
+                        <>
+                          <Grid
+                            key={index}
+                            item
+                            sm={3.9}
+                            sx={{
+                              backgroundColor: "##F7F8F9",
+                              border: "1px solid #ddd",
+                              padding: "10px",
+                              borderRadius: "8px",
+                              marginBottom: "15px",
+                            }}
+                            className="mt-20 assign-radio-grid"
+                          >
+                            <MyFormControlLabel
+                              className="assign-formlable"
+                              value={select}
+                              label={
+                                <Grid display={"flex"}>
+                                  <Tooltip describeChild title={item} arrow>
+                                    <Typography
+                                      variant="subtitle1"
+                                      sx={{
+                                        width: "180px",
+                                        overflow: "hidden",
+                                        wordWrap: "break-word",
+                                        whiteSpace: "normal",
+                                      }}
+                                    >
+                                      {item}
+                                    </Typography>
+                                  </Tooltip>
+                                </Grid>
+                              }
+                              control={
+                                <>
+                                  <Box
                                     sx={{
-                                      width: "180px",
-                                      overflow: "hidden",
-                                      wordWrap: "break-word",
-                                      whiteSpace: "normal",
+                                      position: "relative",
+                                      display: "inline-flex",
+                                      mt: 1,
+                                      mr: 2,
+                                      pl: 2,
                                     }}
                                   >
-                                    {item}
-                                  </Typography>
-                                </Tooltip>
-                              </Grid>
-                            }
-                            control={
-                              <>
-                                <Box
-                                  sx={{
-                                    position: "relative",
-                                    display: "inline-flex",
-                                    mt: 1,
-                                    mr: 2,
-                                    pl: 2,
-                                  }}
-                                >
-                                  <IconButton
-                                    onClick={() => {
-                                      if (!startDate || !endDate) {
-                                        notifyError(
-                                          "Please select start and end date first."
-                                        );
-                                      } else {
-                                        handleDownload(item, index);
+                                    <IconButton
+                                      onClick={() => {
+                                        if (!startDate || !endDate) {
+                                          notifyError(
+                                            "Please select start and end date first."
+                                          );
+                                        } else {
+                                          handleDownload(item, index);
+                                        }
+                                      }}
+                                      disabled={
+                                        progressState[index] > 0 &&
+                                        progressState[index] < 100
                                       }
-                                    }}
-                                    disabled={
-                                      progressState[index] > 0 &&
-                                      progressState[index] < 100
-                                    }
-                                  >
-                                    <DownloadIcon color="primary" />
-                                  </IconButton>
-                                  {progressState[index] > 0 &&
-                                    progressState[index] < 100 && (
-                                      <CircularProgress
-                                        variant="determinate"
-                                        value={progressState[index]}
-                                        size={38}
-                                        thickness={2}
-                                        sx={{
-                                          position: "absolute",
-                                          top: 2,
-                                          left: 18,
-                                          zIndex: 1,
-                                          color: "primary.main",
-                                        }}
-                                      />
-                                    )}
-                                </Box>
-                              </>
-                            }
-                          />
-                        </Grid>
-                        <Grid item sm={0.1}></Grid>
-                      </>
-                    ))}
+                                    >
+                                      <DownloadIcon color="primary" />
+                                    </IconButton>
+                                    {progressState[index] > 0 &&
+                                      progressState[index] < 100 && (
+                                        <CircularProgress
+                                          variant="determinate"
+                                          value={progressState[index]}
+                                          size={38}
+                                          thickness={2}
+                                          sx={{
+                                            position: "absolute",
+                                            top: 2,
+                                            left: 18,
+                                            zIndex: 1,
+                                            color: "primary.main",
+                                          }}
+                                        />
+                                      )}
+                                  </Box>
+                                </>
+                              }
+                            />
+                          </Grid>
+                          <Grid item sm={0.1}></Grid>
+                        </>
+                      ))}
               </Grid>
             </Grid>
           </Grid>
