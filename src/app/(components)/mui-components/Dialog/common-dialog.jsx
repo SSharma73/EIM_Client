@@ -5,9 +5,6 @@ import Typography from "@mui/material/Typography";
 // **  component
 import CancelAlertDialog from "./confirmation-dialog/index";
 
-
-
-
 const CommonDialog = ({
   message,
   title,

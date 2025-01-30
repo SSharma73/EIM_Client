@@ -10,7 +10,6 @@ import {
 import Dialog, { DialogProps } from "@mui/material/Dialog";
 import { IoIosCloseCircleOutline } from "@/app/(components)/mui-components/icons";
 
-
 const CommonDialog = ({
   title = "Dialog Title",
   message = "Dialog Message",
@@ -36,10 +35,10 @@ const CommonDialog = ({
       </IconButton>
       <DialogTitle
         sx={{
-          backgroundColor: "#0E0147",
+          backgroundColor: (theme) => theme.palette.primary.main,
         }}
       >
-        <Typography variant="h6" color={"white"} >
+        <Typography variant="h6" color={"white"}>
           {title}
         </Typography>
       </DialogTitle>
