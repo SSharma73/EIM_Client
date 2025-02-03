@@ -32,7 +32,13 @@ const Page = () => {
     const customerId = localStorage.getItem("customerId");
     try {
       const url = `notification/notifications/?customerId=${customerId}${
-        status === "All" ? "" : `&status=${status.toLowerCase()}`
+        status === "All"
+          ? ""
+          : `&status=${
+              status.toLowerCase() === "fleet status"
+                ? "other"
+                : status.toLowerCase()
+            }`
       }`;
       const res = await axiosInstance.get(url);
       if (res.status === 200 || res.status === 201) {
