@@ -1,3 +1,4 @@
+"use client";
 import React from "react";
 import noData from "../../../../../public/Img/Nodata.svg";
 import Image from "next/image";

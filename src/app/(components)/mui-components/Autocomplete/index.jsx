@@ -3,7 +3,6 @@ import React from "react";
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
 import { Avatar } from "@mui/material";
-import { CiSearch } from "react-icons/ci";
 import Image from "next/image";
 
 function sleep(duration) {

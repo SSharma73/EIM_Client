@@ -34,6 +34,10 @@ const Read = ({ data, getData, tabsValue }) => {
             backgroundColor: "#fff",
             padding: 2,
             borderRadius: "16px",
+            height: "700px",
+            overflowY: "auto",
+            justifyContent: "center",
+            alignItems: "center",
           }}
         >
           <Box>
@@ -52,11 +56,20 @@ const Read = ({ data, getData, tabsValue }) => {
                       {notification?.requestType[0]}
                     </Avatar>
                     <Box flexGrow={1}>
-                      <Typography variant="body1">
-                        {notification?.fleetNumber} is requesting for{" "}
-                        {notification?.requestType}, Current battery:{" "}
-                        {notification?.batteryPercentage?.toFixed(2)}%
-                      </Typography>
+                      {notification?.requestType === "Disconnected" ? (
+                        <Typography variant="body1">
+                          {notification?.fleetNumber} has been{" "}
+                          {notification?.requestType} due to a{" "}
+                          {notification?.reason}, Current battery:{" "}
+                          {notification?.batteryPercentage?.toFixed(2)}%
+                        </Typography>
+                      ) : (
+                        <Typography variant="body1">
+                          {notification?.fleetNumber} is requesting for{" "}
+                          {notification?.requestType}, Current battery:{" "}
+                          {notification?.batteryPercentage?.toFixed(2)}%
+                        </Typography>
+                      )}
                       {notification.status === "pending" && (
                         <Box mt={1}>
                           <Button
@@ -91,7 +104,7 @@ const Read = ({ data, getData, tabsValue }) => {
                 container
                 justifyContent="center"
                 alignItems="center"
-                sx={{ width: "100%", height: "40vh" }}
+                sx={{ width: "100%", height: "600px" }}
                 direction="column"
               >
                 <Grid container justifyContent="center">

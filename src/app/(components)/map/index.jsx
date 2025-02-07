@@ -43,7 +43,7 @@ const Page = ({
             const { lat, lng } = response.data.results[0].geometry.location;
             setCenter1({ lat, lng });
           } else {
-            console.error("No results found for the specified location.");
+            // console.error("No results found for the specified location.");
           }
         } catch (error) {
           console.error("Error fetching geocoded coordinates:", error);

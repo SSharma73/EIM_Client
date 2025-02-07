@@ -1,20 +1,7 @@
 "use client";
-import {
-  Grid,
-  IconButton,
-  Badge,
-  Typography,
-  ButtonGroup,
-  Button,
-} from "@mui/material";
+import { Grid, Badge, ButtonGroup, Button } from "@mui/material";
 import React, { useState, useEffect } from "react";
-import {
-  GoogleMap,
-  useJsApiLoader,
-  Marker,
-  InfoWindow,
-  InfoBox,
-} from "@react-google-maps/api";
+import { GoogleMap, useJsApiLoader, Marker } from "@react-google-maps/api";
 import axios from "axios";
 import styled from "@emotion/styled";
 import Box from "@mui/material/Box";
@@ -59,7 +46,7 @@ const Page = ({
             const { lat, lng } = response.data.results[0].geometry.location;
             setCenter1({ lat, lng });
           } else {
-            console.error("No results found for the specified location.");
+            // console.error("No results found for the specified location.");
           }
         } catch (error) {
           console.error("Error fetching geocoded coordinates:", error);

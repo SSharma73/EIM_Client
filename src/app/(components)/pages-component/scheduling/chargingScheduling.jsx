@@ -103,7 +103,7 @@ const VehicleScheduling = () => {
               <Card
                 sx={{
                   maxWidth: "auto",
-                  backgroundColor: "#6099EB",
+
                   paddingTop: 3,
                   borderRadius: "10px",
                   position: "relative",
@@ -131,7 +131,9 @@ const VehicleScheduling = () => {
                 <CardContent
                   sx={{
                     backgroundColor:
-                      item.stationType === "delta" ? "#0179BD" : "#009660",
+                      item.stationType === "delta"
+                        ? " rgba(0, 140, 219, 0.75)"
+                        : "rgba(0, 150, 96, 0.75)",
                   }}
                 >
                   {(item.title === "Swapping" ||
@@ -240,7 +242,9 @@ const VehicleScheduling = () => {
                 <CardActions
                   sx={{
                     backgroundColor:
-                      item.stationType === "delta" ? "#008CDB" : "#02BB78",
+                      item.stationType === "delta"
+                        ? " rgba(0, 140, 219, 0.9)"
+                        : "rgba(0, 150, 96, 0.90)",
                   }}
                 >
                   <Typography variant="body2">

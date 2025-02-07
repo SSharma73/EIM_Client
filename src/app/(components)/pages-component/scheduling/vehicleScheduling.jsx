@@ -2,7 +2,7 @@
 import { Grid, Typography } from "@mui/material";
 import React, { useState, useEffect } from "react";
 import Map from "@/app/(components)/map";
-import { Card, Divider, Avatar, Tooltip } from "@mui/material";
+import { Card, Divider, Avatar, Tooltip, Button } from "@mui/material";
 import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
 import { CustomGrid } from "../../mui-components/CustomGrid";
@@ -12,6 +12,7 @@ import Image from "next/image";
 import { PiCarBattery } from "react-icons/pi";
 import axiosInstance from "@/app/api/axiosInstance";
 import moment from "moment";
+import { useRouter } from "next/navigation";
 
 const iconUrls = ["./SANY.svg", "./BYD.svg", "./foton.svg", "./truck4.svg"];
 const iconMapping = {
@@ -33,6 +34,7 @@ const VehicleScheduling = () => {
   const [schedules, setSchedules] = useState([]);
   const [locations, setLocations] = useState([]);
   const [search, setSearch] = useState("");
+  const router = useRouter();
 
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState(search);
   useEffect(() => {
@@ -105,7 +107,13 @@ const VehicleScheduling = () => {
             E-Tractor Scheduling Overview{" "}
           </Typography>
         </Grid>
-        <Grid item md={4} xs={12} sx={{ mt: 1 }}>
+        <Grid
+          item
+          md={4}
+          xs={12}
+          sx={{ mt: 1, justifyContent: "center", alignItems: "center" }}
+          display={"flex"}
+        >
           <CustomTextField
             type={"search"}
             placeholder={"Search"}
@@ -113,6 +121,16 @@ const VehicleScheduling = () => {
             value={debouncedSearchQuery}
             onChange={handleSearchChange}
           />
+          <Grid item ml={2}>
+            <Tooltip title="scheduling history">
+              <Button
+                variant={"contained"}
+                onClick={() => router.push("/scheduling/history")}
+              >
+                History
+              </Button>
+            </Tooltip>
+          </Grid>
         </Grid>
       </CustomGrid>
       <Grid container spacing={2}>
@@ -153,7 +171,9 @@ const VehicleScheduling = () => {
                 <CardContent
                   sx={{
                     backgroundColor:
-                      item.stationType === "delta" ? "#0179BD" : "#009660",
+                      item.stationType === "delta"
+                        ? " rgba(0, 140, 219, 0.75)"
+                        : "rgba(0, 150, 96, 0.75)",
                   }}
                 >
                   {(item.title === "Swapping" ||
@@ -261,7 +281,9 @@ const VehicleScheduling = () => {
                 <CardActions
                   sx={{
                     backgroundColor:
-                      item.stationType === "delta" ? "#008CDB" : "#02BB78",
+                      item.stationType === "delta"
+                        ? " rgba(0, 140, 219, 0.9)"
+                        : "rgba(0, 150, 96, 0.90)",
                   }}
                 >
                   <Typography variant="body2">

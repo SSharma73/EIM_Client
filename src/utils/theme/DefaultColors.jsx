@@ -202,9 +202,13 @@ const baselightTheme = createTheme({
           backgroundColor: theme.palette.primary.main,
           marginBottom: "12px",
           padding: "12px",
+          position: "sticky",
+          top: 0,
+          zIndex: 1,
         },
       },
     },
+  
     MuiAutocomplete: {
       styleOverrides: {
         popper: {

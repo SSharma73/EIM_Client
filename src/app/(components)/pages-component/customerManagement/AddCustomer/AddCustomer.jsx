@@ -126,7 +126,7 @@ export default function AddUser({ id, open, setOpen, handleTableData }) {
         onConfirm={handleConfirm}
       />
       <Dialog open={open} maxWidth={"sm"} onClose={handleClose} fullWidth>
-        <DialogTitle>
+        <DialogTitle sx={{}}>
           <Grid
             container
             alignItems={"center"}
@@ -150,7 +150,15 @@ export default function AddUser({ id, open, setOpen, handleTableData }) {
                 handleTableData={handleTableData}
               />
             </DialogContent>
-            <DialogActions sx={{ mr: 2 }}>
+            <DialogActions
+              sx={{
+                mr: 2,
+                position: "sticky",
+                bottom: 0,
+                zIndex: 1,
+                backgroundColor: "#fff",
+              }}
+            >
               <Button
                 variant="outlined"
                 size="large"

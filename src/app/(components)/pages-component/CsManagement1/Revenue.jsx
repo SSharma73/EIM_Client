@@ -7,7 +7,6 @@ import CommonDatePicker from "@/app/(components)/mui-components/Text-Field's/Dat
 import Papa from "papaparse";
 import { saveAs } from "file-saver";
 import { FaRegFileExcel } from "react-icons/fa";
-import { RevenueManagementData } from "../../table/rows";
 import Fusion from "./fusion";
 import { notifyError, notifySuccess } from "../../mui-components/Snackbar";
 
@@ -55,7 +54,7 @@ const Charging = ({ value }) => {
     setFusionValue(item);
   };
   const handleExport = (data) => {
-    console.log("Exporting data", data);
+   
 
     if (!Array.isArray(data) || data.length === 0) {
       notifyError("No data available to export");

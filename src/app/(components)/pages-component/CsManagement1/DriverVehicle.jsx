@@ -1,17 +1,8 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import {
-  Grid,
-  Typography,
-  Button,
-  Chip,
-  Tooltip,
-  IconButton,
-} from "@mui/material";
+import { Grid, Typography, Button, Chip } from "@mui/material";
 import CustomTable from "@/app/(components)/mui-components/Table/customTable/index";
 import TableSkeleton from "@/app/(components)/mui-components/Skeleton/tableSkeleton";
-import Link from "next/link";
-import { IoEyeOutline } from "react-icons/io5";
 import Papa from "papaparse";
 import { saveAs } from "file-saver";
 import { FaRegFileExcel } from "react-icons/fa";
@@ -118,6 +109,7 @@ const Charging = ({ value, eventLabel, selectedItems, selectedCustId }) => {
       const params = new URLSearchParams({
         customerId: selectedCustId,
         region: selectedItems?.Region,
+        type: labelStatus === "Swapping" ? "sany" : "delta",
       });
       const { data } = await axiosInstance.get(
         `fleet/fetchFleets?${params.toString()}`
@@ -132,15 +124,29 @@ const Charging = ({ value, eventLabel, selectedItems, selectedCustId }) => {
 
   useEffect(() => {
     fetchFleets();
-  }, [selectedCustId, selectedItems?.Region]);
+  }, [selectedCustId, selectedItems?.Region, labelStatus]);
   const getFormattedData = (data) => {
     return data?.map((item, index) => ({
       "E-Tractor ID": item?.fleetNumber || "--",
-      "Charging Cycle": item?.chargingCycle || "--",
-      "Charging Time (hr.)": item?.chargingTime || "--",
+      "Charging Cycle":
+        labelStatus === "Swapping"
+          ? item?.swappingCycle || "--"
+          : item?.chargingCycle || "--",
+      "Charging Time (hr.)":
+        labelStatus === "Swapping"
+          ? item?.fleetSwappingTime
+            ? item?.fleetSwappingTime.toFixed(2)
+            : "" || "--"
+          : item?.chargingTime || "--",
       Status: item?.status || "--",
-      "Start SoC (%)": item?.startSoC || "--",
-      "End SoC (%)": item?.endSoC || "--",
+      "Start SoC (%)":
+        labelStatus === "Swapping"
+          ? item?.startSoc || "--"
+          : item?.startSoC || "--",
+      "End SoC (%)":
+        labelStatus === "Swapping"
+          ? item?.endSoc || "--"
+          : item?.endSoc || "--",
       "Current SoC (%)": (
         <Chip
           key={index}

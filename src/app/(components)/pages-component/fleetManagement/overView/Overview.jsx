@@ -56,7 +56,6 @@ const Overview = ({
   const [trips, setTrips] = useState(false);
   const [activeMarker, setActiveMarker] = useState(null);
   const [icons, setIcons] = useState(null);
-  const router = useRouter();
   const [openDownload, setOpenDownload] = useState(false);
   const [graphData, setGraphData] = useState([]);
   const [fleetNumber, setFleetNumber] = useState(null);
@@ -78,9 +77,9 @@ const Overview = ({
       handleFunction: () => setDistance(true),
     },
     {
-      content: "0",
+      content: "4",
       value: "Vehicle",
-      avg: "0 (Ton)",
+      avg: "15.01 (Ton)",
       titleParts: [
         { text: "Trip payload ", style: { fontSize: "16px", fontWeight: 600 } },
         { text: "(Ton)", style: { fontSize: "13px", fontWeight: 600 } },
@@ -90,9 +89,9 @@ const Overview = ({
       handleFunction: () => setPayload(true),
     },
     {
-      content: "0",
+      content: "4",
       value: "Vehicle",
-      avg: "0 (kWh)",
+      avg: "65.23 (kWh)",
       titleParts: [
         { text: "Trips ", style: { fontSize: "16px", fontWeight: 600 } },
         {
@@ -175,7 +174,7 @@ const Overview = ({
                   : "green",
               color: "white",
             }}
-            label={<Typography variant="body2">{item.isConnected}</Typography>}
+            label={<Typography variant="body2">{item?.isConnected}</Typography>}
           />
         </Box>
       ),
@@ -198,7 +197,9 @@ const Overview = ({
       currentSoc: item?.batteryPercentage
         ? `${item?.batteryPercentage?.toFixed(2)}%`
         : "--",
-      effectiveRange: item?.effectiveRange || "--",
+      effectiveRange:
+        item?.effectiveRange != null ? item.effectiveRange.toFixed(3) : "--",
+
       Action: (
         <Grid container justifyContent="center" spacing={2}>
           <Grid item xs={12}>
@@ -207,7 +208,7 @@ const Overview = ({
                 size="small"
                 onClick={() => handleOpenDownload(item.fleetNumber)}
               >
-                <IoMdDownload color="rgba(14, 1, 71, 1)" />
+                <IoMdDownload color="#38E0CF" />
               </IconButton>
             </Tooltip>
           </Grid>

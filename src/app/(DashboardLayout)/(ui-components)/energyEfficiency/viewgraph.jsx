@@ -1,14 +1,7 @@
 import * as React from "react";
 import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
-import {
-  Typography,
-  Grid,
-  TextField,
-  Divider,
-  IconButton,
-  DialogTitle,
-} from "@mui/material";
+import { Typography, Grid, IconButton, DialogTitle } from "@mui/material";
 import CloseOutlinedIcon from "@mui/icons-material/CloseOutlined";
 import Graph from "./graph";
 import Graph2 from "./graph2";

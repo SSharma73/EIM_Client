@@ -5,23 +5,12 @@ import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
-import {
-  Typography,
-  Grid,
-  TextField,
-  MenuItem,
-  Select,
-  FormControl,
-  InputLabel,
-  IconButton,
-} from "@mui/material";
+import { Typography, Grid, IconButton } from "@mui/material";
 import CloseOutlinedIcon from "@mui/icons-material/CloseOutlined";
-import { useForm, Controller } from "react-hook-form";
 import ToastComponent, {
   notifyError,
   notifySuccess,
 } from "@/app/(components)/mui-components/Snackbar/index";
-import axiosInstance from "@/app/api/axiosInstance";
 import CommonDialog from "@/app/(components)/mui-components/Dialog/index";
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -69,14 +58,13 @@ export default function AddUser({ open, setOpen, fleetNumber }) {
       if (!response.ok) {
         throw new Error("Failed to download file");
       }
-      console.log(response, "response");
 
       const blob = await response.blob();
       saveAs(blob, `FleetData-${fleetNumber}-${formattedDate}.json`);
       notifySuccess("Download successful");
     } catch (error) {
       console.error("Error downloading file:", error);
-      notifyError("Failed to download file.....");
+      notifyError("No data found on this date!");
     }
   };
 

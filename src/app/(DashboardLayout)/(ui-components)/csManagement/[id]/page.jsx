@@ -1,18 +1,17 @@
 "use client";
-import { Grid } from "@mui/material";
-import React, { useEffect, useState } from "react";
 import Table from "./table";
-import { useSearchParams } from "next/navigation";
-import ManagementGrid from "@/app/(components)/mui-components/Card";
-import axiosInstance from "@/app/api/axiosInstanceImg";
 import moment from "moment";
+import { Grid } from "@mui/material";
+import { useSearchParams } from "next/navigation";
+import React, { useEffect, useState } from "react";
+import axiosInstance from "@/app/api/axiosInstanceImg";
+import ManagementGrid from "@/app/(components)/mui-components/Card";
 
 const ChargingId = ({ params }) => {
   const searchParams = useSearchParams();
   const tabValue = searchParams.get("tab");
   const eventLabel = searchParams.get("eventLabel");
   const hubName = searchParams.get("name");
-
   const [page, setPage] = React.useState(0);
   const [loading, setLoading] = useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
@@ -22,17 +21,13 @@ const ChargingId = ({ params }) => {
   const [startDate, setStartDate] = useState(moment());
   const [endDate, setEndDate] = useState(moment());
 
-  // const getDataFromChildHandler = (date, dataArr) => {
-  //   setDate(date);
-  // };
   const labelStatus = eventLabel?.slice(0, 8);
 
   const vehicle1 = [
-    "Date",
+    "Date & Time",
     "Hub name",
     "Status",
     "Truck ID",
-    "No. of trucks",
     "Unit consumed(kWh)",
     "Avg. charging time(hr.)",
   ];
@@ -54,6 +49,7 @@ const ChargingId = ({ params }) => {
       link: `/csManagement/${params.id}?tab=${tabValue}&eventLabel=${eventLabel}`,
     },
   ];
+  console.log("even", eventLabel);
 
   const fetchChargingHistory = async () => {
     try {
@@ -81,7 +77,6 @@ const ChargingId = ({ params }) => {
     const selectedEndDate = dateRange[0].endDate;
     setStartDate(selectedStartDate);
     setEndDate(selectedEndDate);
-    // fetchChargingHistory({ selectedStartDate, selectedEndDate });
   };
   useEffect(() => {
     fetchChargingHistory();
@@ -89,12 +84,13 @@ const ChargingId = ({ params }) => {
   const getFormattedData = (data) => {
     return data?.map((item) => ({
       Date: item?.createdAt
-        ? moment(item.createdAt).format("DD/MM/YYYY")
+        ? ` ${moment(item?.updatedAt).format("lll")}`
         : "--",
       "Hub name": hubName ?? "--",
       Status: item?.status ?? "Charging",
-      "Truck ID": "--",
-      "No. of trucks": "--",
+      "Truck ID":
+        labelStatus === "availabl" ? item?.fleetId?.fleetNumber ?? "--" : "--",
+
       "Unit consumed(kWh)": item?.totalConsumption ?? "--",
       "Avg. charging time(hr.)":
         item.meterStopTime && item.meterStartTime

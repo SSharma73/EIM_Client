@@ -60,7 +60,7 @@ export default function AddUser({ open, setOpen, handleEfficiencyData }) {
           },
         }
       );
-      console.log("response", response);
+
       if (response?.status === 200 || response?.status === 201) {
         handleEfficiencyData();
         handleClose();

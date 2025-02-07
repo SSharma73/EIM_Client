@@ -31,6 +31,7 @@ const Table = ({
   const columns = [
     "Station ID",
     "SS status",
+    "Currently swapping",
     "Swapping queue",
     "Unit consumed(kWh)",
     "Battery availability status",
@@ -77,9 +78,11 @@ const Table = ({
 
   const getFormattedData = (data) => {
     return data?.map((item, index) => {
-      const color = item?.currentlySwapping === 0 ? "success" : "error";
+      const color = item?.status === "available" ? "success" : "error";
+      const color1 = item?.currentlySwapping === 0 ? "success" : "error";
 
-      const label = item?.currentlySwapping === 0 ? "Available" : "Occupied";
+      const label = item?.status;
+      const label1 = item?.currentlySwapping === 1 ? "Occupied" : "Available";
       const batteryStates = [
         { index: 1 },
         { index: 2 },
@@ -96,6 +99,19 @@ const Table = ({
               color={color}
               sx={{
                 backgroundColor: color,
+                color: "white",
+              }}
+            />
+          </Box>
+        ),
+        currentlySwapping: (
+          <Box>
+            <Chip
+              size="small"
+              label={<Typography variant="body2">{label1}</Typography>}
+              color={color1}
+              sx={{
+                backgroundColor: color1,
                 color: "white",
               }}
             />

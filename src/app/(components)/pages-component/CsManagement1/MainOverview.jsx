@@ -19,7 +19,7 @@ const Overview1 = ({ type, selectedItems, selectedCustId }) => {
   const [value, setValue] = useState(0);
   const [fetchAllDetails, setFetchAllDetails] = useState(null);
 
-  console.log("selectedItems", selectedItems, selectedCustId);
+  // console.log("selectedItems", selectedItems, selectedCustId);
   const fetchDetails = async ({
     limit = 10,
     page = 1,

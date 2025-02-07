@@ -1,5 +1,5 @@
 "use client";
-import { Grid, Button, Typography, IconButton } from "@mui/material";
+import { Grid, Button, Typography } from "@mui/material";
 import React, { useState, useEffect } from "react";
 import { dummyData } from "@/app/(components)/table/rows";
 import { Gauge, gaugeClasses } from "@mui/x-charts/Gauge";

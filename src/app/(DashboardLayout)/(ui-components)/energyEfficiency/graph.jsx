@@ -1,7 +1,7 @@
 import React from "react";
-import { Divider, Grid } from "@mui/material";
+import { Grid } from "@mui/material";
 import { Line } from "react-chartjs-2";
-import { Chart, layouts, registerables } from "chart.js";
+import { Chart, registerables } from "chart.js";
 
 Chart.register(...registerables);
 const data1 = {

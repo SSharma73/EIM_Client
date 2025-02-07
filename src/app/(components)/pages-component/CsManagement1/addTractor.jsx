@@ -165,7 +165,7 @@ export default function AddUser({ open, setOpen }) {
                         control={control}
                         rules={{ required: "Type is required!" }}
                         render={({ field }) => (
-                          <Select {...field}>
+                          <Select {...field} label="Select Type">
                             <MenuItem value="delta">Delta</MenuItem>
                             <MenuItem value="sany">Sany</MenuItem>
                           </Select>
@@ -204,7 +204,7 @@ export default function AddUser({ open, setOpen }) {
                         control={control}
                         rules={{ required: "Customer is required!" }}
                         render={({ field }) => (
-                          <Select {...field}>
+                          <Select {...field} label="Select Customer">
                             {customers?.length > 0 &&
                               customers.map((customer) => (
                                 <MenuItem
@@ -233,7 +233,7 @@ export default function AddUser({ open, setOpen }) {
                       control={control}
                       rules={{ required: "Port is required!" }}
                       render={({ field }) => (
-                        <Select {...field}>
+                        <Select {...field} label="Select Port">
                           {ports?.length > 0 &&
                             ports.map((port) => (
                               <MenuItem key={port._id} value={port._id}>

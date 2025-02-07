@@ -132,14 +132,13 @@ const BalancePage = ({ state }) => {
     ],
     datasets: [
       {
-        data: data.map((item) => item.value), // Map the values to the data array
-        backgroundColor: data.map((item) => item.color), // Map the colors to the background
+        data: data.map((item) => item.value),
+        backgroundColor: data.map((item) => item.color),
         hoverOffset: 15,
         borderColor: "transparent",
       },
     ],
   };
-  console.log("data1", data1);
 
   return (
     <Grid item md={4} xs={12}>
@@ -171,9 +170,9 @@ const BalancePage = ({ state }) => {
           container
           mt={
             data1 &&
-            data1.datasets &&
-            data1.datasets[0] &&
-            data1.datasets[0].data.every((value) => value === 0)
+            data1?.datasets &&
+            data1?.datasets[0] &&
+            data1?.datasets[0]?.data?.every((value) => value === 0)
               ? 20
               : 7
           }
@@ -184,16 +183,16 @@ const BalancePage = ({ state }) => {
             <Typography variant="h6">{allStation?.All}</Typography>
           </Grid>
           <List sx={{ width: "100%" }}>
-            {data.map((text, item) => (
+            {data?.map((text, item) => (
               <ListItem
                 key={item}
                 sx={{ padding: 0, rowGap: 2 }}
                 disableGutters
-                secondaryAction={text.value}
+                secondaryAction={text?.value}
               >
                 <ListItemText sx={{ alignItems: "center" }}>
-                  <Badge1 variant="dot" color={text.color} />
-                  {text.labels}
+                  <Badge1 variant="dot" color={text?.color} />
+                  {text?.labels}
                 </ListItemText>
               </ListItem>
             ))}

@@ -21,7 +21,7 @@ const Settings = () => {
       const { data: responseData } = await axiosInstance.get(
         `user/fetchUserById/${userId}`
       );
-      setData(responseData?.data); // Update this based on your response structure
+      setData(responseData?.data);
     } catch (error) {
       console.error("Error fetching user by ID:", error);
     }

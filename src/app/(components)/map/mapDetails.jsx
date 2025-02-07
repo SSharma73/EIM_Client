@@ -3,7 +3,6 @@ import { Grid, Typography, IconButton, Stack } from "@mui/material";
 import styled from "@emotion/styled";
 import { IoMdClose } from "react-icons/io";
 import Image from "next/image";
-import SANY from "../../../../public/SANY.png";
 
 const MainGrid = styled(Grid)(({ theme }) => ({
   backgroundColor: theme.palette.background.paper,
@@ -12,7 +11,7 @@ const MainGrid = styled(Grid)(({ theme }) => ({
 }));
 const MapDetails = ({ title, icons, onClose, truckDetails }) => {
   const [date, setDate] = useState(null);
-  console.log("truckDetails", `"${icons}"`);
+  // console.log("truckDetails", `"${icons}"`);
 
   return (
     <MainGrid container rowGap={1}>
@@ -59,7 +58,11 @@ const MapDetails = ({ title, icons, onClose, truckDetails }) => {
           <Typography>Average Speed</Typography>
         </Stack>
         <Stack rowGap={2} mt={1} p={1}>
-          <Typography>{truckDetails?.effectiveRange}</Typography>
+          <Typography>
+            {truckDetails?.effectiveRange
+              ? truckDetails?.effectiveRange?.toFixed(3)
+              : 0}
+          </Typography>
           <Typography color={"secondary"}>
             {truckDetails?.nearestCharger?.name}
           </Typography>

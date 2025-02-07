@@ -207,7 +207,6 @@ const Analysis = ({ state }) => {
   //   return acc + (data?.totalConsumption || 0);
   // }, 0);
 
-  console.log("state", state);
   const fetchGraphData = (startDate, endDate) => {
     setLoading(true);
     Promise.all([

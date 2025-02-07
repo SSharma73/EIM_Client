@@ -1,13 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import {
-  Card,
-  CardContent,
-  Typography,
-  Grid,
-  Avatar,
-  Chip,
-} from "@mui/material";
+import { Card, CardContent, Typography, Grid, Avatar } from "@mui/material";
 import Image from "next/image";
 import Tick from "../../../../../public/Img/tick.svg";
 import List from "@mui/material/List";
@@ -96,7 +89,12 @@ function MyCards() {
                                       backgroundColor: "#38E0CF",
                                     }}
                                   >
-                                    <Image src={Tick} alt="tick" />
+                                    <Image
+                                      src={Tick}
+                                      alt="tick"
+                                      height={15}
+                                      width={15}
+                                    />
                                   </Avatar>
                                 </ListItemAvatar>
                                 <ListItemText primary={feature} />

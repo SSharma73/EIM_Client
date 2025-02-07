@@ -53,7 +53,7 @@ const Overview = () => {
   const [icons, setIcons] = useState(null);
 
   const handleMapData = (index, point) => {
-    console.log("point", index, point);
+    
     setActiveMarker(index);
     setIcons(point);
   };

@@ -88,7 +88,7 @@ const Notification = () => {
     const customerId = localStorage.getItem("customerId");
     try {
       const res = await axiosInstance.get(
-        `notification/notifications/?customerId=${customerId}`
+        `notification/notifications?customerId=${customerId}&limit=10`
       );
       if (res.status === 200 || res.status === 201) {
         SetDummyData(res?.data?.pendingNotifications);
@@ -166,8 +166,7 @@ const Notification = () => {
                       }}
                     >
                       <Typography variant="body1">
-                        {item?.fleetNumber} is requesting for{" "}
-                        {item?.requestType}
+                        {item?.fleetNumber} has been {item?.requestType}
                       </Typography>
                     </Box>
                     <Typography variant="caption" sx={{ color: "text" }}>
