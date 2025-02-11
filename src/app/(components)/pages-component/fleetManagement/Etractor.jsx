@@ -228,7 +228,9 @@ const Charging = ({
         ? item?.avgConsumption.toFixed(3)
         : "--",
       mobileNumber12: item?.mobileNumber ? item?.mobileNumber : "--",
-      effectiveRange: item.effectiveRange || "--",
+      effectiveRange: item.effectiveRange
+        ? item.effectiveRange.toFixed(2)
+        : "--",
       // Action: [
       //   <Grid container justifyContent="center" spacing={2} key={index}>
       //     <Grid item xs={12}>

@@ -12,9 +12,14 @@ import {
   notifyError,
   notifySuccess,
 } from "@/app/(components)/mui-components/Snackbar";
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
+import FormControl from "@mui/material/FormControl";
+import Select from "@mui/material/Select";
 
 const Table = ({
   data,
+  typeStatus,
   name,
   page,
   columns,
@@ -25,7 +30,12 @@ const Table = ({
   getDataFromChildHandler,
   getFormattedData,
   handleTableData,
+  setChargerType,
+  chargerType,
 }) => {
+  const handleChange = (event) => {
+    setChargerType(event.target.value);
+  };
   const handleExport = (data) => {
     if (!Array.isArray(data) || data.length === 0) {
       notifyError("No data available to export");
@@ -81,6 +91,24 @@ const Table = ({
         </Grid>
         <Grid item className="customSearch">
           <Grid container>
+            {typeStatus.toLocaleLowerCase() === "sany" && (
+              <Grid item mr={1} minWidth={"140px"}>
+                <FormControl fullWidth>
+                  <InputLabel id="demo-simple-select-label">Status</InputLabel>
+                  <Select
+                    labelId="demo-simple-select-label"
+                    id="demo-simple-select"
+                    value={chargerType}
+                    label="Status"
+                    onChange={handleChange}
+                  >
+                    <MenuItem value={"Charging"}>Charging</MenuItem>
+                    <MenuItem value={"Swapping"}>Swapping</MenuItem>
+                    <MenuItem value={"BatteryCharge"}>Battery Charge</MenuItem>
+                  </Select>
+                </FormControl>
+              </Grid>
+            )}
             <Grid item mr={1}>
               <Button
                 variant="outlined"
@@ -93,6 +121,7 @@ const Table = ({
                 Download Excel
               </Button>
             </Grid>
+
             <Grid item mr={1}>
               <CommonDatePicker
                 getDataFromChildHandler={getDataFromChildHandler}

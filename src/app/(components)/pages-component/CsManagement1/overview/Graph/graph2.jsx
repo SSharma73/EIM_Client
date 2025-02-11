@@ -51,12 +51,18 @@ const options = {
   },
 };
 
-const Graph = ({ graphType, type, selectedItems, selectedCustId }) => {
+const Graph = ({
+  calculateDateRange,
+  type,
+  selectedItems,
+  selectedCustId,
+  selectedTimeFrames,
+}) => {
   const [chartData, setChartData] = useState({
     labels: [],
     datasets: [
       {
-        label: "E Tractor",
+        label: "Usage",
         data: [],
         backgroundColor: "rgba(247, 187, 187, .2)",
         borderColor: "#38E0CF",
@@ -70,15 +76,17 @@ const Graph = ({ graphType, type, selectedItems, selectedCustId }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        const { startDate, endDate } = calculateDateRange(selectedTimeFrames);
         const { data } = await axiosInstance.get("charger/usageGraph", {
           params: {
-            graphType,
+            startDate,
+            endDate,
             type,
             region: selectedItems,
             customerId: selectedCustId,
           },
         });
-        const labels = data?.data?.map((item) => item.interval) || [];
+        const labels = data?.data?.map((item) => item.createdAt) || [];
         const usageData = data?.data?.map((item) => item.usage) || [];
         // Calculate total usage
         const total = usageData.reduce((acc, curr) => acc + curr, 0);
@@ -99,7 +107,7 @@ const Graph = ({ graphType, type, selectedItems, selectedCustId }) => {
     };
 
     fetchData();
-  }, [graphType, type, selectedItems, selectedCustId]);
+  }, [selectedTimeFrames, type, selectedItems, selectedCustId]);
 
   return (
     <Grid container mt={2} mb={1}>

@@ -6,19 +6,19 @@ import { Chart, registerables } from "chart.js";
 Chart.register(...registerables);
 
 const data = {
-  labels: Array.from({ length: 20 }, (_, i) => (i + 1).toString()), // Labels from 1 to 20
+  labels: Array.from({ length: 20 }, (_, i) => (i + 1).toString()),
   datasets: [
     {
       label: "Units consumption",
-      data: Array.from({ length: 0 }, () => Math.floor(Math.random() * 0)), // Adjusted length to match labels
-      backgroundColor: "rgba(247, 187, 187, .2)", // Fill color
+      data: Array.from({ length: 0 }, () => Math.floor(Math.random() * 0)),
+      backgroundColor: "rgba(247, 187, 187, .2)",
       borderColor: "#38E0CF",
       borderWidth: 2,
     },
     {
       label: "Battery SoC",
-      data: Array.from({ length: 0 }, () => Math.floor(Math.random() * 0)), // Adjusted length to match labels
-      backgroundColor: "rgba(247, 187, 187, .2)", // Fill color
+      data: Array.from({ length: 0 }, () => Math.floor(Math.random() * 0)),
+      backgroundColor: "rgba(247, 187, 187, .2)",
       borderColor: "#1A1C67",
       borderWidth: 2,
     },

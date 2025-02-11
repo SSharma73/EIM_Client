@@ -14,8 +14,8 @@ const data = {
   ],
   datasets: [
     {
-      label: "My First Dataset",
-      data: [12, 9, 22, 25, 88],
+      label: "Trips",
+      data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
       backgroundColor: "rgba(247, 187, 187, .2)",
       borderColor: "#38E0CF",
       borderWidth: 2,

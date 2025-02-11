@@ -25,7 +25,7 @@ const Charging = ({ value, eventLabel, selectedItems, selectedCustId }) => {
     "Start SoC(%)",
     "End SoC(%)",
     "Current SoC(%)",
-    "Charged SoC(%)",
+    // "Charged SoC(%)",
     "Units consumed (kWh)",
     // "Action",
   ];
@@ -76,7 +76,7 @@ const Charging = ({ value, eventLabel, selectedItems, selectedCustId }) => {
       "Start SoC(%)",
       "End SoC(%)",
       "Current SoC(%)",
-      "Charged SoC(%)",
+      // "Charged SoC(%)",
       "Units consumed",
     ];
     csvData.push(headerRow);
@@ -91,7 +91,7 @@ const Charging = ({ value, eventLabel, selectedItems, selectedCustId }) => {
         row?.["End SoC (%)"] || "--",
         // Extract the text from the Chip component for "Current SoC (%)"
         row?.["Current SoC (%)"]?.props?.label || "--",
-        row?.["Charged SoC (%)"] || "--",
+        // row?.["Charged SoC (%)"] || "--",
         row?.["Units Consumed (kWh)"] || "--",
       ];
       csvData.push(rowData);
@@ -155,8 +155,10 @@ const Charging = ({ value, eventLabel, selectedItems, selectedCustId }) => {
           label={item?.batteryPercentage || "--"}
         />
       ),
-      "Charged SoC (%)": item?.chargedSoC || "--",
-      "Units Consumed (kWh)": item?.unitsConsumed || "--",
+      // "Charged SoC (%)": item?.chargedSoC || "--",
+      "Units Consumed (kWh)": item?.totalConsumption
+        ? item?.totalConsumption.toFixed(2)
+        : "--",
       // Action: [
       //   <Grid container justifyContent="center" spacing={2} key={index}>
       //     <Grid item xs={12}>

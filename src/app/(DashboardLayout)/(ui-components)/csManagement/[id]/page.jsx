@@ -20,14 +20,17 @@ const ChargingId = ({ params }) => {
   const [data, setData] = useState(null);
   const [startDate, setStartDate] = useState(moment());
   const [endDate, setEndDate] = useState(moment());
+  const [chargerType, setChargerType] = React.useState("Charging");
 
   const labelStatus = eventLabel?.slice(0, 8);
+
+  const typeStatus = hubName.split(" ")[0];
 
   const vehicle1 = [
     "Date & Time",
     "Hub name",
     "Status",
-    "Truck ID",
+    chargerType === "BatteryCharge" ? "Battery No." : "Truck ID",
     "Unit consumed(kWh)",
     "Avg. charging time(hr.)",
   ];
@@ -45,11 +48,10 @@ const ChargingId = ({ params }) => {
     { label: "Dashboard", link: "/" },
     { label: "CS/SS-Management", link: "/csManagement" },
     {
-      label: `${params.id}`,
+      label: `${hubName}`,
       link: `/csManagement/${params.id}?tab=${tabValue}&eventLabel=${eventLabel}`,
     },
   ];
-  console.log("even", eventLabel);
 
   const fetchChargingHistory = async () => {
     try {
@@ -62,10 +64,14 @@ const ChargingId = ({ params }) => {
             stationId: params?.id,
             startDate: startDate,
             endDate: endDate,
+            status: chargerType,
+            type: typeStatus.toLocaleLowerCase(),
           },
         }
       );
-      setData(data?.data);
+      if (status === 200 || status === 201) {
+        setData(data?.data);
+      }
     } catch (error) {
       console.error("Error fetching charging history:", error);
     } finally {
@@ -80,7 +86,7 @@ const ChargingId = ({ params }) => {
   };
   useEffect(() => {
     fetchChargingHistory();
-  }, [page, rowsPerPage, startDate, endDate]);
+  }, [page, rowsPerPage, startDate, endDate, chargerType]);
   const getFormattedData = (data) => {
     return data?.map((item) => ({
       Date: item?.createdAt
@@ -89,7 +95,11 @@ const ChargingId = ({ params }) => {
       "Hub name": hubName ?? "--",
       Status: item?.status ?? "Charging",
       "Truck ID":
-        labelStatus === "availabl" ? item?.fleetId?.fleetNumber ?? "--" : "--",
+        labelStatus === "availabl"
+          ? chargerType === "BatteryCharge"
+            ? item?.batteryId?.batteryNumber ?? "--"
+            : item?.fleetId?.fleetNumber ?? "--"
+          : "--",
 
       "Unit consumed(kWh)": item?.totalConsumption ?? "--",
       "Avg. charging time(hr.)":
@@ -108,6 +118,7 @@ const ChargingId = ({ params }) => {
       {tabValue &&
         (tabValue === "2" ? (
           <Table
+            typeStatus={typeStatus}
             name={`${hubName} (${eventLabel})`}
             columns={vehicle1}
             data={data}
@@ -122,6 +133,8 @@ const ChargingId = ({ params }) => {
             getFormattedData={getFormattedData}
             getDataFromChildHandler={getDataFromChildHandler}
             handleTableData={fetchChargingHistory}
+            chargerType={chargerType}
+            setChargerType={setChargerType}
           />
         ) : tabValue === "3" ? (
           <Table
@@ -139,6 +152,8 @@ const ChargingId = ({ params }) => {
             getFormattedData={getFormattedData}
             getDataFromChildHandler={getDataFromChildHandler}
             handleTableData={fetchChargingHistory}
+            chargerType={chargerType}
+            setChargerType={setChargerType}
           />
         ) : null)}
     </Grid>

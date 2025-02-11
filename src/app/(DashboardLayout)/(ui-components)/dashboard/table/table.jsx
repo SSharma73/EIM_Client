@@ -55,7 +55,9 @@ const Table = ({
       currentSoc: item.batteryPercentage
         ? `${item.batteryPercentage?.toFixed(2)}%`
         : "--",
-      effectiveRange: item.effectiveRange || "--",
+      effectiveRange: item.effectiveRange
+        ? item.effectiveRange.toFixed(2)
+        : "--",
     }));
   };
   return (

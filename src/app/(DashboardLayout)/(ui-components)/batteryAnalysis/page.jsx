@@ -9,6 +9,8 @@ import ManagementGrid from "@/app/(components)/mui-components/Card";
 import { CustomGrid } from "@/app/(components)/mui-components/CustomGrid";
 import AddBattery from "./addBattery";
 import ToastComponent from "@/app/(components)/mui-components/Snackbar/index";
+import axiosInstance from "@/app/api/axiosInstance";
+import axios from "axios";
 Chart.register(...registerables);
 
 const avg_battery = {
@@ -40,7 +42,7 @@ const avg_battery_charge = {
   datasets: [
     {
       label: "Average battery charge cycle",
-      data: [55, 35, 220],
+      data: [0, 0, 0],
       backgroundColor: ["#83B4F9", "#326EC3", "#C8DFFF"],
       borderColor: "transparent",
       hoverOffset: 10,
@@ -83,71 +85,130 @@ const config = {
     ...options,
   },
 };
-const data2 = [
-  { label: "Total battery packs", value: "--" },
-  { label: "Offline battery", value: "--" },
-  {
-    label: "On E-Tractor",
-    Tripvalue: "--",
-    trip: "Trip",
-    charging: "Charging",
-    chargingValue: "--",
-  },
-  {
-    label: "Swapping station",
-    Tripvalue: "--",
-    trip: "Available",
-    charging: "Charging",
-    chargingValue: "--",
-  },
-];
+
 const menuItems = ["Today", "Weekly", "Monthly", "Yearly"];
+const breadcrumbItems = [
+  { label: "Dashboard", link: "/" },
+  { label: "Battery-Analysis", link: "/batteryAnalysis" },
+];
 const Page = () => {
   const [page, setPage] = React.useState(0);
   const [loading, setLoading] = useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(25);
   const [searchQuery, setSearchQuery] = useState(null);
+  const [region, setRegion] = useState([]);
+  const [customers, setCustomers] = useState([]);
+  const [selectedCustId, setSelectedCustId] = useState(null);
   const [date, setDate] = useState(null);
   const [data, setData] = useState(null);
   const [open, setOpen] = useState(false);
+  const [cardValue, setCardValue] = useState(null);
+  const data2 = [
+    { label: "Total battery packs", value: cardValue?.totalBattery || "--" },
+    { label: "Offline battery", value: "0" },
+    {
+      label: "On E-Tractor",
+      value: cardValue?.onEtractor || "--",
+    },
+    {
+      label: "Swapping station",
+      Tripvalue: cardValue?.swappingAvailable || "--",
+      trip: "Available",
+      charging: "Charging",
+      chargingValue: cardValue?.swappingCharging || "0",
+    },
+  ];
+
   const getDataFromChildHandler = (date, dataArr) => {
     setDate(date);
   };
-  const droDownButtons = [
+
+  useEffect(() => {
+    const regions = async () => {
+      const { data } = await axiosInstance.get("dashboard/regions");
+      setRegion(data?.regions);
+    };
+    const customer = async () => {
+      const { data } = await axiosInstance.get("dashboard/customers");
+      setCustomers(data?.customers);
+    };
+    regions();
+    customer();
+  }, []);
+  const [selectedItems, setSelectedItems] = useState({
+    Region: "",
+    Customer: "",
+  });
+  useEffect(() => {
+    if (selectedItems?.Customer) {
+      const customer = customers?.find(
+        (customer) => customer?.brandName === selectedItems?.Customer
+      );
+      setSelectedCustId(customer?._id);
+    }
+  }, [selectedItems]);
+
+  const dropDownButtons = [
     {
       label: "Region",
-      menuItems: ["Mumbai", "Delhi", "Agra", "Punjab", "Kolkata"],
+      menuItems: region,
     },
     {
       label: "Customer",
-      menuItems: ["Customer 1", "Customer 2", "Customer 3"],
+      menuItems: customers?.map((customer) => customer?.brandName),
     },
   ];
-  const breadcrumbItems = [
-    { label: "Dashboard", link: "/" },
-    { label: "Battery-Analysis", link: "/batteryAnalysis" },
-  ];
+
   const handleEfficiencyData = async (value) => {
-    // try {
-    //   const res = await axiosInstance.get(
-    //     `/battery/getAll?page=${page + 1}&pageSize=${rowsPerPage}&search=${
-    //       value ?? ""
-    //     }`
-    //   );
-    //   console.log("res", res);
-    //   setData(res?.data);
-    // } catch (error) {
-    //   console.log("batteryeffiency", error);
-    // }
+    try {
+      setLoading(true);
+      const res = await axiosInstance.get(
+        `battery/fetchBattery?page=${page + 1}&pageSize=${rowsPerPage}&search=${
+          searchQuery ?? ""
+        }&region=${selectedItems?.Region}&customerId=${selectedCustId}`
+      );
+      if (res.status === 200 || res.status === 201) {
+        setLoading(false);
+        setData(res?.data?.data);
+      }
+    } catch (error) {
+      console.log("batteryeffiency", error);
+    }
   };
   useEffect(() => {
     handleEfficiencyData();
-  }, [page, rowsPerPage, date]);
+  }, [
+    page,
+    rowsPerPage,
+    date,
+    searchQuery,
+    selectedItems?.Region,
+    selectedCustId,
+  ]);
   const handleOpen = () => {
     setOpen(true);
   };
+
+  const handleDropdownSelect = (label, item) => {
+    setSelectedItems((prevState) => ({
+      ...prevState,
+      [label]: item,
+    }));
+  };
+
+  const handleCardData = async () => {
+    try {
+      const { data, status } = await axiosInstance.get(
+        `/battery/fetchDashboard`
+      );
+      if (status === 200 || status === 201) {
+        setCardValue(data?.data);
+        console.log("handle", data);
+      }
+    } catch (error) {}
+  };
   useEffect(() => {
-    setData([]);
+    handleCardData();
   }, []);
   return (
     <Grid container spacing={2}>
@@ -157,8 +218,10 @@ const Page = () => {
           breadcrumbItems={breadcrumbItems}
           handleClickOpen={handleOpen}
           moduleName={"Battery Analysis"}
-          dropDown={droDownButtons}
+          dropDownEvent={dropDownButtons}
           button={"Add Battery"}
+          selectedItems={selectedItems}
+          handleDropdownSelect={handleDropdownSelect}
         />
       </Grid>
       <AddBattery
@@ -167,14 +230,14 @@ const Page = () => {
         handleEfficiencyData={handleEfficiencyData}
       />
       {data2.map((item, index) => {
-        const isLargeCard = index >= 2;
+        const isLargeCard = index >= 3;
         return (
           <Grid
             key={index}
             item
             xs={12}
             sm={6}
-            lg={isLargeCard ? 3.6 : 2.4}
+            lg={isLargeCard ? 3.6 : 2.8}
             md={6}
           >
             <CustomGrid>
@@ -211,7 +274,7 @@ const Page = () => {
           </Grid>
         );
       })}
-      {[1, 2, 3].map((index) => (
+      {/* {[1, 2, 3].map((index) => (
         <Grid key={index} item xl={4} md={4} sm={12} xs={12}>
           <CustomGrid>
             <Grid
@@ -253,29 +316,8 @@ const Page = () => {
             </Grid>
           </CustomGrid>
         </Grid>
-      ))}
-      {/* <Grid item xs={12}>
-        <Grid
-          container
-          sx={{
-            padding: "16px 16px 0px 16px",
-            backgroundColor: "#6099EB",
-            borderRadius: "16px",
-            color: "#fff",
-          }}
-          justifyContent={"space-between"}
-          alignItems={"center"}
-        >
-          <Typography variant="h5">
-            <AccessTimeFilledIcon
-              sx={{ verticalAlign: "middle", mr: "3px", p: "2px" }}
-            />
-            Consumption/charge (kWh)
-          </Typography>
-          <CommonDatePicker getDataFromChildHandler={getDataFromChildHandler} />
-          <Graph1 />{" "}
-        </Grid>
-      </Grid> */}
+      ))} */}
+
       <Grid item xs={12}>
         <Table
           data={data}

@@ -10,13 +10,13 @@ import {
   IconButton,
 } from "@mui/material";
 import CustomTable from "@/app/(components)/mui-components/Table/customTable/index";
-import CustomTextField from "@/app/(components)/mui-components/Text-Field's/index";
 import TableSkeleton from "@/app/(components)/mui-components/Skeleton/tableSkeleton";
-import CloudDownloadIcon from "@mui/icons-material/CloudDownload";
 import CommonDatePicker from "@/app/(components)/mui-components/Text-Field's/Date-range-Picker/index";
-import Link from "next/link";
-import { IoEyeOutline } from "react-icons/io5";
-import { CustomDownloadExcel } from "@/app/(components)/mui-components/DownloadExcel/index";
+import { FaRegFileExcel } from "react-icons/fa";
+import Papa from "papaparse";
+import { saveAs } from "file-saver";
+import moment from "moment";
+import { notifySuccess } from "@/app/(components)/mui-components/Snackbar";
 
 const Table = ({
   data,
@@ -28,16 +28,20 @@ const Table = ({
   searchQuery,
   setSearchQuery,
   loading,
-  handleExport,
   getDataFromChildHandler,
+  setBatteryCode,
 }) => {
   const columns = [
     "Date",
-    "Temperature(°C)",
-    "Voltage(V)",
+    "Battery No.",
+    "Status",
+    "Avg. charging time(hr.)",
     "Battery SoC(%)",
-    "Battery SoH(%)",
-    "Error",
+    "Start SoC",
+    "End SoC",
+    "Meter start",
+    "Meter stop",
+    "Total unit consumption(Kwh)",
   ];
   const [open, setOpenDialog] = React.useState(false);
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState(searchQuery);
@@ -66,19 +70,73 @@ const Table = ({
   const handleCancel = () => {
     setOpenDialog(false);
   };
+  const handleExport = (data) => {
+    if (!Array.isArray(data) || data.length === 0) {
+      notifyError("No data available to export");
+      return;
+    }
+
+    const formattedData = getFormattedData(data);
+
+    const headerRow = [
+      "Date & Time",
+      "Battery ID",
+      "Status",
+      "SOC",
+      "Start SOC",
+      "End SOC",
+      "Meter Start",
+      "Meter Stop",
+      "Unit Consumed (kWh)",
+      "Avg. Charging Time (hr.)",
+    ];
+
+    const csvData = [
+      ["", "", "All Battery Logs Data", "", "", "", "", "", "", ""], // Title row
+      [],
+      headerRow,
+      ...formattedData.map((row) => [
+        row.date,
+        row.batteryId,
+        row.status,
+        row.soc,
+        row.startSoc,
+        row.endSoc,
+        row.meterStart,
+        row.meterStop,
+        row.totalConsumption,
+        row["Avg. charging time(hr.)"],
+      ]),
+    ];
+
+    const csvString = Papa.unparse(csvData);
+    const blob = new Blob([csvString], { type: "text/csv;charset=utf-8" });
+    saveAs(blob, "batteryLogsData.csv");
+    notifySuccess("Download Excel Successfully");
+  };
+
   const getFormattedData = (data) => {
-    return data?.map((item, index) => ({
-      date: item.date ? item.date : "--",
-      temperature: `${item.temperature.toFixed(1)}°C`
-        ? `${item.temperature.toFixed(1)}°C`
-        : "--",
-      voltage: `${item.voltage.toFixed(1)}V`
-        ? `${item.voltage.toFixed(1)}V`
-        : "--",
-      soc: `${item.soc}%` ? `${item.soc}%` : "--",
-      soh: `${item.soh}%` ? `${item.soh}%` : "--",
-      error: item.error ? item.error : "--",
-    }));
+    return data?.map((item) => {
+      setBatteryCode(item?.batteryId?.batteryNumber);
+      return {
+        date: item?.createdAt ? moment(item.createdAt).format("lll") : "--",
+        batteryId: item?.batteryId?.batteryNumber ?? "--",
+        status: item?.batteryId?.status ?? "--",
+        "Avg. charging time(hr.)":
+          item?.meterStopTime && item?.meterStartTime
+            ? (
+                (new Date(item.meterStopTime) - new Date(item.meterStartTime)) /
+                3600000
+              ).toFixed(2)
+            : "--",
+        soc: item?.batteryId ? `${item.batteryId.soc} %` : "--",
+        startSoc: item?.beforeSoc ?? "--",
+        endSoc: item?.afterSoc ?? "--",
+        meterStart: item?.meterStart ?? "--",
+        meterStop: item?.meterStop ?? "--",
+        totalConsumption: item?.totalConsumption ?? "--",
+      };
+    });
   };
 
   return (
@@ -91,16 +149,21 @@ const Table = ({
         className="customGrid"
       >
         <Grid item>
-          <Typography variant="h3">Battery ({params.id})</Typography>
+          <Typography variant="h3">Battery logs</Typography>
         </Grid>
         <Grid item className="customSearch">
           <Grid container>
             <Grid item mr={1}>
-              <CustomDownloadExcel
-                name={"Download Excel"}
-                rows={data}
-                data={"Fleet (121)"}
-              />
+              <Button
+                variant="outlined"
+                onClick={() => {
+                  handleExport(data?.result);
+                }}
+                startIcon={<FaRegFileExcel />}
+                size="large"
+              >
+                Download Excel
+              </Button>
             </Grid>
             <Grid item mr={1}>
               <CommonDatePicker
@@ -125,7 +188,7 @@ const Table = ({
       ) : (
         <CustomTable
           page={page}
-          rows={getFormattedData(data)}
+          rows={getFormattedData(data?.result)}
           count={data?.totalDocuments}
           columns={columns}
           setPage={setPage}

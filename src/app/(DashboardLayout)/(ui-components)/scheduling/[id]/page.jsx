@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import ManagementGrid from "@/app/(components)/mui-components/Card";
 import Table from "./table";
 import axiosInstance from "@/app/api/axiosInstance";
+import moment from "moment";
 
 const breadcrumbItems = [
   { label: "Dashboard", link: "/" },
@@ -23,13 +24,24 @@ const Page = () => {
   const [rowsPerPage, setRowsPerPage] = React.useState(25);
   const [deviceData, setDeviceData] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
+  const [startDate, setStartDate] = useState(moment());
+  const [endDate, setEndDate] = useState(moment());
+
+  const getDataFromChildHandler = (date, dataArr) => {
+    const selectedStartDate = date[0].startDate;
+    const selectedEndDate = date[0].endDate;
+    setStartDate(selectedStartDate);
+    setEndDate(selectedEndDate);
+  };
 
   const handleHistoryData = async () => {
     try {
       const { data, status } = await axiosInstance.get(
         `/schedule/getSchedulingHistory?page=${
           page + 1
-        }&limit=${rowsPerPage}&search=${searchQuery}`
+        }&limit=${rowsPerPage}&search=${searchQuery}&startDate=${
+          startDate ?? ""
+        }&endDate=${endDate ?? ""}`
       );
 
       if (status === 200 || status === 201) {
@@ -39,7 +51,7 @@ const Page = () => {
   };
   useEffect(() => {
     handleHistoryData();
-  }, [page, rowsPerPage, searchQuery]);
+  }, [page, rowsPerPage, searchQuery, startDate, endDate]);
 
   return (
     <Grid container xs={12}>
@@ -61,6 +73,7 @@ const Page = () => {
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
           loading={loading}
+          getDataFromChildHandler={getDataFromChildHandler}
         />
       </Grid>
     </Grid>

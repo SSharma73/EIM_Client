@@ -138,6 +138,11 @@ const Table = ({
                 Download Excel
               </Button>
             </Grid>
+            <Grid item mr={1}>
+              <CommonDatePicker
+                getDataFromChildHandler={getDataFromChildHandler}
+              />
+            </Grid>
           </Grid>
         </Grid>
       </Grid>

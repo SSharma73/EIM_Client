@@ -6,7 +6,13 @@ import axiosInstance from "@/app/api/axiosInstanceImg";
 
 Chart.register(...registerables);
 
-const Graph = ({ graphType, type, selectedItems, selectedCustId }) => {
+const Graph = ({
+  calculateDateRange,
+  type,
+  selectedItems,
+  selectedCustId,
+  selectedTimeFrames,
+}) => {
   const [chartData, setChartData] = useState({
     labels: [],
     datasets: [
@@ -62,16 +68,18 @@ const Graph = ({ graphType, type, selectedItems, selectedCustId }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        const { startDate, endDate } = calculateDateRange(selectedTimeFrames);
         const { data } = await axiosInstance.get("charger/sessionGraph", {
           params: {
-            graphType,
+            startDate,
+            endDate,
             type,
             region: selectedItems,
             customerId: selectedCustId,
           },
         });
-        const labels = data?.data.map((item) => item.interval) || [];
-        const sessionData = data?.data.map((item) => item.session) || [];
+        const labels = data?.data.map((item) => item.createdAt) || [];
+        const sessionData = data?.data.map((item) => item.totalSession) || [];
         const total = sessionData.reduce((acc, curr) => acc + curr, 0);
 
         setChartData({
@@ -92,7 +100,7 @@ const Graph = ({ graphType, type, selectedItems, selectedCustId }) => {
     };
 
     fetchData();
-  }, [graphType, type, selectedItems, selectedCustId]);
+  }, [selectedTimeFrames, type, selectedItems, selectedCustId]);
 
   return (
     <Grid container mt={2} mb={1}>

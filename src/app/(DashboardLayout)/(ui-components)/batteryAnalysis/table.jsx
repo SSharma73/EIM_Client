@@ -16,21 +16,18 @@ import ToastComponent, {
   notifyError,
   notifySuccess,
 } from "@/app/(components)/mui-components/Snackbar";
-import Image from "next/image";
-import noData from "../../../../../public/Img/Nodata.svg";
 
 const columns = [
-  "Battery packs ID",
+  "Battery ID",
   "Status",
-  "Temperature(°C)",
-  "Voltage(V)",
+  "Battery health(%)",
   "Current SoC(%)",
-  "Current SoH(%)",
-  "Error",
+  "Port name",
   "Charging cycle",
+  "Swapping cycle",
+  "Station code",
   "Units consumed(kWh)",
   "Avg. charging time(hr)",
-  "Battery Location",
   "Action",
 ];
 const Table = ({
@@ -86,15 +83,16 @@ const Table = ({
     }
 
     const modifiedData = data?.map((row) => ({
-      batteryId: row?.batteryId,
-      status: row?.status,
-      swappingcycle: row?.swappingcycle,
-      avgSpeed: row?.avgSpeed,
-      selectedpackage: row?.selectedpackage,
-      maxPayload: row?.maxPayload,
-      distance: row?.distance,
-      value: row?.value,
-      jobRole: row?.jobRole,
+      batteryId: row?.batteryNumber ?? "--",
+      status: row?.status ?? "--",
+      batteryHealth: row?.batteryHealth ?? "--",
+      soc: row?.soc ?? "--",
+      portId: row?.portId?.name ?? "--",
+      chargingCycle: row?.chargingCycle ?? "0",
+      swappingCycle: row?.swappingCycle ?? "0",
+      stationId: item?.stationId ? item?.stationId?.stationCode : "--",
+      unitConsumed: row?.unitConsumed ?? "0",
+      averageCharging: row?.averageCharging ?? "0",
     }));
 
     const csvData = [];
@@ -103,61 +101,73 @@ const Table = ({
     csvData.push([]);
 
     const headerRow = [
-      "Battery packs ID",
+      "Battery ID",
       "Status",
-      "Temperature(°C)",
-      "Voltage(V)",
-      "Battery SoC(%)",
-      "Battery SoH(%)",
-      "Error",
-      "Charging cycle",
-      "Units Consumed(kW)",
-      "Avg. Charging time",
-      "Battery Location",
-      "Alerts",
+      "Battery Health (%)",
+      "State of Charge (SOC) (%)",
+      "Port Name",
+      "Charging Cycle",
+      "Swapping Cycle",
+      "Fleet Number",
+      "Unit Consumed",
+      "Average Charging Time",
     ];
     csvData.push(headerRow);
 
     modifiedData.forEach((row) => {
       const rowData = [
-        row?.batteryId,
-        row?.status,
-        row?.swappingcycle,
-        row?.avgSpeed,
-        row?.selectedpackage,
-        row?.maxPayload,
-        row?.distance,
-        row?.value,
-        row?.jobRole,
+        row.batteryId,
+        row.status,
+        row.batteryHealth,
+        row.soc,
+        row.portId,
+        row.chargingCycle,
+        row.swappingCycle,
+        row.stationId,
+        row.unitConsumed,
+        row.averageCharging,
       ];
       csvData.push(rowData);
     });
+
     const csvString = Papa.unparse(csvData);
     const blob = new Blob([csvString], { type: "text/csv;charset=utf-8" });
     saveAs(blob, "BatteryAnalysis.csv");
-    notifySuccess("Download Excel Succefully");
+    notifySuccess("Download Excel Successfully");
   };
+
   const getFormattedData = (data) => {
     return data?.map((item, index) => ({
-      batteryId: item?.batteryId ? item?.batteryId : "--",
-      status: item?.status ?? "--",
-      temperature: item?.temperature ?? "--",
-      voltage: item?.voltage ? item?.voltage : "--",
-      batterySoc: item?.batterySoc ? item?.batterySoc : "--",
-      batterySoh: item?.batterySoh ? item?.batterySoh : "--",
-      chargingCycle: item?.chargingCycle ? item?.chargingCycle : "--",
-      unitConsumed: item?.unitConsumed ? item?.unitConsumed : "--",
-      avgChargingTime: item?.avgChargingTime ? item?.avgChargingTime : "--",
-      Error: item?.Error ? item?.Error : "--",
-      batteryLocation: item?.batteryLocation ? item?.batteryLocation : "--",
+      batteryId: item?.batteryNumber ? item?.batteryNumber : "--",
+      status: (
+        <>
+          {item?.status === "Swapped" ? (
+            <Grid container>
+              <Grid item>{item?.status ?? "--"}</Grid>
+              <Grid item>
+                <Typography fontSize={"12px"}>
+                  {item?.fleetId?.fleetNumber ?? "--"}
+                </Typography>{" "}
+              </Grid>
+            </Grid>
+          ) : (
+            item?.status ?? "--"
+          )}
+        </>
+      ),
+      batteryHealth: `${item?.batteryHealth} %` ?? "--",
+      soc: `${item?.soc} %` ?? "--",
+      portId: item?.portId ? item?.portId?.name : "--",
+      chargingCycle: item?.chargingCycle ? item?.chargingCycle : 0,
+      swappingCycle: item?.swappingCycle ? item?.swappingCycle : "0",
+      stationId: item?.stationId ? item?.stationId?.stationCode : "--",
+      unitConsumed: item?.unitConsumed ? item?.unitConsumed.toFixed(2) : "0",
+      averageCharging: item?.averageCharging
+        ? item?.averageCharging.toFixed(2)
+        : "0",
+
       Action: [
-        <Grid
-          container
-          justifyContent="center"
-          spacing={2}
-          key={index}
-          width={"130px"}
-        >
+        <Grid container spacing={2} key={index}>
           <Grid item xs={12} sm={4} md={4}>
             <Tooltip title="View">
               <IconButton
@@ -167,20 +177,6 @@ const Table = ({
                 }}
               >
                 <EyeIcon />
-              </IconButton>
-            </Tooltip>
-          </Grid>
-          <Grid item xs={12} sm={4} md={4}>
-            <Tooltip title="Edit">
-              <IconButton size="small">
-                <FaRegEdit color="rgba(14, 1, 71, 1)" />
-              </IconButton>
-            </Tooltip>
-          </Grid>
-          <Grid item xs={12} sm={4} md={4}>
-            <Tooltip title="Delete">
-              <IconButton size="small">
-                <MdDeleteOutline color="rgba(14, 1, 71, 1)" />
               </IconButton>
             </Tooltip>
           </Grid>
@@ -207,18 +203,13 @@ const Table = ({
               <Button
                 variant="outlined"
                 onClick={() => {
-                  handleExport(data?.data);
+                  handleExport(data?.result);
                 }}
                 startIcon={<FaRegFileExcel />}
                 size="large"
               >
                 Download Excel
               </Button>
-            </Grid>
-            <Grid item mr={1}>
-              <CommonDatePicker
-                getDataFromChildHandler={getDataFromChildHandler}
-              />
             </Grid>
             <CustomTextField
               type="search"
@@ -241,7 +232,7 @@ const Table = ({
       ) : (
         <CustomTable
           page={page}
-          rows={getFormattedData(data?.data)}
+          rows={getFormattedData(data?.result)}
           count={data?.totalDocuments}
           columns={columns}
           setPage={setPage}

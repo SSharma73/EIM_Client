@@ -9,6 +9,7 @@ import Overview from "@/app/(components)/pages-component/CsManagement1/overview/
 import TimerIcon from "@mui/icons-material/Timer";
 import styled from "@emotion/styled";
 import ManagementGrid from "../../mui-components/Card";
+import dayjs from "dayjs";
 
 const CustomGrid = styled(Grid)(({ theme }) => ({
   padding: theme.spacing(2),
@@ -118,6 +119,28 @@ const Overview1 = ({ type, selectedItems, selectedCustId }) => {
     { title: "Usage", content: "1947.33 kWh" },
     { title: "Up time", content: "400" },
   ];
+  const calculateDateRange = (timeFrame) => {
+    const endDate = dayjs().format("YYYY-MM-DD");
+    let startDate;
+    switch (timeFrame) {
+      case "Today":
+        startDate = endDate;
+        break;
+      case "Weekly":
+        startDate = dayjs().subtract(7, "days").format("YYYY-MM-DD");
+        break;
+      case "Monthly":
+        startDate = dayjs().startOf("month").format("YYYY-MM-DD");
+        break;
+      case "Yearly":
+        startDate = dayjs().startOf("year").format("YYYY-MM-DD");
+        break;
+      default:
+        startDate = endDate;
+    }
+    return { startDate, endDate };
+  };
+
   const days = ["Daily", "Weekly", "Monthly", "Yearly"];
   const [selectedTimeFrames, setSelectedTimeFrames] = useState(
     data?.map(() => days[0])
@@ -155,18 +178,20 @@ const Overview1 = ({ type, selectedItems, selectedCustId }) => {
 
             {index === 0 && (
               <Graph
-                graphType={selectedTimeFrames[index].toLowerCase()}
+                calculateDateRange={calculateDateRange}
                 type={type}
                 selectedCustId={selectedCustId}
                 selectedItems={selectedItems?.Region}
+                selectedTimeFrames={selectedTimeFrames[0]}
               />
             )}
             {index === 1 && (
               <Graph2
-                graphType={selectedTimeFrames[index].toLowerCase()}
+                calculateDateRange={calculateDateRange}
                 type={type}
                 selectedCustId={selectedCustId}
                 selectedItems={selectedItems?.Region}
+                selectedTimeFrames={selectedTimeFrames[1]}
               />
             )}
             {index === 2 && (

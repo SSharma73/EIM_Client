@@ -8,7 +8,7 @@ const data1 = {
   labels: ["dd mm yy", "dd mm yy", "dd mm yy", "dd mm yy", "dd mm yy"],
   datasets: [
     {
-      label: "E Tractor",
+      label: "Up time",
       data: [0, 0, 0, 0, 0],
       backgroundColor: "rgba(247, 187, 187, .2)",
       borderColor: "#38E0CF",

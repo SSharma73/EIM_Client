@@ -1,40 +1,65 @@
 "use client";
-import { Button, Grid, Typography } from "@mui/material";
+import { Grid } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import Table from "./table";
-import { useSearchParams } from "next/navigation";
 import axiosInstance from "@/app/api/axiosInstance";
-import { particularBatteryData } from "@/app/(components)/table/rows";
+import ManagementGrid from "@/app/(components)/mui-components/Card";
 
 const Page = ({ params }) => {
   const [page, setPage] = React.useState(0);
   const [loading, setLoading] = useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(25);
   const [searchQuery, setSearchQuery] = useState("");
-  const [date, setDate] = useState(null);
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
   const [data, setData] = useState(null);
+  const [batteryCode, setBatteryCode] = useState(null);
+
+  const breadcrumbItems = [
+    { label: "Dashboard", link: "/" },
+    { label: "Battery-Analysis", link: "/batteryAnalysis" },
+    { label: `${batteryCode ?? "--"}`, link: `/batteryAnalysis/${params?.id}` },
+  ];
   const getDataFromChildHandler = (date, dataArr) => {
-    setDate(date);
+    const selectedStartDate = date[0].startDate;
+    const selectedEndDate = date[0].endDate;
+    setStartDate(selectedStartDate);
+    setEndDate(selectedEndDate);
   };
   const handleEachBattery = async () => {
-    // try {
-    //     const response = await axiosInstance(`/battery/getOne/${params?.id}?page=${page + 1
-    //         }&pageSize=${rowsPerPage}&search=${searchQuery}`)
-    //     console.log("battery", response)
-    //     // setData(response?.data)
-    // } catch (error) {
-    //     console.log(error)
-    // }
+    try {
+      setLoading(true);
+      const response = await axiosInstance("charger/fetchChargingHistory", {
+        params: {
+          page: page + 1,
+          limit: rowsPerPage,
+          startDate: startDate ?? "",
+          endDate: endDate ?? "",
+          status: "BatteryCharge",
+          type: "sany",
+          batteryId: params?.id,
+        },
+      });
+
+      setData(response?.data?.data);
+      setLoading(false);
+    } catch (error) {
+      console.log(error);
+    }
   };
   useEffect(() => {
-    // handleEachBattery()
-    setData(particularBatteryData);
-  }, []);
+    handleEachBattery();
+  }, [params?.id, startDate, endDate, rowsPerPage, page]);
   return (
     <Grid container rowGap={2} sm={12} md={12}>
+      <ManagementGrid
+        breadcrumbItems={breadcrumbItems}
+        moduleName={"Battery Analysis details"}
+      />
       <Table
         data={data}
         params={params}
+        setBatteryCode={setBatteryCode}
         rowsPerPage={rowsPerPage}
         setRowsPerPage={setRowsPerPage}
         page={page}
