@@ -16,7 +16,7 @@ const data = {
   datasets: [
     {
       label: "Trip payload",
-      data: [0, 0, 0, 0, 0, 0], // Example dummy data
+      data: [0, 20, 44, 15, 60, 55], // Example dummy data
       backgroundColor: "rgba(247, 187, 187, .2)",
       borderColor: "#38E0CF",
       borderWidth: 2,

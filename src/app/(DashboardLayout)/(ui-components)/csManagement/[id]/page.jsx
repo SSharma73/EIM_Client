@@ -49,7 +49,7 @@ const ChargingId = ({ params }) => {
     { label: "CS/SS-Management", link: "/csManagement" },
     {
       label: `${hubName}`,
-      link: `/csManagement/${params.id}?tab=${tabValue}&eventLabel=${eventLabel}`,
+      link: ``,
     },
   ];
 
@@ -90,7 +90,7 @@ const ChargingId = ({ params }) => {
   const getFormattedData = (data) => {
     return data?.map((item) => ({
       Date: item?.createdAt
-        ? ` ${moment(item?.updatedAt).format("lll")}`
+        ? ` ${moment(item?.createdAt).format("lll")}`
         : "--",
       "Hub name": hubName ?? "--",
       Status: item?.status ?? "Charging",

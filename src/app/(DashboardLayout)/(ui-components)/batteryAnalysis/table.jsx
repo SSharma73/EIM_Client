@@ -3,9 +3,6 @@ import React, { useState, useEffect } from "react";
 import { Grid, Typography, Button, Tooltip, IconButton } from "@mui/material";
 import CustomTable from "@/app/(components)/mui-components/Table/customTable/index";
 import TableSkeleton from "@/app/(components)/mui-components/Skeleton/tableSkeleton";
-import CommonDatePicker from "@/app/(components)/mui-components/Text-Field's/Date-range-Picker/index";
-import { FaRegEdit } from "react-icons/fa";
-import { MdDeleteOutline } from "react-icons/md";
 import CustomTextField from "@/app/(components)/mui-components/Text-Field's";
 import { useRouter } from "next/navigation";
 import { EyeIcon } from "@/app/(components)/mui-components/icons/index";
@@ -26,6 +23,7 @@ const columns = [
   "Charging cycle",
   "Swapping cycle",
   "Station code",
+  "Compartment No.",
   "Units consumed(kWh)",
   "Avg. charging time(hr)",
   "Action",
@@ -40,7 +38,6 @@ const Table = ({
   searchQuery,
   setSearchQuery,
   loading,
-  getDataFromChildHandler,
 }) => {
   const [open, setOpenDialog] = React.useState(false);
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState(searchQuery);
@@ -91,6 +88,7 @@ const Table = ({
       chargingCycle: row?.chargingCycle ?? "0",
       swappingCycle: row?.swappingCycle ?? "0",
       stationId: item?.stationId ? item?.stationId?.stationCode : "--",
+      compartmentNo: item?.compartmentNo ?? "--",
       unitConsumed: row?.unitConsumed ?? "0",
       averageCharging: row?.averageCharging ?? "0",
     }));
@@ -109,6 +107,7 @@ const Table = ({
       "Charging Cycle",
       "Swapping Cycle",
       "Fleet Number",
+      "Compartment No",
       "Unit Consumed",
       "Average Charging Time",
     ];
@@ -124,6 +123,7 @@ const Table = ({
         row.chargingCycle,
         row.swappingCycle,
         row.stationId,
+        row?.compartmentNo,
         row.unitConsumed,
         row.averageCharging,
       ];
@@ -161,6 +161,7 @@ const Table = ({
       chargingCycle: item?.chargingCycle ? item?.chargingCycle : 0,
       swappingCycle: item?.swappingCycle ? item?.swappingCycle : "0",
       stationId: item?.stationId ? item?.stationId?.stationCode : "--",
+      compartmentNo: item?.compartmentNo ?? "--",
       unitConsumed: item?.unitConsumed ? item?.unitConsumed.toFixed(2) : "0",
       averageCharging: item?.averageCharging
         ? item?.averageCharging.toFixed(2)

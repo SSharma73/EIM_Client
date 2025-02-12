@@ -15,7 +15,7 @@ const data = {
   datasets: [
     {
       label: "Trips",
-      data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      data: [25, 11, 38, 45, 20, 33, 0, 0, 0, 0],
       backgroundColor: "rgba(247, 187, 187, .2)",
       borderColor: "#38E0CF",
       borderWidth: 2,

@@ -71,7 +71,11 @@ const MapDetails = ({ title, icons, onClose, truckDetails }) => {
             {truckDetails?.nearestCharger?.stationCode}
           </Typography>
           <Typography color={"secondary"}>{truckDetails?.type}</Typography>
-          <Typography>{truckDetails?.averageSpeed}</Typography>
+          <Typography>
+            {truckDetails?.averageSpeed
+              ? truckDetails?.averageSpeed.toFixed(3)
+              : "--"}
+          </Typography>
         </Stack>
       </Grid>
       <Image src={`${icons}`} height={100} width={280} />

@@ -5,10 +5,13 @@ import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
-import { Typography, Grid, TextField, Box, IconButton } from "@mui/material";
+import { Typography, Grid, TextField, IconButton } from "@mui/material";
 import CloseOutlinedIcon from "@mui/icons-material/CloseOutlined";
 import { useForm } from "react-hook-form";
-import { notifySuccess } from "@/app/(components)/mui-components/Snackbar/index";
+import {
+  notifyError,
+  notifySuccess,
+} from "@/app/(components)/mui-components/Snackbar/index";
 import axiosInstance from "@/app/api/axiosInstance";
 import CommonDialog from "@/app/(components)/mui-components/Dialog/index";
 import InputLabel from "@mui/material/InputLabel";
@@ -65,6 +68,13 @@ export default function AddUser({ open, setOpen, handleEfficiencyData }) {
   const submitDetails = async () => {
     try {
       const formData = getValues();
+      if (
+        handleDrowDown?.PortId === null ||
+        handleDrowDown?.customerId === null ||
+        handleDrowDown?.stationId === null
+      ) {
+        notifyError("please filled all the field");
+      }
       const body = {
         portId: handleDrowDown?.PortId,
         stationId: handleDrowDown?.stationId,

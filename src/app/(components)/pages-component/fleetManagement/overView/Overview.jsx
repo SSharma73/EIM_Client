@@ -23,7 +23,6 @@ import Graph3 from "@/app/(components)/pages-component/fleetManagement/vehicle/g
 import CustomTable from "@/app/(components)/mui-components/Table/customTable/index";
 import TableSkeleton from "@/app/(components)/mui-components/Skeleton/tableSkeleton";
 import { CustomDropdownEvent } from "@/app/(components)/mui-components/Card/HeaderGrid/DropdownButton/dropDownEvent";
-import { useRouter } from "next/navigation";
 import { IoMdDownload } from "react-icons/io";
 import DownloadData from "@/app/(components)/pages-component/fleetManagement/overView/download";
 
