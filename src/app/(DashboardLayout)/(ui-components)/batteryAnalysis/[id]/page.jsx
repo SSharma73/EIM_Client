@@ -49,7 +49,9 @@ const Page = ({ params }) => {
     }
   };
   useEffect(() => {
-    handleEachBattery();
+    if (startDate && endDate && selectedFilter && params?.id) {
+      handleEachBattery();
+    }
   }, [params?.id, startDate, endDate, rowsPerPage, page, selectedFilter]);
   return (
     <Grid container rowGap={2} sm={12} md={12}>

@@ -33,18 +33,31 @@ const Table = ({
   getDataFromChildHandler,
   setBatteryCode,
 }) => {
-  const columns = [
-    "Date",
-    "Battery No.",
-    "Status",
-    "Avg. charging time(hr.)",
-    "Battery SoC(%)",
-    "Start SoC",
-    "End SoC",
-    "Meter start",
-    "Meter stop",
-    "Total unit consumption(Kwh)",
-  ];
+  // Dynamically modify columns based on the selected filter
+  const columns =
+    selectedFilter === "Swapping"
+      ? [
+          "Date",
+          "Battery No.",
+          "Status",
+          "Avg. charging time(hr.)",
+          "Battery SoC(%)",
+          "Start SoC",
+          "End SoC",
+          "Total unit consumption(Kwh)",
+        ]
+      : [
+          "Date",
+          "Battery No.",
+          "Status",
+          "Avg. charging time(hr.)",
+          "Battery SoC(%)",
+          "Start SoC",
+          "End SoC",
+          "Meter start",
+          "Meter stop",
+          "Total unit consumption(Kwh)",
+        ];
 
   const [open, setOpenDialog] = React.useState(false);
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState(searchQuery);
@@ -82,18 +95,30 @@ const Table = ({
 
     const formattedData = getFormattedData(data);
 
-    const headerRow = [
-      "Date & Time",
-      "Battery ID",
-      "Status",
-      "SOC",
-      "Start SOC",
-      "End SOC",
-      "Meter Start",
-      "Meter Stop",
-      "Unit Consumed (kWh)",
-      "Avg. Charging Time (hr.)",
-    ];
+    const headerRow =
+      selectedFilter === "Swapping"
+        ? [
+            "Date & Time",
+            "Battery ID",
+            "Status",
+            "SOC",
+            "Start SOC",
+            "End SOC",
+            "Unit Consumed (kWh)",
+            "Avg. Charging Time (hr.)",
+          ]
+        : [
+            "Date & Time",
+            "Battery ID",
+            "Status",
+            "SOC",
+            "Start SOC",
+            "End SOC",
+            "Meter Start",
+            "Meter Stop",
+            "Unit Consumed (kWh)",
+            "Avg. Charging Time (hr.)",
+          ];
 
     const csvData = [
       ["", "", "All Battery Logs Data", "", "", "", "", "", "", ""], // Title row
@@ -122,7 +147,7 @@ const Table = ({
   const getFormattedData = (data) => {
     return data?.map((item) => {
       setBatteryCode(item?.batteryId?.batteryNumber);
-      return {
+      const formattedItem = {
         date: item?.createdAt ? moment(item.createdAt).format("lll") : "--",
         batteryId: item?.batteryId?.batteryNumber ?? "--",
         status: item?.status ?? "--",
@@ -136,10 +161,15 @@ const Table = ({
         soc: item?.batteryId ? `${item.batteryId.soc} %` : "--",
         startSoc: item?.beforeSoc ?? "--",
         endSoc: item?.afterSoc ?? "--",
-        meterStart: item?.meterStart ?? "--",
-        meterStop: item?.meterStop ?? "--",
         totalConsumption: item?.totalConsumption ?? "--",
       };
+
+      if (selectedFilter !== "Swapping") {
+        formattedItem.meterStart = item?.meterStart ?? "--";
+        formattedItem.meterStop = item?.meterStop ?? "--";
+      }
+
+      return formattedItem;
     });
   };
 
@@ -182,6 +212,23 @@ const Table = ({
                   value={selectedFilter}
                   onChange={(e) => setSelectedFilter(e.target.value)}
                   label="Filter"
+                  MenuProps={{
+                    PaperProps: {
+                      sx: {
+                        maxHeight: 200,
+                        marginTop: "-80px",
+                        transition: "margin-top 0.3s ease",
+                      },
+                    },
+                    anchorOrigin: {
+                      vertical: "top",
+                      horizontal: "center",
+                    },
+                    transformOrigin: {
+                      vertical: "top",
+                      horizontal: "center",
+                    },
+                  }}
                 >
                   <MenuItem value="BatteryCharge">Charging</MenuItem>
                   <MenuItem value="Swapping">Swapping</MenuItem>
