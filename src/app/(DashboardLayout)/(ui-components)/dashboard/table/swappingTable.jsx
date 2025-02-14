@@ -81,8 +81,8 @@ const Table = ({
       const color = item?.status === "available" ? "success" : "error";
       const color1 = item?.currentlySwapping === 0 ? "success" : "error";
 
-      const label = item?.status === "available" ? "Available" : "Occupied";
-      const label1 = item?.currentlySwapping === 1 ? "Occupied" : "Available";
+      const label = item?.status === "available" ? "available" : "occupied";
+      const label1 = item?.currentlySwapping === 1 ? "occupied" : "available";
       const batteryStates = [
         { index: 1 },
         { index: 2 },

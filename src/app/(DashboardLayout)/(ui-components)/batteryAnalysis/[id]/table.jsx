@@ -3,11 +3,11 @@ import React, { useState, useEffect } from "react";
 import {
   Grid,
   Typography,
-  Box,
   Button,
-  Chip,
-  Tooltip,
-  IconButton,
+  Select,
+  MenuItem,
+  InputLabel,
+  FormControl,
 } from "@mui/material";
 import CustomTable from "@/app/(components)/mui-components/Table/customTable/index";
 import TableSkeleton from "@/app/(components)/mui-components/Skeleton/tableSkeleton";
@@ -23,6 +23,8 @@ const Table = ({
   params,
   rowsPerPage,
   setRowsPerPage,
+  selectedFilter,
+  setSelectedFilter,
   page,
   setPage,
   searchQuery,
@@ -43,6 +45,7 @@ const Table = ({
     "Meter stop",
     "Total unit consumption(Kwh)",
   ];
+
   const [open, setOpenDialog] = React.useState(false);
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState(searchQuery);
 
@@ -70,6 +73,7 @@ const Table = ({
   const handleCancel = () => {
     setOpenDialog(false);
   };
+
   const handleExport = (data) => {
     if (!Array.isArray(data) || data.length === 0) {
       notifyError("No data available to export");
@@ -121,7 +125,7 @@ const Table = ({
       return {
         date: item?.createdAt ? moment(item.createdAt).format("lll") : "--",
         batteryId: item?.batteryId?.batteryNumber ?? "--",
-        status: item?.batteryId?.status ?? "--",
+        status: item?.status ?? "--",
         "Avg. charging time(hr.)":
           item?.meterStopTime && item?.meterStartTime
             ? (
@@ -138,6 +142,11 @@ const Table = ({
       };
     });
   };
+
+  // Filter the data based on selected filter
+  const filteredData = selectedFilter
+    ? data?.result.filter((item) => item?.status === selectedFilter)
+    : data?.result;
 
   return (
     <Grid container mt={3}>
@@ -157,7 +166,7 @@ const Table = ({
               <Button
                 variant="outlined"
                 onClick={() => {
-                  handleExport(data?.result);
+                  handleExport(filteredData);
                 }}
                 startIcon={<FaRegFileExcel />}
                 size="large"
@@ -165,20 +174,29 @@ const Table = ({
                 Download Excel
               </Button>
             </Grid>
+            <Grid item>
+              <FormControl variant="outlined" sx={{ minWidth: 120, mr: 1.2 }}>
+                <InputLabel id="filter-label">Filter</InputLabel>
+                <Select
+                  labelId="filter-label"
+                  value={selectedFilter}
+                  onChange={(e) => setSelectedFilter(e.target.value)}
+                  label="Filter"
+                >
+                  <MenuItem value="BatteryCharge">Charging</MenuItem>
+                  <MenuItem value="Swapping">Swapping</MenuItem>
+                </Select>
+              </FormControl>
+            </Grid>
             <Grid item mr={1}>
               <CommonDatePicker
                 getDataFromChildHandler={getDataFromChildHandler}
               />
             </Grid>
-            {/* <CustomTextField
-                            type="search"
-                            placeholder="Search empId / Name"
-                            value={debouncedSearchQuery}
-                            onChange={handleSearchChange}
-                        /> */}
           </Grid>
         </Grid>
       </Grid>
+
       {loading ? (
         <TableSkeleton
           rowNumber={new Array(10).fill(0)}
@@ -188,7 +206,7 @@ const Table = ({
       ) : (
         <CustomTable
           page={page}
-          rows={getFormattedData(data?.result)}
+          rows={getFormattedData(filteredData)}
           count={data?.totalDocuments}
           columns={columns}
           setPage={setPage}

@@ -39,8 +39,8 @@ const Table = ({
     return data?.map((item) => {
       const color = item?.status === "available" ? "success" : "error";
       const color1 = item?.currentlyCharging === 0 ? "success" : "error";
-      const label = item?.status === "available" ? "Available" : "Occupied";
-      const label1 = item?.currentlyCharging === 1 ? "Occupied" : "Available";
+      const label = item?.status === "available" ? "available" : "occupied";
+      const label1 = item?.currentlyCharging === 1 ? "occupied" : "available";
       return {
         id: item?.stationCode ?? "--",
         status: (
