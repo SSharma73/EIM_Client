@@ -14,6 +14,7 @@ import Image from "next/image";
 import Link from "next/link";
 import moment from "moment";
 
+
 const theme = createTheme();
 const Menu = styled(MuiMenu)(({ theme }) => ({
   "& .MuiMenu-paper": {
@@ -44,21 +45,7 @@ const styles = {
     border: 0,
   },
 };
-const MenuItemTitle = styled(Typography)(({ theme }) => ({
-  fontWeight: 600,
-  flex: "1 1 100%",
-  overflow: "hidden",
-  fontSize: "0.875rem",
-  whiteSpace: "nowrap",
-  textOverflow: "ellipsis",
-  marginBottom: theme.spacing(0.75),
-}));
-const MenuItemSubtitle = styled(Typography)`
-  flex: "1 1 100%",
-  overflow: "hidden",
-  whiteSpace: "nowrap",
-  textOverflow: "ellipsis",
-`;
+
 const ScrollWrapper = ({ children }) => {
   const hidden = useMediaQuery(theme.breakpoints.down("lg"));
   return (

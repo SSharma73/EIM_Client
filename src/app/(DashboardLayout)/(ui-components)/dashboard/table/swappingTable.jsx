@@ -72,7 +72,7 @@ const Table = ({
     } else if (batterySoc > 50 && batterySoc < 90) {
       return { color: "#FFC300", percent: `${batterySoc}%` };
     } else {
-      return { color: "#347D00", percent: "100%" };
+      return { color: "#347D00", percent: `${batterySoc}%` };
     }
   };
 

@@ -58,6 +58,7 @@ const Graph = ({
   selectedCustId,
   selectedTimeFrames,
 }) => {
+  console.log("Check Graph", selectedTimeFrames);
   const [chartData, setChartData] = useState({
     labels: [],
     datasets: [
@@ -71,7 +72,7 @@ const Graph = ({
       },
     ],
   });
-  const [totalUsage, setTotalUsage] = useState(0); // State for total usage
+  const [totalUsage, setTotalUsage] = useState(0);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -88,7 +89,6 @@ const Graph = ({
         });
         const labels = data?.data?.map((item) => item.createdAt) || [];
         const usageData = data?.data?.map((item) => item.usage) || [];
-        // Calculate total usage
         const total = usageData.reduce((acc, curr) => acc + curr, 0);
         setTotalUsage(total); // Update total usage state
 

@@ -104,10 +104,10 @@ const AuthLogin = ({ title, subtitle }) => {
               id="email"
               name="email"
               {...register("email", {
-                required: "email is required!",
+                required: "Email is required!",
                 pattern: {
                   value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-                  message: "enter valid email!",
+                  message: "Please enter a valid email!",
                 },
               })}
               error={!!errors.email}
@@ -122,7 +122,7 @@ const AuthLogin = ({ title, subtitle }) => {
               label="Password"
               fullWidth
               name="password"
-              {...register("password", { required: "password is required!" })}
+              {...register("password", { required: "Password is required!" })}
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
@@ -150,15 +150,17 @@ const AuthLogin = ({ title, subtitle }) => {
             alignItems="center"
             justifyContent="space-between"
           >
-            <Typography color={"#fff"}>Forgot Password</Typography>
+            <Typography color={"#fff"}>Forgot Password?</Typography>
           </Stack>
         </Stack>
+
         <Box>
           <Button fullWidth size="large" type="submit" variant="contained">
             Sign In
           </Button>
         </Box>
       </form>
+
       <Box
         justifyContent={"center"}
         alignItems={"center"}
