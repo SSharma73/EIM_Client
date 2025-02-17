@@ -4,6 +4,8 @@ import React, { useEffect, useState } from "react";
 import Table from "./table";
 import axiosInstance from "@/app/api/axiosInstance";
 import ManagementGrid from "@/app/(components)/mui-components/Card";
+import dayjs from "dayjs";
+import moment from "moment";
 
 const Page = ({ params }) => {
   const [page, setPage] = React.useState(0);
@@ -24,9 +26,15 @@ const Page = ({ params }) => {
   const getDataFromChildHandler = (date, dataArr) => {
     const selectedStartDate = date[0].startDate;
     const selectedEndDate = date[0].endDate;
+    console.log("mmm", moment(selectedStartDate).format("dd/mm/yyyy"));
     setStartDate(selectedStartDate);
     setEndDate(selectedEndDate);
   };
+  console.log(
+    "start",
+    moment(startDate).format("dd-mm-yyyy"),
+    moment(endDate).format("dd-mm-yyyy")
+  );
   const handleEachBattery = async () => {
     try {
       setLoading(true);

@@ -11,6 +11,7 @@ import MapImg from "../../../../../public/Img/Vector.svg";
 import Image from "next/image";
 import { PiCarBattery } from "react-icons/pi";
 import axiosInstance from "@/app/api/axiosInstance";
+import Nodata from "../../../../../public/Img/Nodata.svg";
 import moment from "moment";
 
 const iconUrls = ["./available.svg", "charger.svg"];
@@ -256,6 +257,24 @@ const VehicleScheduling = () => {
           );
         })}
       </Grid>
+      {schedules?.length === 0 && (
+        <Grid
+          container
+          p={2}
+          bgcolor={"#fff"}
+          borderRadius={"12px"}
+          justifyContent={"center"}
+        >
+          <Grid item xs={12} display={"flex"} justifyContent={"center"}>
+            <Image src={Nodata} alt="no data" height={"350"} />
+          </Grid>
+          <Grid item>
+            <Typography variant="h5">
+              No truck is currently scheduled or charging.
+            </Typography>
+          </Grid>
+        </Grid>
+      )}
     </Grid>
   );
 };

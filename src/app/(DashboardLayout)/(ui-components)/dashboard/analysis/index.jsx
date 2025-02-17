@@ -9,6 +9,7 @@ import styled from "@emotion/styled";
 import axiosInstance from "@/app/api/axiosInstance";
 import dayjs from "dayjs";
 import { addDays, subDays } from "date-fns";
+import moment from "moment";
 
 const CustomGrid = styled(Grid)(({ theme }) => ({
   padding: theme.spacing(2),
@@ -251,6 +252,7 @@ const Analysis = ({ state }) => {
     ) {
       const startDate = dayjs(dateRange[0]?.startDate).format("YYYY-MM-DD");
       const endDate = dayjs(dateRange[0]?.endDate).format("YYYY-MM-DD");
+
       fetchGraphData(startDate, endDate);
     }
   }, [dateRange, state?.brandId, state?.fleetNumber, state?.region]);

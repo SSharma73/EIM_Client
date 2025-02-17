@@ -238,6 +238,7 @@ const Table = ({
             <Grid item mr={1}>
               <CommonDatePicker
                 getDataFromChildHandler={getDataFromChildHandler}
+                days={93}
               />
             </Grid>
           </Grid>

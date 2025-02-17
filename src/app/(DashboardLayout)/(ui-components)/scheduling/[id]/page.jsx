@@ -24,8 +24,8 @@ const Page = () => {
   const [rowsPerPage, setRowsPerPage] = React.useState(25);
   const [deviceData, setDeviceData] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
-  const [startDate, setStartDate] = useState(moment());
-  const [endDate, setEndDate] = useState(moment());
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
 
   const getDataFromChildHandler = (date, dataArr) => {
     const selectedStartDate = date[0].startDate;

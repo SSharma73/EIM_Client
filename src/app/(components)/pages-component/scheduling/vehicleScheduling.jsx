@@ -12,6 +12,7 @@ import Image from "next/image";
 import { PiCarBattery } from "react-icons/pi";
 import axiosInstance from "@/app/api/axiosInstance";
 import moment from "moment";
+import Nodata from "../../../../../public/Img/Nodata.svg";
 import { useRouter } from "next/navigation";
 
 const iconUrls = ["./SANY.svg", "./BYD.svg", "./foton.svg", "./truck4.svg"];
@@ -121,6 +122,7 @@ const VehicleScheduling = () => {
             value={debouncedSearchQuery}
             onChange={handleSearchChange}
           />
+
           <Grid item ml={2}>
             <Tooltip title="scheduling history">
               <Button
@@ -295,6 +297,24 @@ const VehicleScheduling = () => {
           );
         })}
       </Grid>
+      {schedules?.length === 0 && (
+        <Grid
+          container
+          p={2}
+          bgcolor={"#fff"}
+          borderRadius={"12px"}
+          justifyContent={"center"}
+        >
+          <Grid item xs={12} display={"flex"} justifyContent={"center"}>
+            <Image src={Nodata} alt="no data" height={"350"} />
+          </Grid>
+          <Grid item>
+            <Typography variant="h5">
+              No truck is currently scheduled or charging.
+            </Typography>
+          </Grid>
+        </Grid>
+      )}
     </Grid>
   );
 };

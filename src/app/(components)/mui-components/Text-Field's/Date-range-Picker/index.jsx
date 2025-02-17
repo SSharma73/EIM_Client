@@ -18,13 +18,12 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   },
 }));
 
-const defaultDateRange = {
-  startDate: subDays(new Date(), 7),
-  endDate: addDays(new Date(), 0),
-  key: "selection",
-};
-
-const Calendar = ({ getDataFromChildHandler }) => {
+const Calendar = ({ getDataFromChildHandler, days }) => {
+  const defaultDateRange = {
+    startDate: subDays(new Date(), days ? days : 7),
+    endDate: addDays(new Date(), 0),
+    key: "selection",
+  };
   const [open, setOpen] = useState(false);
   const [fullWidth] = useState(true);
   const [maxWidth] = useState("md");
