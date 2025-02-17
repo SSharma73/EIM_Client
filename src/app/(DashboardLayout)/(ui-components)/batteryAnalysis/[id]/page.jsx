@@ -14,6 +14,7 @@ const Page = ({ params }) => {
   const [endDate, setEndDate] = useState(null);
   const [data, setData] = useState(null);
   const [batteryCode, setBatteryCode] = useState(null);
+  const [selectedFilter, setSelectedFilter] = useState("BatteryCharge"); // Track selected filter
 
   const breadcrumbItems = [
     { label: "Dashboard", link: "/" },
@@ -35,7 +36,7 @@ const Page = ({ params }) => {
           limit: rowsPerPage,
           startDate: startDate ?? "",
           endDate: endDate ?? "",
-          status: "BatteryCharge",
+          status: selectedFilter,
           type: "sany",
           batteryId: params?.id,
         },
@@ -48,8 +49,10 @@ const Page = ({ params }) => {
     }
   };
   useEffect(() => {
-    handleEachBattery();
-  }, [params?.id, startDate, endDate, rowsPerPage, page]);
+    if (startDate && endDate && selectedFilter && params?.id) {
+      handleEachBattery();
+    }
+  }, [params?.id, startDate, endDate, rowsPerPage, page, selectedFilter]);
   return (
     <Grid container rowGap={2} sm={12} md={12}>
       <ManagementGrid
@@ -60,6 +63,8 @@ const Page = ({ params }) => {
         data={data}
         params={params}
         setBatteryCode={setBatteryCode}
+        selectedFilter={selectedFilter}
+        setSelectedFilter={setSelectedFilter}
         rowsPerPage={rowsPerPage}
         setRowsPerPage={setRowsPerPage}
         page={page}

@@ -45,17 +45,13 @@ const Overview = ({ fetchAllDetails }) => {
     } else if (batterySoc > 50 && batterySoc < 90) {
       return { color: "#FFC300", percent: `${batterySoc}%` };
     } else {
-      return { color: "#347D00", percent: "100%" };
+      return { color: "#347D00", percent: `${batterySoc}%` };
     }
   };
   return (
     <Grid container>
       <CustomGrid>
         <Grid item xs={12} md={6} p={2}>
-          <Grid mb={2}>
-            <CustomTextField fullWidth type="search" placeholder="Search" />
-          </Grid>
-
           <Divider />
           {fetchAllDetails?.result?.length > 0 ? (
             fetchAllDetails.result.map((item, index) => {
@@ -96,7 +92,6 @@ const Overview = ({ fetchAllDetails }) => {
                                 const batteryInfo = getBatteryStatus(
                                   item?.batterySoc[state.index]
                                 );
-
                                 return (
                                   <Tooltip
                                     title={batteryInfo.percent}

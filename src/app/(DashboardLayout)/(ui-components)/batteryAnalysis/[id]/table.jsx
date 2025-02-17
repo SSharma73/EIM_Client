@@ -3,11 +3,11 @@ import React, { useState, useEffect } from "react";
 import {
   Grid,
   Typography,
-  Box,
   Button,
-  Chip,
-  Tooltip,
-  IconButton,
+  Select,
+  MenuItem,
+  InputLabel,
+  FormControl,
 } from "@mui/material";
 import CustomTable from "@/app/(components)/mui-components/Table/customTable/index";
 import TableSkeleton from "@/app/(components)/mui-components/Skeleton/tableSkeleton";
@@ -23,6 +23,8 @@ const Table = ({
   params,
   rowsPerPage,
   setRowsPerPage,
+  selectedFilter,
+  setSelectedFilter,
   page,
   setPage,
   searchQuery,
@@ -31,18 +33,32 @@ const Table = ({
   getDataFromChildHandler,
   setBatteryCode,
 }) => {
-  const columns = [
-    "Date",
-    "Battery No.",
-    "Status",
-    "Avg. charging time(hr.)",
-    "Battery SoC(%)",
-    "Start SoC",
-    "End SoC",
-    "Meter start",
-    "Meter stop",
-    "Total unit consumption(Kwh)",
-  ];
+  // Dynamically modify columns based on the selected filter
+  const columns =
+    selectedFilter === "Swapping"
+      ? [
+          "Date",
+          "Battery No.",
+          "Status",
+          "Avg. charging time(hr.)",
+          "Battery SoC(%)",
+          "Start SoC",
+          "End SoC",
+          "Total unit consumption(Kwh)",
+        ]
+      : [
+          "Date",
+          "Battery No.",
+          "Status",
+          "Avg. charging time(hr.)",
+          "Battery SoC(%)",
+          "Start SoC",
+          "End SoC",
+          "Meter start",
+          "Meter stop",
+          "Total unit consumption(Kwh)",
+        ];
+
   const [open, setOpenDialog] = React.useState(false);
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState(searchQuery);
 
@@ -70,6 +86,7 @@ const Table = ({
   const handleCancel = () => {
     setOpenDialog(false);
   };
+
   const handleExport = (data) => {
     if (!Array.isArray(data) || data.length === 0) {
       notifyError("No data available to export");
@@ -78,18 +95,30 @@ const Table = ({
 
     const formattedData = getFormattedData(data);
 
-    const headerRow = [
-      "Date & Time",
-      "Battery ID",
-      "Status",
-      "SOC",
-      "Start SOC",
-      "End SOC",
-      "Meter Start",
-      "Meter Stop",
-      "Unit Consumed (kWh)",
-      "Avg. Charging Time (hr.)",
-    ];
+    const headerRow =
+      selectedFilter === "Swapping"
+        ? [
+            "Date & Time",
+            "Battery ID",
+            "Status",
+            "SOC",
+            "Start SOC",
+            "End SOC",
+            "Unit Consumed (kWh)",
+            "Avg. Charging Time (hr.)",
+          ]
+        : [
+            "Date & Time",
+            "Battery ID",
+            "Status",
+            "SOC",
+            "Start SOC",
+            "End SOC",
+            "Meter Start",
+            "Meter Stop",
+            "Unit Consumed (kWh)",
+            "Avg. Charging Time (hr.)",
+          ];
 
     const csvData = [
       ["", "", "All Battery Logs Data", "", "", "", "", "", "", ""], // Title row
@@ -118,10 +147,10 @@ const Table = ({
   const getFormattedData = (data) => {
     return data?.map((item) => {
       setBatteryCode(item?.batteryId?.batteryNumber);
-      return {
+      const formattedItem = {
         date: item?.createdAt ? moment(item.createdAt).format("lll") : "--",
         batteryId: item?.batteryId?.batteryNumber ?? "--",
-        status: item?.batteryId?.status ?? "--",
+        status: item?.status ?? "--",
         "Avg. charging time(hr.)":
           item?.meterStopTime && item?.meterStartTime
             ? (
@@ -132,12 +161,22 @@ const Table = ({
         soc: item?.batteryId ? `${item.batteryId.soc} %` : "--",
         startSoc: item?.beforeSoc ?? "--",
         endSoc: item?.afterSoc ?? "--",
-        meterStart: item?.meterStart ?? "--",
-        meterStop: item?.meterStop ?? "--",
         totalConsumption: item?.totalConsumption ?? "--",
       };
+
+      if (selectedFilter !== "Swapping") {
+        formattedItem.meterStart = item?.meterStart ?? "--";
+        formattedItem.meterStop = item?.meterStop ?? "--";
+      }
+
+      return formattedItem;
     });
   };
+
+  // Filter the data based on selected filter
+  const filteredData = selectedFilter
+    ? data?.result.filter((item) => item?.status === selectedFilter)
+    : data?.result;
 
   return (
     <Grid container mt={3}>
@@ -157,7 +196,7 @@ const Table = ({
               <Button
                 variant="outlined"
                 onClick={() => {
-                  handleExport(data?.result);
+                  handleExport(filteredData);
                 }}
                 startIcon={<FaRegFileExcel />}
                 size="large"
@@ -165,20 +204,46 @@ const Table = ({
                 Download Excel
               </Button>
             </Grid>
+            <Grid item>
+              <FormControl variant="outlined" sx={{ minWidth: 120, mr: 1.2 }}>
+                <InputLabel id="filter-label">Filter</InputLabel>
+                <Select
+                  labelId="filter-label"
+                  value={selectedFilter}
+                  onChange={(e) => setSelectedFilter(e.target.value)}
+                  label="Filter"
+                  MenuProps={{
+                    PaperProps: {
+                      sx: {
+                        maxHeight: 200,
+                        marginTop: "-80px",
+                        transition: "margin-top 0.3s ease",
+                      },
+                    },
+                    anchorOrigin: {
+                      vertical: "top",
+                      horizontal: "center",
+                    },
+                    transformOrigin: {
+                      vertical: "top",
+                      horizontal: "center",
+                    },
+                  }}
+                >
+                  <MenuItem value="BatteryCharge">Charging</MenuItem>
+                  <MenuItem value="Swapping">Swapping</MenuItem>
+                </Select>
+              </FormControl>
+            </Grid>
             <Grid item mr={1}>
               <CommonDatePicker
                 getDataFromChildHandler={getDataFromChildHandler}
               />
             </Grid>
-            {/* <CustomTextField
-                            type="search"
-                            placeholder="Search empId / Name"
-                            value={debouncedSearchQuery}
-                            onChange={handleSearchChange}
-                        /> */}
           </Grid>
         </Grid>
       </Grid>
+
       {loading ? (
         <TableSkeleton
           rowNumber={new Array(10).fill(0)}
@@ -188,7 +253,7 @@ const Table = ({
       ) : (
         <CustomTable
           page={page}
-          rows={getFormattedData(data?.result)}
+          rows={getFormattedData(filteredData)}
           count={data?.totalDocuments}
           columns={columns}
           setPage={setPage}

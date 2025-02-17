@@ -178,26 +178,30 @@ const Overview1 = ({ type, selectedItems, selectedCustId }) => {
 
             {index === 0 && (
               <Graph
-                calculateDateRange={calculateDateRange}
                 type={type}
                 selectedCustId={selectedCustId}
                 selectedItems={selectedItems?.Region}
+                calculateDateRange={calculateDateRange}
                 selectedTimeFrames={selectedTimeFrames[0]}
               />
             )}
             {index === 1 && (
               <Graph2
-                calculateDateRange={calculateDateRange}
                 type={type}
                 selectedCustId={selectedCustId}
                 selectedItems={selectedItems?.Region}
+                calculateDateRange={calculateDateRange}
                 selectedTimeFrames={selectedTimeFrames[1]}
               />
             )}
             {index === 2 && (
               <Graph3
-                graphType={selectedTimeFrames[index].toLowerCase()}
                 type={type}
+                selectedCustId={selectedCustId}
+                selectedItems={selectedItems?.Region}
+                calculateDateRange={calculateDateRange}
+                selectedTimeFrames={selectedTimeFrames[2]}
+                graphType={selectedTimeFrames[index].toLowerCase()}
               />
             )}
             <Divider sx={{ mb: 3 }} />

@@ -6,6 +6,7 @@ import Image from "next/image";
 import ProfilePic from "../../../../../public/Img/profilepic.svg";
 import { CustomGrid } from "@/app/(components)/mui-components/CustomGrid";
 import axiosInstance from "@/app/api/axiosInstance";
+import { MdOutlineAdminPanelSettings } from "react-icons/md";
 
 const breadcrumbItems = [
   { label: "Dashboard", link: "/" },
@@ -42,7 +43,7 @@ const Settings = () => {
           <Grid container justifyContent={"space-between"}>
             <Grid item>
               <Avatar sx={{ height: "120px", width: "120px" }}>
-                <Image src={ProfilePic} />
+                <MdOutlineAdminPanelSettings size={90} />
               </Avatar>
             </Grid>
           </Grid>

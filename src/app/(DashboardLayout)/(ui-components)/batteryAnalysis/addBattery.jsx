@@ -89,7 +89,9 @@ export default function AddUser({ open, setOpen, handleEfficiencyData }) {
         notifySuccess("battery added successfully !");
         handleClose();
       }
-    } catch (error) {}
+    } catch (error) {
+      notifyError(error.response?.data?.message);
+    }
   };
 
   const handleCommanDialog = () => {
@@ -169,10 +171,10 @@ export default function AddUser({ open, setOpen, handleEfficiencyData }) {
                     <Select
                       labelId="demo-simple-select-label"
                       id="demo-simple-select"
-                      value={handleDrowDown?.customerId}
+                      value={handleDrowDown?.stationId}
                       label="Select station"
                       onChange={(e) =>
-                        handleChange("customerId", e.target.value)
+                        handleChange("stationId", e.target.value)
                       }
                     >
                       {station &&
@@ -192,10 +194,10 @@ export default function AddUser({ open, setOpen, handleEfficiencyData }) {
                     <Select
                       labelId="demo-simple-select-label"
                       id="demo-simple-select"
-                      value={handleDrowDown?.stationId}
+                      value={handleDrowDown?.customerId}
                       label="Select customer"
                       onChange={(e) =>
-                        handleChange("stationId", e.target.value)
+                        handleChange("customerId", e.target.value)
                       }
                     >
                       {customers &&
