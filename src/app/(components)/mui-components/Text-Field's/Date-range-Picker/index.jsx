@@ -19,7 +19,7 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
 }));
 
 const defaultDateRange = {
-  startDate: subDays(new Date(), 1),
+  startDate: subDays(new Date(), 7),
   endDate: addDays(new Date(), 0),
   key: "selection",
 };
@@ -106,6 +106,15 @@ const Calendar = ({ getDataFromChildHandler }) => {
     today.setHours(0, 0, 0, 0);
     return date > today;
   };
+  useEffect(() => {
+    if (selectedRange.length > 0) {
+      setInputValue(
+        `${dayjs(selectedRange[0].startDate).format("DD/MM/YYYY")} - ${dayjs(
+          selectedRange[0].endDate
+        ).format("DD/MM/YYYY")}`
+      );
+    }
+  }, [selectedRange]);
 
   return (
     <>
