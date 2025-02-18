@@ -40,7 +40,7 @@ const Table = ({
           "Date",
           "Battery No.",
           "Status",
-          "Avg. charging time(hr.)",
+          "Avg. swapping time(hr.)",
           "Battery SoC(%)",
           "Start SoC",
           "End SoC",
@@ -54,9 +54,9 @@ const Table = ({
           "Battery SoC(%)",
           "Start SoC",
           "End SoC",
+          "Total unit consumption(Kwh)",
           "Meter start",
           "Meter stop",
-          "Total unit consumption(Kwh)",
         ];
 
   const [open, setOpenDialog] = React.useState(false);
@@ -105,7 +105,7 @@ const Table = ({
             "Start SOC",
             "End SOC",
             "Unit Consumed (kWh)",
-            "Avg. Charging Time (hr.)",
+            "Avg. Swapping Time (hr.)",
           ]
         : [
             "Date & Time",
@@ -167,6 +167,7 @@ const Table = ({
       if (selectedFilter !== "Swapping") {
         formattedItem.meterStart = item?.meterStart ?? "--";
         formattedItem.meterStop = item?.meterStop ?? "--";
+        // formattedItem?.totalConsumption= item?.totalConsumption ?? "--";
       }
 
       return formattedItem;

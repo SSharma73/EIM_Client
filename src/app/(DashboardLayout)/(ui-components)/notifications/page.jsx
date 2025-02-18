@@ -20,6 +20,8 @@ const Page = () => {
   ];
   const [value, setValue] = useState(0);
   const [tabsValue, setTabsValue] = useState("All");
+  const [page, setPage] = React.useState(1);
+  const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -31,7 +33,7 @@ const Page = () => {
   const getData = async (status) => {
     const customerId = localStorage.getItem("customerId");
     try {
-      const url = `notification/notifications/?customerId=${customerId}${
+      const url = `notification/notifications/?customerId=${customerId}&${
         status === "All"
           ? ""
           : `&status=${
@@ -39,10 +41,10 @@ const Page = () => {
                 ? "other"
                 : status.toLowerCase()
             }`
-      }`;
+      }&page=${page + 1}&limit=${rowsPerPage}`;
       const res = await axiosInstance.get(url);
       if (res.status === 200 || res.status === 201) {
-        setData(res?.data?.notifications || []);
+        setData(res?.data || []);
       }
     } catch (err) {
       console.error("Error fetching notifications:", err);
@@ -53,7 +55,7 @@ const Page = () => {
     if (tabsValue) {
       getData(tabsValue);
     }
-  }, [tabsValue]);
+  }, [tabsValue, rowsPerPage, page]);
   return (
     <Grid container>
       <HeaderGrid
@@ -65,7 +67,15 @@ const Page = () => {
         handleChange={handleChange}
       />
       <Grid container>
-        <Read data={data} getData={getData} tabsValue={tabsValue} />
+        <Read
+          data={data}
+          getData={getData}
+          tabsValue={tabsValue}
+          setPage={setPage}
+          page={page}
+          rowsPerPage={rowsPerPage}
+          setRowsPerPage={setRowsPerPage}
+        />
       </Grid>
     </Grid>
   );

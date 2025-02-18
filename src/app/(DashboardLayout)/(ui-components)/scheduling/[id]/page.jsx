@@ -50,7 +50,9 @@ const Page = () => {
     } catch (error) {}
   };
   useEffect(() => {
-    handleHistoryData();
+    if (endDate) {
+      handleHistoryData();
+    }
   }, [page, rowsPerPage, searchQuery, startDate, endDate]);
 
   return (

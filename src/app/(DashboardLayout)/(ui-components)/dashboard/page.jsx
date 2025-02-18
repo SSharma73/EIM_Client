@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { Grid, Typography, Avatar, useTheme } from "@mui/material";
+import { Grid, Typography, Avatar, useTheme, Skeleton } from "@mui/material";
 import { styled } from "@mui/system";
 import Image from "next/image";
 import AutoBox from "@/app/(components)/mui-components/Autocomplete/autocomplete";
@@ -111,19 +111,17 @@ function ShorterGrid() {
 
   const fetchData = async () => {
     try {
-      const [regionsResponse, customersResponse, fleetsResponse] =
-        await Promise.all([
-          axiosInstance.get("dashboard/regions"),
-          axiosInstance.get(
-            `dashboard/customers?region=${state?.region ?? ""}`
-          ),
-          axiosInstance.get(
-            `fleet/fetchFleets?region=${state?.region ?? ""}&customerId=${
-              state?.brandId ?? ""
-            }`
-          ),
-        ]);
+      const regionsResponse = await axiosInstance.get("dashboard/regions");
 
+      const customersResponse = await axiosInstance.get(
+        `dashboard/customers?region=${state?.region ?? ""}`
+      );
+
+      const fleetsResponse = await axiosInstance.get(
+        `fleet/fetchFleets?region=${state?.region ?? ""}&customerId=${
+          state?.brandId ?? ""
+        }`
+      );
       const regions = regionsResponse?.data?.regions;
       const customers = customersResponse?.data?.customers;
       const fleets = fleetsResponse?.data?.data?.result;
@@ -252,13 +250,9 @@ function ShorterGrid() {
 
   useEffect(() => {
     fetchData();
-    if (state?.brandName || state?.fleetNumber || state?.region) {
-      fetchMileageData();
-      fetchConsumptionData();
-    } else {
-      fetchMileageData();
-      fetchConsumptionData();
-    }
+
+    fetchMileageData();
+    fetchConsumptionData();
   }, [
     state?.brandName,
     state?.fleetNumber,
@@ -278,81 +272,129 @@ function ShorterGrid() {
   return (
     <>
       <Grid container spacing={2}>
-        {state?.data?.map((item, index) => (
-          <Grid key={index} item xs={12} sm={6} md={4} lg={2.4}>
-            <MainGrid>
-              <Grid container>
-                {index < 3 ? (
-                  <>
-                    <AutoBox
-                      icon={item.icon}
-                      place={item.label}
-                      data={item.data1}
-                      onChange={
-                        item.label === "Region"
-                          ? handleRegionChange
-                          : item.label === "Customer"
-                          ? handleBrandChange
-                          : item.label === "Tractor"
-                          ? handleFleetChange
-                          : null
-                      }
-                      clearIcon={
-                        item.label === "Region"
-                          ? handleClearRegion
-                          : item.label === "Customer"
-                          ? handleClearBrand
-                          : item.label === "Tractor"
-                          ? handleClearFleet
-                          : null
-                      }
-                    />
-                    <Typography variant="h3" sx={{ pl: 8, fontWeight: "bold" }}>
-                      {item?.value}
-                    </Typography>
-                  </>
-                ) : (
-                  <>
-                    <Grid container alignItems="center" sx={{ pt: 1.2, pl: 1 }}>
-                      <Grid item xs={2}>
-                        <Avatar
+        {state?.data?.length > 0
+          ? state.data.map((item, index) => (
+              <Grid key={index} item xs={12} sm={6} md={4} lg={2.4}>
+                <MainGrid>
+                  <Grid container>
+                    {index < 3 ? (
+                      <>
+                        <AutoBox
+                          icon={item.icon}
+                          place={item.label}
+                          data={item.data1}
+                          onChange={
+                            item.label === "Region"
+                              ? handleRegionChange
+                              : item.label === "Customer"
+                              ? handleBrandChange
+                              : item.label === "Tractor"
+                              ? handleFleetChange
+                              : null
+                          }
+                          clearIcon={
+                            item.label === "Region"
+                              ? handleClearRegion
+                              : item.label === "Customer"
+                              ? handleClearBrand
+                              : item.label === "Tractor"
+                              ? handleClearFleet
+                              : null
+                          }
+                        />
+                        <Typography
+                          variant="h3"
+                          sx={{ pl: 8, fontWeight: "bold" }}
+                        >
+                          {item?.value}
+                        </Typography>
+                      </>
+                    ) : (
+                      <>
+                        <Grid
+                          container
+                          alignItems="center"
+                          sx={{ pt: 1.2, pl: 1 }}
+                        >
+                          <Grid item xs={2}>
+                            <Avatar
+                              sx={{
+                                width: 40,
+                                height: 40,
+                                backgroundColor: theme.palette.primary.main,
+                              }}
+                            >
+                              {item.icon ? (
+                                <Image
+                                  width={30}
+                                  height={30}
+                                  src={item.icon}
+                                  alt={item.label}
+                                />
+                              ) : (
+                                <Skeleton
+                                  variant="circular"
+                                  width={30}
+                                  height={30}
+                                />
+                              )}
+                            </Avatar>
+                          </Grid>
+                          <Grid item xs={10}>
+                            <Typography variant="h6" sx={{ pl: 2 }}>
+                              {item?.label || <Skeleton width={80} />}
+                            </Typography>
+                          </Grid>
+                        </Grid>
+                        <Typography
+                          variant="h4"
                           sx={{
-                            width: 40,
-                            height: 40,
-                            backgroundColor: theme.palette.primary.main,
+                            pl: { xs: 7, sm: 7, md: 7, lg: 7 },
+                            mt: { sm: 1, md: 2, lg: 1 },
                           }}
                         >
-                          {item.icon && (
-                            <Image
-                              width={30}
-                              height={30}
-                              src={item.icon}
-                              alt={item.label}
-                            />
+                          {item?.value !== undefined ? (
+                            item?.value?.toFixed(2)
+                          ) : (
+                            <Skeleton width={50} />
                           )}
-                        </Avatar>
-                      </Grid>
-                      <Grid item xs={10}>
-                        <Typography variant="h6" sx={{ pl: 2 }}>
-                          {item?.label}
                         </Typography>
-                      </Grid>
-                    </Grid>
-                    <Typography
-                      variant="h4"
-                      sx={{
-                        pl: { xs: 7, sm: 7, md: 7, lg: 7 },
-                        mt: { sm: 1, md: 2, lg: 1 },
-                      }}
-                    >
-                      {item?.value?.toFixed(2)}
-                    </Typography>
-                  </>
-                )}
+                      </>
+                    )}
+                  </Grid>
+                </MainGrid>
               </Grid>
-            </MainGrid>
-          </Grid>
-        ))}
+            ))
+          : // Render Skeletons when data is loading or unavailable
+            Array.from(new Array(5)).map((_, index) => (
+              <Grid key={index} item xs={12} sm={6} md={4} lg={2.4}>
+                <MainGrid>
+                  <Grid
+                    container
+                    justifyContent={"center"}
+                    alignItems={"center"}
+                  >
+                    <Grid item xs={3}>
+                      <Skeleton
+                        variant="circular"
+                        width="40px"
+                        height={"40px"}
+                      />
+                    </Grid>
+                    <Grid item xs={8}>
+                      <Skeleton
+                        variant="rectangular"
+                        width="100%"
+                        height={30}
+                      />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <Skeleton width={60} height={30} sx={{ mt: 1, ml: 8 }} />
+                    </Grid>
+                  </Grid>
+                </MainGrid>
+              </Grid>
+            ))}
 
         {activeMarker && activeMarker !== null ? (
           <Grid item xl={9} xs={12} md={8} height={"380px"}>

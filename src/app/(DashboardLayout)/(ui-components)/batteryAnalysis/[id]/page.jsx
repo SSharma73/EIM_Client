@@ -30,11 +30,7 @@ const Page = ({ params }) => {
     setStartDate(selectedStartDate);
     setEndDate(selectedEndDate);
   };
-  console.log(
-    "start",
-    moment(startDate).format("dd-mm-yyyy"),
-    moment(endDate).format("dd-mm-yyyy")
-  );
+
   const handleEachBattery = async () => {
     try {
       setLoading(true);
