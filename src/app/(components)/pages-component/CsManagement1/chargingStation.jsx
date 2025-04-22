@@ -48,7 +48,7 @@ const Charging = ({
   ];
   const getBatteryStatus = (batterySoc) => {
     if (batterySoc === undefined || batterySoc === null) {
-      return { color: "#B0B0B0", percent: "No data" }; // Handle no data scenario
+      return { color: "#B0B0B0", percent: "No data" };
     }
     if (batterySoc <= 50) {
       return { color: "#FF0000", percent: `${batterySoc}%` };
@@ -156,6 +156,7 @@ const Charging = ({
         handleCommanCancel();
         notifySuccess(data?.message);
       }
+      1;
     } catch (error) {
       notifyError(error.data.msg);
       console.error("Error updating charger:", error);
@@ -237,7 +238,7 @@ const Charging = ({
             <Grid item xs={6}>
               <Tooltip title="View">
                 <Link
-                  href={`/csManagement/${item._id}?tab=${value}&eventLabel=${label}&name=${item?.name}`}
+                  href={`/csManagement/${item._id}?tab=${value}&eventLabel=${label}&name=${item?.type}`}
                 >
                   <IconButton size="small">
                     <IoEyeOutline color="rgba(14, 1, 71, 1)" />
